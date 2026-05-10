@@ -9,7 +9,17 @@ using MegaERP.Modules.Shipping.Infrastructure;
 using MegaERP.Shared.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity;
 using System.Text;
+using MegaERP.Modules.IAM.Core.Entities;
+using MegaERP.Modules.IAM.Infrastructure.Persistence;
+using MegaERP.Modules.CMS.Infrastructure.Persistence;
+using MegaERP.Modules.Ecommerce.Infrastructure.Persistence;
+using MegaERP.Modules.Sales.Infrastructure.Persistence;
+using MegaERP.Modules.Billing.Infrastructure.Persistence;
+using MegaERP.Modules.Accounting.Infrastructure.Persistence;
+using MegaERP.Modules.HR.Infrastructure.Persistence;
+using MegaERP.Modules.Shipping.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,6 +69,46 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Initialize Database and Seed User
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var iamContext = services.GetRequiredService<IAMDbContext>();
+        iamContext.Database.EnsureCreated();
+
+        // Seed User
+        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+        var userEmail = "canayan@megaerp.com";
+        if (await userManager.FindByEmailAsync(userEmail) == null)
+        {
+            var user = new ApplicationUser
+            {
+                UserName = userEmail,
+                Email = userEmail,
+                FirstName = "Can",
+                LastName = "Ayan",
+                IsActive = true
+            };
+            await userManager.CreateAsync(user, "67890memo");
+        }
+
+        // Other contexts
+        services.GetRequiredService<CMSDbContext>().Database.EnsureCreated();
+        services.GetRequiredService<EcommerceDbContext>().Database.EnsureCreated();
+        services.GetRequiredService<SalesDbContext>().Database.EnsureCreated();
+        services.GetRequiredService<BillingDbContext>().Database.EnsureCreated();
+        services.GetRequiredService<AccountingDbContext>().Database.EnsureCreated();
+        services.GetRequiredService<HRDbContext>().Database.EnsureCreated();
+        services.GetRequiredService<ShippingDbContext>().Database.EnsureCreated();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Database initialization error: {ex.Message}");
+    }
+}
 
 var summaries = new[]
 {

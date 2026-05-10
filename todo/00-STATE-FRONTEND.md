@@ -3,7 +3,12 @@
 Bu dosya, projeye daha sonra geri dönüldüğünde frontend tarafında nerede kaldığımızı hatırlamak için oluşturulmuştur.
 
 ## 🟢 Neler Yaptık?
-- Frontend projesi için henüz bir başlangıç yapılmadı, tamamen mimari tasarım aşamasındayız. Backend ile eş zamanlı veya peşinden gidecek şekilde konumlandırıldı.
+- **Frontend İskeleti:** Next.js 15 (App Router), TypeScript ve Tailwind CSS kullanılarak `src/mega-erp-web` altında oluşturuldu.
+- **Tasarım Standartları:** `todo/FRONTEND-STANDARDS.md` dosyası oluşturularak renk paleti, tipografi ve bileşen kuralları belirlendi.
+- **UI Kütüphanesi:** Lucide React, Zustand ve Framer Motion entegre edildi.
+- **Temel Bileşenler:** Premium tasarıma sahip `Button` ve `Card` bileşenleri atomic yapıda oluşturuldu.
+- **Landing Page:** Tüm backend modüllerini premium bir arayüzle tanıtan ana sayfa (`app/page.tsx`) hazırlandı.
+- **Git:** Tüm frontend geliştirmeleri GitHub'a push edildi.
 
 ## 🟡 Nerede Kaldık? (Sıradaki İşlem)
 1. **Frontend Teknoloji Seçimi:** React/Next.js, Angular veya Vue.js arasında bir karar verilecek.
