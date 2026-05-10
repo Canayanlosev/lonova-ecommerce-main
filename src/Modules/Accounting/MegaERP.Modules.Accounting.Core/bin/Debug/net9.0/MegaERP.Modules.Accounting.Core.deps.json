@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "MegaERP.Modules.Accounting.Core/1.0.0": {
+        "dependencies": {
+          "MegaERP.Shared.Core": "1.0.0"
+        },
+        "runtime": {
+          "MegaERP.Modules.Accounting.Core.dll": {}
+        }
+      },
+      "MegaERP.Shared.Core/1.0.0": {
+        "runtime": {
+          "MegaERP.Shared.Core.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "MegaERP.Modules.Accounting.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MegaERP.Shared.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

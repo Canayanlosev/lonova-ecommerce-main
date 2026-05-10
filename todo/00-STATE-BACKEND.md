@@ -9,7 +9,8 @@ Bu dosya, projeye daha sonra geri dönüldüğünde nerede kaldığımızı, nel
 - **IAM Modülü:** `Tenant`, `ApplicationUser`, `ApplicationRole` entity'leri tamamlandı. `IdentityDbContext` entegrasyonu ve JWT tabanlı `Login/Register` sistemi (`AuthController`, `JwtProvider`) kuruldu.
 - **CMS Modülü:** `DynamicContentType`, `DynamicContent` (JSONB desteği), `CMSDbContext` ve `ContentTypesController` oluşturuldu.
 - **Ecommerce Modülü:** `Product`, `Category` ve `ProductVariant` yapıları tamamlandı. Ürün ve kategori yönetimi için `ProductsController` ve `CategoriesController` (Authorize destekli) ve DTO'lar yazıldı.
-- **Git Altyapısı:** Proje yerel Git deposu olarak başlatıldı, `main` branch oluşturuldu ve şu ana kadarki tüm geliştirmeler commit'lendi.
+- **Sales Modülü:** `BasketItem`, `Order` ve `OrderItem` entity'leri, `SalesDbContext` ve PostgreSQL entegrasyonu tamamlandı.
+- **Git Altyapısı:** Proje yerel Git deposu olarak başlatıldı, `main` branch GitHub'a (`Canayanlosev/lonova-ecommerce-main`) force push ile gönderildi ve Sales modülü geliştirmeleri de eklendi.
 - **Build:** Proje .NET 9 SDK ile başarıyla derlendi.
 
 ## 🟡 Nerede Kaldık? (Sıradaki İşlem)

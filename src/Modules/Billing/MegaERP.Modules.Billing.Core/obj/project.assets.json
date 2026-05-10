@@ -1,11 +1,30 @@
 {
   "version": 3,
   "targets": {
-    "net9.0": {}
+    "net9.0": {
+      "MegaERP.Shared.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "compile": {
+          "bin/placeholder/MegaERP.Shared.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MegaERP.Shared.Core.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "MegaERP.Shared.Core/1.0.0": {
+      "type": "project",
+      "path": "../../../Shared/MegaERP.Shared.Core/MegaERP.Shared.Core.csproj",
+      "msbuildProject": "../../../Shared/MegaERP.Shared.Core/MegaERP.Shared.Core.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net9.0": []
+    "net9.0": [
+      "MegaERP.Shared.Core >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\cande\\.nuget\\packages\\": {},
@@ -38,7 +57,11 @@
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Shared\\MegaERP.Shared.Core\\MegaERP.Shared.Core.csproj": {
+              "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Shared\\MegaERP.Shared.Core\\MegaERP.Shared.Core.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

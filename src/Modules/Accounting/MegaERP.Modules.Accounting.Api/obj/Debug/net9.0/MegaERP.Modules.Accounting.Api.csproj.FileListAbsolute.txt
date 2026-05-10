@@ -1,0 +1,12 @@
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Accounting\MegaERP.Modules.Accounting.Api\bin\Debug\net9.0\MegaERP.Modules.Accounting.Api.deps.json
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Accounting\MegaERP.Modules.Accounting.Api\bin\Debug\net9.0\MegaERP.Modules.Accounting.Api.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Accounting\MegaERP.Modules.Accounting.Api\bin\Debug\net9.0\MegaERP.Modules.Accounting.Api.pdb
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Accounting\MegaERP.Modules.Accounting.Api\obj\Debug\net9.0\MegaERP.Modules.Accounting.Api.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Accounting\MegaERP.Modules.Accounting.Api\obj\Debug\net9.0\MegaERP.Modules.Accounting.Api.AssemblyInfoInputs.cache
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Accounting\MegaERP.Modules.Accounting.Api\obj\Debug\net9.0\MegaERP.Modules.Accounting.Api.AssemblyInfo.cs
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Accounting\MegaERP.Modules.Accounting.Api\obj\Debug\net9.0\MegaERP.Modules.Accounting.Api.csproj.CoreCompileInputs.cache
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Accounting\MegaERP.Modules.Accounting.Api\obj\Debug\net9.0\MegaERP.Modules.Accounting.Api.sourcelink.json
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Accounting\MegaERP.Modules.Accounting.Api\obj\Debug\net9.0\MegaERP.Modules.Accounting.Api.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Accounting\MegaERP.Modules.Accounting.Api\obj\Debug\net9.0\refint\MegaERP.Modules.Accounting.Api.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Accounting\MegaERP.Modules.Accounting.Api\obj\Debug\net9.0\MegaERP.Modules.Accounting.Api.pdb
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Accounting\MegaERP.Modules.Accounting.Api\obj\Debug\net9.0\ref\MegaERP.Modules.Accounting.Api.dll

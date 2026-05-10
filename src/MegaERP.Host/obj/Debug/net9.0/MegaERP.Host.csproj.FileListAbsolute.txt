@@ -74,3 +74,11 @@ C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\MegaERP.Host\bin\Debug\ne
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\MegaERP.Host\bin\Debug\net9.0\MegaERP.Modules.Sales.Infrastructure.pdb
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\MegaERP.Host\bin\Debug\net9.0\MegaERP.Modules.Sales.Core.pdb
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\MegaERP.Host\obj\Debug\net9.0\MegaERP.Host.sourcelink.json
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\MegaERP.Host\bin\Debug\net9.0\MegaERP.Modules.Accounting.Core.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\MegaERP.Host\bin\Debug\net9.0\MegaERP.Modules.Accounting.Infrastructure.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\MegaERP.Host\bin\Debug\net9.0\MegaERP.Modules.Billing.Core.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\MegaERP.Host\bin\Debug\net9.0\MegaERP.Modules.Billing.Infrastructure.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\MegaERP.Host\bin\Debug\net9.0\MegaERP.Modules.Billing.Infrastructure.pdb
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\MegaERP.Host\bin\Debug\net9.0\MegaERP.Modules.Accounting.Infrastructure.pdb
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\MegaERP.Host\bin\Debug\net9.0\MegaERP.Modules.Accounting.Core.pdb
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\MegaERP.Host\bin\Debug\net9.0\MegaERP.Modules.Billing.Core.pdb

@@ -581,6 +581,62 @@
           "buildTransitive/net8.0/System.Text.Json.targets": {}
         }
       },
+      "MegaERP.Modules.Accounting.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "MegaERP.Shared.Core": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/MegaERP.Modules.Accounting.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MegaERP.Modules.Accounting.Core.dll": {}
+        }
+      },
+      "MegaERP.Modules.Accounting.Infrastructure/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "MegaERP.Modules.Accounting.Core": "1.0.0",
+          "MegaERP.Shared.Infrastructure": "1.0.0",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "9.0.0"
+        },
+        "compile": {
+          "bin/placeholder/MegaERP.Modules.Accounting.Infrastructure.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MegaERP.Modules.Accounting.Infrastructure.dll": {}
+        }
+      },
+      "MegaERP.Modules.Billing.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "MegaERP.Shared.Core": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/MegaERP.Modules.Billing.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MegaERP.Modules.Billing.Core.dll": {}
+        }
+      },
+      "MegaERP.Modules.Billing.Infrastructure/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "MegaERP.Modules.Billing.Core": "1.0.0",
+          "MegaERP.Shared.Infrastructure": "1.0.0",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "9.0.0"
+        },
+        "compile": {
+          "bin/placeholder/MegaERP.Modules.Billing.Infrastructure.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MegaERP.Modules.Billing.Infrastructure.dll": {}
+        }
+      },
       "MegaERP.Modules.CMS.Api/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v9.0",
@@ -1627,6 +1683,26 @@
         "useSharedDesignerContext.txt"
       ]
     },
+    "MegaERP.Modules.Accounting.Core/1.0.0": {
+      "type": "project",
+      "path": "../Modules/Accounting/MegaERP.Modules.Accounting.Core/MegaERP.Modules.Accounting.Core.csproj",
+      "msbuildProject": "../Modules/Accounting/MegaERP.Modules.Accounting.Core/MegaERP.Modules.Accounting.Core.csproj"
+    },
+    "MegaERP.Modules.Accounting.Infrastructure/1.0.0": {
+      "type": "project",
+      "path": "../Modules/Accounting/MegaERP.Modules.Accounting.Infrastructure/MegaERP.Modules.Accounting.Infrastructure.csproj",
+      "msbuildProject": "../Modules/Accounting/MegaERP.Modules.Accounting.Infrastructure/MegaERP.Modules.Accounting.Infrastructure.csproj"
+    },
+    "MegaERP.Modules.Billing.Core/1.0.0": {
+      "type": "project",
+      "path": "../Modules/Billing/MegaERP.Modules.Billing.Core/MegaERP.Modules.Billing.Core.csproj",
+      "msbuildProject": "../Modules/Billing/MegaERP.Modules.Billing.Core/MegaERP.Modules.Billing.Core.csproj"
+    },
+    "MegaERP.Modules.Billing.Infrastructure/1.0.0": {
+      "type": "project",
+      "path": "../Modules/Billing/MegaERP.Modules.Billing.Infrastructure/MegaERP.Modules.Billing.Infrastructure.csproj",
+      "msbuildProject": "../Modules/Billing/MegaERP.Modules.Billing.Infrastructure/MegaERP.Modules.Billing.Infrastructure.csproj"
+    },
     "MegaERP.Modules.CMS.Api/1.0.0": {
       "type": "project",
       "path": "../Modules/CMS/MegaERP.Modules.CMS.Api/MegaERP.Modules.CMS.Api.csproj",
@@ -1695,6 +1771,8 @@
   },
   "projectFileDependencyGroups": {
     "net9.0": [
+      "MegaERP.Modules.Accounting.Infrastructure >= 1.0.0",
+      "MegaERP.Modules.Billing.Infrastructure >= 1.0.0",
       "MegaERP.Modules.CMS.Api >= 1.0.0",
       "MegaERP.Modules.CMS.Infrastructure >= 1.0.0",
       "MegaERP.Modules.Ecommerce.Api >= 1.0.0",
@@ -1740,6 +1818,12 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
+            "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Accounting\\MegaERP.Modules.Accounting.Infrastructure\\MegaERP.Modules.Accounting.Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Accounting\\MegaERP.Modules.Accounting.Infrastructure\\MegaERP.Modules.Accounting.Infrastructure.csproj"
+            },
+            "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Billing\\MegaERP.Modules.Billing.Infrastructure\\MegaERP.Modules.Billing.Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Billing\\MegaERP.Modules.Billing.Infrastructure\\MegaERP.Modules.Billing.Infrastructure.csproj"
+            },
             "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\CMS\\MegaERP.Modules.CMS.Api\\MegaERP.Modules.CMS.Api.csproj": {
               "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\CMS\\MegaERP.Modules.CMS.Api\\MegaERP.Modules.CMS.Api.csproj"
             },

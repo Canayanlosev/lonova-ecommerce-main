@@ -21,6 +21,8 @@
     <ProjectReference Include="..\Modules\Ecommerce\MegaERP.Modules.Ecommerce.Infrastructure\MegaERP.Modules.Ecommerce.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Ecommerce\MegaERP.Modules.Ecommerce.Api\MegaERP.Modules.Ecommerce.Api.csproj" />
     <ProjectReference Include="..\Modules\Sales\MegaERP.Modules.Sales.Infrastructure\MegaERP.Modules.Sales.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Billing\MegaERP.Modules.Billing.Infrastructure\MegaERP.Modules.Billing.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Accounting\MegaERP.Modules.Accounting.Infrastructure\MegaERP.Modules.Accounting.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
