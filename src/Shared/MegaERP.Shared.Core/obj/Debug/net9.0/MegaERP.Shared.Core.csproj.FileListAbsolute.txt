@@ -1,0 +1,11 @@
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Core\bin\Debug\net9.0\MegaERP.Shared.Core.deps.json
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Core\bin\Debug\net9.0\MegaERP.Shared.Core.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Core\bin\Debug\net9.0\MegaERP.Shared.Core.pdb
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Core\obj\Debug\net9.0\MegaERP.Shared.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Core\obj\Debug\net9.0\MegaERP.Shared.Core.AssemblyInfoInputs.cache
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Core\obj\Debug\net9.0\MegaERP.Shared.Core.AssemblyInfo.cs
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Core\obj\Debug\net9.0\MegaERP.Shared.Core.csproj.CoreCompileInputs.cache
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Core\obj\Debug\net9.0\MegaERP.Shared.Core.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Core\obj\Debug\net9.0\refint\MegaERP.Shared.Core.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Core\obj\Debug\net9.0\MegaERP.Shared.Core.pdb
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Core\obj\Debug\net9.0\ref\MegaERP.Shared.Core.dll

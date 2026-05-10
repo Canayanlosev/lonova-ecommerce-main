@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "MegaERP.Modules.Sales.Core/1.0.0": {
+        "runtime": {
+          "MegaERP.Modules.Sales.Core.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "MegaERP.Modules.Sales.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

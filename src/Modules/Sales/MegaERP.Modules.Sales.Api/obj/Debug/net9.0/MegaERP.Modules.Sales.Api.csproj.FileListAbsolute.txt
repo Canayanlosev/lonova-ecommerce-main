@@ -1,0 +1,11 @@
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Sales\MegaERP.Modules.Sales.Api\bin\Debug\net9.0\MegaERP.Modules.Sales.Api.deps.json
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Sales\MegaERP.Modules.Sales.Api\bin\Debug\net9.0\MegaERP.Modules.Sales.Api.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Sales\MegaERP.Modules.Sales.Api\bin\Debug\net9.0\MegaERP.Modules.Sales.Api.pdb
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Sales\MegaERP.Modules.Sales.Api\obj\Debug\net9.0\MegaERP.Modules.Sales.Api.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Sales\MegaERP.Modules.Sales.Api\obj\Debug\net9.0\MegaERP.Modules.Sales.Api.AssemblyInfoInputs.cache
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Sales\MegaERP.Modules.Sales.Api\obj\Debug\net9.0\MegaERP.Modules.Sales.Api.AssemblyInfo.cs
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Sales\MegaERP.Modules.Sales.Api\obj\Debug\net9.0\MegaERP.Modules.Sales.Api.csproj.CoreCompileInputs.cache
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Sales\MegaERP.Modules.Sales.Api\obj\Debug\net9.0\MegaERP.Modules.Sales.Api.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Sales\MegaERP.Modules.Sales.Api\obj\Debug\net9.0\refint\MegaERP.Modules.Sales.Api.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Sales\MegaERP.Modules.Sales.Api\obj\Debug\net9.0\MegaERP.Modules.Sales.Api.pdb
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Sales\MegaERP.Modules.Sales.Api\obj\Debug\net9.0\ref\MegaERP.Modules.Sales.Api.dll
