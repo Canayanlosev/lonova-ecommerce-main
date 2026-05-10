@@ -12,7 +12,9 @@ Bu dosya, projeye daha sonra geri dönüldüğünde nerede kaldığımızı, nel
 - **Sales Modülü:** `BasketItem`, `Order` ve `OrderItem` entity'leri, `SalesDbContext` ve PostgreSQL entegrasyonu tamamlandı.
 - **Billing Modülü:** `Invoice` ve `InvoiceItem` yapıları, `BillingDbContext` ve PostgreSQL entegrasyonu tamamlandı.
 - **Accounting Modülü:** `AccountingAccount` (Cari) ve `JournalEntry` yapıları, `AccountingDbContext` ve PostgreSQL entegrasyonu tamamlandı.
-- **Git Altyapısı:** Proje yerel Git deposu olarak başlatıldı, `main` branch GitHub'a gönderildi ve tüm modül geliştirmeleri (IAM, CMS, Ecommerce, Sales, Billing, Accounting) commit'lenip push edildi.
+- **HR (İnsan Kaynakları) Modülü:** `Employee`, `Department` ve `LeaveRequest` yapıları, `HRDbContext` ve PostgreSQL entegrasyonu tamamlandı.
+- **Shipping (Lojistik) Modülü:** `Shipment` ve `ShippingMethod` yapıları, `ShippingDbContext` ve PostgreSQL entegrasyonu tamamlandı.
+- **Git Altyapısı:** Proje GitHub'a (`Canayanlosev/lonova-ecommerce-main`) tüm modülleriyle (IAM, CMS, Ecommerce, Sales, Billing, Accounting, HR, Shipping) birlikte güncel olarak push edildi.
 - **Build:** Proje .NET 9 SDK ile başarıyla derlendi.
 
 ## 🟡 Nerede Kaldık? (Sıradaki İşlem)
