@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MegaERP.Modules.CMS.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b41e4aa7f81adfca7f9058df891c083c826c25df")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f587e211609cedfb67568b183a7ea4f2610fcfde")]
 [assembly: System.Reflection.AssemblyProductAttribute("MegaERP.Modules.CMS.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MegaERP.Modules.CMS.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -35,6 +35,19 @@ builder.Services.AddHRInfrastructure(builder.Configuration);
 builder.Services.AddShippingInfrastructure(builder.Configuration);
 builder.Services.AddControllers();
 
+// MediatR Registration for all modules
+builder.Services.AddMediatR(cfg => {
+    cfg.RegisterServicesFromAssemblies(
+        typeof(Program).Assembly,
+        typeof(MegaERP.Modules.IAM.Infrastructure.DependencyInjection).Assembly,
+        typeof(MegaERP.Modules.CMS.Infrastructure.DependencyInjection).Assembly,
+        typeof(MegaERP.Modules.Ecommerce.Infrastructure.DependencyInjection).Assembly,
+        typeof(MegaERP.Modules.Sales.Core.Features.Orders.Commands.PlaceOrderCommand).Assembly,
+        typeof(MegaERP.Modules.Billing.Core.Events.CreateInvoiceOnOrderPlacedHandler).Assembly,
+        typeof(MegaERP.Modules.Accounting.Core.Events.AccountingEntryOnOrderPlacedHandler).Assembly
+    );
+});
+
 // JWT Authentication
 var secretKey = builder.Configuration["Jwt:SecretKey"] ?? "a_very_long_and_secure_secret_key_1234567890";
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

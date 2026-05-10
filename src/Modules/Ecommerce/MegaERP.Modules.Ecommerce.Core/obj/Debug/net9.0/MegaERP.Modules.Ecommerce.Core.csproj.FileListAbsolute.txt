@@ -14,3 +14,5 @@ C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Ecommerce\MegaERP
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Ecommerce\MegaERP.Modules.Ecommerce.Core\obj\Debug\net9.0\MegaERP.Modules.Ecommerce.Core.csproj.AssemblyReference.cache
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Ecommerce\MegaERP.Modules.Ecommerce.Core\obj\Debug\net9.0\MegaERP..1F8CF999.Up2Date
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Ecommerce\MegaERP.Modules.Ecommerce.Core\obj\Debug\net9.0\MegaERP.Modules.Ecommerce.Core.sourcelink.json
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Ecommerce\MegaERP.Modules.Ecommerce.Core\bin\Debug\net9.0\MegaERP.Shared.Events.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Ecommerce\MegaERP.Modules.Ecommerce.Core\bin\Debug\net9.0\MegaERP.Shared.Events.pdb

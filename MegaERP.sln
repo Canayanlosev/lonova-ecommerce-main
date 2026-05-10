@@ -79,6 +79,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MegaERP.Modules.Accounting.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MegaERP.Modules.Accounting.Core", "src\Modules\Accounting\MegaERP.Modules.Accounting.Core\MegaERP.Modules.Accounting.Core.csproj", "{9A376FEB-51AF-40C4-A7C8-8E97CDDA942C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MegaERP.Shared.Events", "src\Shared\MegaERP.Shared.Events\MegaERP.Shared.Events.csproj", "{3BEEE060-D29F-4741-8615-4E503F58E4B4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -413,6 +415,18 @@ Global
 		{9A376FEB-51AF-40C4-A7C8-8E97CDDA942C}.Release|x64.Build.0 = Release|Any CPU
 		{9A376FEB-51AF-40C4-A7C8-8E97CDDA942C}.Release|x86.ActiveCfg = Release|Any CPU
 		{9A376FEB-51AF-40C4-A7C8-8E97CDDA942C}.Release|x86.Build.0 = Release|Any CPU
+		{3BEEE060-D29F-4741-8615-4E503F58E4B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BEEE060-D29F-4741-8615-4E503F58E4B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BEEE060-D29F-4741-8615-4E503F58E4B4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3BEEE060-D29F-4741-8615-4E503F58E4B4}.Debug|x64.Build.0 = Debug|Any CPU
+		{3BEEE060-D29F-4741-8615-4E503F58E4B4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3BEEE060-D29F-4741-8615-4E503F58E4B4}.Debug|x86.Build.0 = Debug|Any CPU
+		{3BEEE060-D29F-4741-8615-4E503F58E4B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BEEE060-D29F-4741-8615-4E503F58E4B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BEEE060-D29F-4741-8615-4E503F58E4B4}.Release|x64.ActiveCfg = Release|Any CPU
+		{3BEEE060-D29F-4741-8615-4E503F58E4B4}.Release|x64.Build.0 = Release|Any CPU
+		{3BEEE060-D29F-4741-8615-4E503F58E4B4}.Release|x86.ActiveCfg = Release|Any CPU
+		{3BEEE060-D29F-4741-8615-4E503F58E4B4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -455,5 +469,6 @@ Global
 		{154CE559-8D77-43F3-9F71-1A922C27B6D4} = {981520C5-C4A1-C200-0F0F-BFA3F127FA90}
 		{41A2E241-A7B3-4A50-BB16-AE31E988CFF5} = {981520C5-C4A1-C200-0F0F-BFA3F127FA90}
 		{9A376FEB-51AF-40C4-A7C8-8E97CDDA942C} = {981520C5-C4A1-C200-0F0F-BFA3F127FA90}
+		{3BEEE060-D29F-4741-8615-4E503F58E4B4} = {C8E42992-5E42-0C2B-DBFE-AA848D06431C}
 	EndGlobalSection
 EndGlobal

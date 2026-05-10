@@ -10,3 +10,4 @@ C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Cor
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Core\obj\Debug\net9.0\MegaERP.Shared.Core.pdb
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Core\obj\Debug\net9.0\ref\MegaERP.Shared.Core.dll
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Core\obj\Debug\net9.0\MegaERP.Shared.Core.sourcelink.json
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Core\obj\Debug\net9.0\MegaERP.Shared.Core.csproj.AssemblyReference.cache

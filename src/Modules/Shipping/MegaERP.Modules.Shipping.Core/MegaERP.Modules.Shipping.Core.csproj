@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Shared\MegaERP.Shared.Core\MegaERP.Shared.Core.csproj" />
+    <ProjectReference Include="..\..\..\Shared\MegaERP.Shared.Events\MegaERP.Shared.Events.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
