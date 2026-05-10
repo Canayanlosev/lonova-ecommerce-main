@@ -9,3 +9,4 @@ C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Billing\MegaERP.M
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Billing\MegaERP.Modules.Billing.Infrastructure\obj\Debug\net9.0\refint\MegaERP.Modules.Billing.Infrastructure.dll
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Billing\MegaERP.Modules.Billing.Infrastructure\obj\Debug\net9.0\MegaERP.Modules.Billing.Infrastructure.pdb
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Billing\MegaERP.Modules.Billing.Infrastructure\obj\Debug\net9.0\ref\MegaERP.Modules.Billing.Infrastructure.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Billing\MegaERP.Modules.Billing.Infrastructure\obj\Debug\net9.0\MegaERP.Modules.Billing.Infrastructure.sourcelink.json

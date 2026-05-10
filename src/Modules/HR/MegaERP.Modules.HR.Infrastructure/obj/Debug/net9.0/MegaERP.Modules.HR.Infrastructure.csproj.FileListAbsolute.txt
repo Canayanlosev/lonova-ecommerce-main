@@ -9,3 +9,4 @@ C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\HR\MegaERP.Module
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\HR\MegaERP.Modules.HR.Infrastructure\obj\Debug\net9.0\refint\MegaERP.Modules.HR.Infrastructure.dll
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\HR\MegaERP.Modules.HR.Infrastructure\obj\Debug\net9.0\MegaERP.Modules.HR.Infrastructure.pdb
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\HR\MegaERP.Modules.HR.Infrastructure\obj\Debug\net9.0\ref\MegaERP.Modules.HR.Infrastructure.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\HR\MegaERP.Modules.HR.Infrastructure\obj\Debug\net9.0\MegaERP.Modules.HR.Infrastructure.sourcelink.json

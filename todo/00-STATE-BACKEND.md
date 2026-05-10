@@ -8,7 +8,8 @@ Bu dosya, projeye daha sonra geri dönüldüğünde nerede kaldığımızı, nel
 - **Paylaşılan Altyapı (Shared):** `BaseEntity`, `BaseTenantEntity`, `ITenantService` ve `BaseDbContext` (multi-tenancy desteği ile) implemente edildi.
 - **IAM Modülü:** `Tenant`, `ApplicationUser`, `ApplicationRole` entity'leri tamamlandı. `IdentityDbContext` entegrasyonu ve JWT tabanlı `Login/Register` sistemi (`AuthController`, `JwtProvider`) kuruldu.
 - **CMS Modülü:** `DynamicContentType`, `DynamicContent` (JSONB desteği), `CMSDbContext` ve `ContentTypesController` oluşturuldu.
-- **Ecommerce Modülü:** `Product`, `Category` ve `ProductVariant` entity'leri, `EcommerceDbContext` ve PostgreSQL entegrasyonu tamamlandı.
+- **Ecommerce Modülü:** `Product`, `Category` ve `ProductVariant` yapıları tamamlandı. Ürün ve kategori yönetimi için `ProductsController` ve `CategoriesController` (Authorize destekli) ve DTO'lar yazıldı.
+- **Git Altyapısı:** Proje yerel Git deposu olarak başlatıldı, `main` branch oluşturuldu ve şu ana kadarki tüm geliştirmeler commit'lendi.
 - **Build:** Proje .NET 9 SDK ile başarıyla derlendi.
 
 ## 🟡 Nerede Kaldık? (Sıradaki İşlem)

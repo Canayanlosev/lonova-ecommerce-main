@@ -13,3 +13,4 @@ C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\IAM\MegaERP.Modul
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\IAM\MegaERP.Modules.IAM.Core\obj\Debug\net9.0\refint\MegaERP.Modules.IAM.Core.dll
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\IAM\MegaERP.Modules.IAM.Core\obj\Debug\net9.0\MegaERP.Modules.IAM.Core.pdb
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\IAM\MegaERP.Modules.IAM.Core\obj\Debug\net9.0\ref\MegaERP.Modules.IAM.Core.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\IAM\MegaERP.Modules.IAM.Core\obj\Debug\net9.0\MegaERP.Modules.IAM.Core.sourcelink.json

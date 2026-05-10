@@ -9,3 +9,4 @@ C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Sales\MegaERP.Mod
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Sales\MegaERP.Modules.Sales.Api\obj\Debug\net9.0\refint\MegaERP.Modules.Sales.Api.dll
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Sales\MegaERP.Modules.Sales.Api\obj\Debug\net9.0\MegaERP.Modules.Sales.Api.pdb
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Sales\MegaERP.Modules.Sales.Api\obj\Debug\net9.0\ref\MegaERP.Modules.Sales.Api.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Sales\MegaERP.Modules.Sales.Api\obj\Debug\net9.0\MegaERP.Modules.Sales.Api.sourcelink.json

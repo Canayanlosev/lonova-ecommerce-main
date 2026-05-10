@@ -17,3 +17,4 @@ C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\CMS\MegaERP.Modul
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\CMS\MegaERP.Modules.CMS.Infrastructure\bin\Debug\net9.0\MegaERP.Shared.Core.pdb
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\CMS\MegaERP.Modules.CMS.Infrastructure\obj\Debug\net9.0\MegaERP.Modules.CMS.Infrastructure.csproj.AssemblyReference.cache
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\CMS\MegaERP.Modules.CMS.Infrastructure\obj\Debug\net9.0\MegaERP..26996957.Up2Date
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\CMS\MegaERP.Modules.CMS.Infrastructure\obj\Debug\net9.0\MegaERP.Modules.CMS.Infrastructure.sourcelink.json

@@ -13,3 +13,4 @@ C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Inf
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Infrastructure\obj\Debug\net9.0\refint\MegaERP.Shared.Infrastructure.dll
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Infrastructure\obj\Debug\net9.0\MegaERP.Shared.Infrastructure.pdb
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Infrastructure\obj\Debug\net9.0\ref\MegaERP.Shared.Infrastructure.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Shared\MegaERP.Shared.Infrastructure\obj\Debug\net9.0\MegaERP.Shared.Infrastructure.sourcelink.json

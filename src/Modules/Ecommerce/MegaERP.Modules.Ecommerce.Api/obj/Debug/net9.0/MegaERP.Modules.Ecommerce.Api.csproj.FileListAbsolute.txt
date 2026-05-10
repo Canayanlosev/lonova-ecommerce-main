@@ -19,3 +19,4 @@ C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Ecommerce\MegaERP
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Ecommerce\MegaERP.Modules.Ecommerce.Api\bin\Debug\net9.0\MegaERP.Shared.Infrastructure.pdb
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Ecommerce\MegaERP.Modules.Ecommerce.Api\obj\Debug\net9.0\MegaERP.Modules.Ecommerce.Api.csproj.AssemblyReference.cache
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Ecommerce\MegaERP.Modules.Ecommerce.Api\obj\Debug\net9.0\MegaERP..CB308CC7.Up2Date
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Ecommerce\MegaERP.Modules.Ecommerce.Api\obj\Debug\net9.0\MegaERP.Modules.Ecommerce.Api.sourcelink.json

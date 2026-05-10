@@ -9,3 +9,4 @@ C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Shipping\MegaERP.
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Shipping\MegaERP.Modules.Shipping.Core\obj\Debug\net9.0\refint\MegaERP.Modules.Shipping.Core.dll
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Shipping\MegaERP.Modules.Shipping.Core\obj\Debug\net9.0\MegaERP.Modules.Shipping.Core.pdb
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Shipping\MegaERP.Modules.Shipping.Core\obj\Debug\net9.0\ref\MegaERP.Modules.Shipping.Core.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\Shipping\MegaERP.Modules.Shipping.Core\obj\Debug\net9.0\MegaERP.Modules.Shipping.Core.sourcelink.json

@@ -722,6 +722,34 @@
           "bin/placeholder/MegaERP.Modules.IAM.Infrastructure.dll": {}
         }
       },
+      "MegaERP.Modules.Sales.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "MegaERP.Shared.Core": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/MegaERP.Modules.Sales.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MegaERP.Modules.Sales.Core.dll": {}
+        }
+      },
+      "MegaERP.Modules.Sales.Infrastructure/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "MegaERP.Modules.Sales.Core": "1.0.0",
+          "MegaERP.Shared.Infrastructure": "1.0.0",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "9.0.0"
+        },
+        "compile": {
+          "bin/placeholder/MegaERP.Modules.Sales.Infrastructure.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MegaERP.Modules.Sales.Infrastructure.dll": {}
+        }
+      },
       "MegaERP.Shared.Core/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v9.0",
@@ -1644,6 +1672,16 @@
       "path": "../Modules/IAM/MegaERP.Modules.IAM.Infrastructure/MegaERP.Modules.IAM.Infrastructure.csproj",
       "msbuildProject": "../Modules/IAM/MegaERP.Modules.IAM.Infrastructure/MegaERP.Modules.IAM.Infrastructure.csproj"
     },
+    "MegaERP.Modules.Sales.Core/1.0.0": {
+      "type": "project",
+      "path": "../Modules/Sales/MegaERP.Modules.Sales.Core/MegaERP.Modules.Sales.Core.csproj",
+      "msbuildProject": "../Modules/Sales/MegaERP.Modules.Sales.Core/MegaERP.Modules.Sales.Core.csproj"
+    },
+    "MegaERP.Modules.Sales.Infrastructure/1.0.0": {
+      "type": "project",
+      "path": "../Modules/Sales/MegaERP.Modules.Sales.Infrastructure/MegaERP.Modules.Sales.Infrastructure.csproj",
+      "msbuildProject": "../Modules/Sales/MegaERP.Modules.Sales.Infrastructure/MegaERP.Modules.Sales.Infrastructure.csproj"
+    },
     "MegaERP.Shared.Core/1.0.0": {
       "type": "project",
       "path": "../Shared/MegaERP.Shared.Core/MegaERP.Shared.Core.csproj",
@@ -1663,6 +1701,7 @@
       "MegaERP.Modules.Ecommerce.Infrastructure >= 1.0.0",
       "MegaERP.Modules.IAM.Api >= 1.0.0",
       "MegaERP.Modules.IAM.Infrastructure >= 1.0.0",
+      "MegaERP.Modules.Sales.Infrastructure >= 1.0.0",
       "MegaERP.Shared.Core >= 1.0.0",
       "MegaERP.Shared.Infrastructure >= 1.0.0",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 9.0.0",
@@ -1718,6 +1757,9 @@
             },
             "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\IAM\\MegaERP.Modules.IAM.Infrastructure\\MegaERP.Modules.IAM.Infrastructure.csproj": {
               "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\IAM\\MegaERP.Modules.IAM.Infrastructure\\MegaERP.Modules.IAM.Infrastructure.csproj"
+            },
+            "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Sales\\MegaERP.Modules.Sales.Infrastructure\\MegaERP.Modules.Sales.Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Sales\\MegaERP.Modules.Sales.Infrastructure\\MegaERP.Modules.Sales.Infrastructure.csproj"
             },
             "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Shared\\MegaERP.Shared.Core\\MegaERP.Shared.Core.csproj": {
               "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Shared\\MegaERP.Shared.Core\\MegaERP.Shared.Core.csproj"
