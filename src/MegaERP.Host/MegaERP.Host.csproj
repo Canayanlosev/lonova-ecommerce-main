@@ -19,6 +19,7 @@
     <ProjectReference Include="..\Modules\CMS\MegaERP.Modules.CMS.Infrastructure\MegaERP.Modules.CMS.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\CMS\MegaERP.Modules.CMS.Api\MegaERP.Modules.CMS.Api.csproj" />
     <ProjectReference Include="..\Modules\Ecommerce\MegaERP.Modules.Ecommerce.Infrastructure\MegaERP.Modules.Ecommerce.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Ecommerce\MegaERP.Modules.Ecommerce.Api\MegaERP.Modules.Ecommerce.Api.csproj" />
   </ItemGroup>
 
 </Project>

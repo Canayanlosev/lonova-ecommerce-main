@@ -67,3 +67,5 @@ C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\MegaERP.Host\bin\Debug\ne
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\MegaERP.Host\bin\Debug\net9.0\MegaERP.Modules.Ecommerce.Infrastructure.dll
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\MegaERP.Host\bin\Debug\net9.0\MegaERP.Modules.Ecommerce.Infrastructure.pdb
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\MegaERP.Host\bin\Debug\net9.0\MegaERP.Modules.Ecommerce.Core.pdb
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\MegaERP.Host\bin\Debug\net9.0\MegaERP.Modules.Ecommerce.Api.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\MegaERP.Host\bin\Debug\net9.0\MegaERP.Modules.Ecommerce.Api.pdb

@@ -10,6 +10,7 @@
         "dependencies": {
           "MegaERP.Modules.CMS.Api": "1.0.0",
           "MegaERP.Modules.CMS.Infrastructure": "1.0.0",
+          "MegaERP.Modules.Ecommerce.Api": "1.0.0",
           "MegaERP.Modules.Ecommerce.Infrastructure": "1.0.0",
           "MegaERP.Modules.IAM.Api": "1.0.0",
           "MegaERP.Modules.IAM.Infrastructure": "1.0.0",
@@ -330,6 +331,18 @@
         },
         "runtime": {
           "MegaERP.Modules.CMS.Infrastructure.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "MegaERP.Modules.Ecommerce.Api/1.0.0": {
+        "dependencies": {
+          "MegaERP.Modules.Ecommerce.Core": "1.0.0",
+          "MegaERP.Modules.Ecommerce.Infrastructure": "1.0.0"
+        },
+        "runtime": {
+          "MegaERP.Modules.Ecommerce.Api.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -681,6 +694,11 @@
       "sha512": ""
     },
     "MegaERP.Modules.CMS.Infrastructure/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MegaERP.Modules.Ecommerce.Api/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

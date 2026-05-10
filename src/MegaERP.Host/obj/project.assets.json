@@ -626,6 +626,23 @@
           "bin/placeholder/MegaERP.Modules.CMS.Infrastructure.dll": {}
         }
       },
+      "MegaERP.Modules.Ecommerce.Api/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "MegaERP.Modules.Ecommerce.Core": "1.0.0",
+          "MegaERP.Modules.Ecommerce.Infrastructure": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/MegaERP.Modules.Ecommerce.Api.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MegaERP.Modules.Ecommerce.Api.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
       "MegaERP.Modules.Ecommerce.Core/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v9.0",
@@ -1597,6 +1614,11 @@
       "path": "../Modules/CMS/MegaERP.Modules.CMS.Infrastructure/MegaERP.Modules.CMS.Infrastructure.csproj",
       "msbuildProject": "../Modules/CMS/MegaERP.Modules.CMS.Infrastructure/MegaERP.Modules.CMS.Infrastructure.csproj"
     },
+    "MegaERP.Modules.Ecommerce.Api/1.0.0": {
+      "type": "project",
+      "path": "../Modules/Ecommerce/MegaERP.Modules.Ecommerce.Api/MegaERP.Modules.Ecommerce.Api.csproj",
+      "msbuildProject": "../Modules/Ecommerce/MegaERP.Modules.Ecommerce.Api/MegaERP.Modules.Ecommerce.Api.csproj"
+    },
     "MegaERP.Modules.Ecommerce.Core/1.0.0": {
       "type": "project",
       "path": "../Modules/Ecommerce/MegaERP.Modules.Ecommerce.Core/MegaERP.Modules.Ecommerce.Core.csproj",
@@ -1637,6 +1659,7 @@
     "net9.0": [
       "MegaERP.Modules.CMS.Api >= 1.0.0",
       "MegaERP.Modules.CMS.Infrastructure >= 1.0.0",
+      "MegaERP.Modules.Ecommerce.Api >= 1.0.0",
       "MegaERP.Modules.Ecommerce.Infrastructure >= 1.0.0",
       "MegaERP.Modules.IAM.Api >= 1.0.0",
       "MegaERP.Modules.IAM.Infrastructure >= 1.0.0",
@@ -1683,6 +1706,9 @@
             },
             "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\CMS\\MegaERP.Modules.CMS.Infrastructure\\MegaERP.Modules.CMS.Infrastructure.csproj": {
               "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\CMS\\MegaERP.Modules.CMS.Infrastructure\\MegaERP.Modules.CMS.Infrastructure.csproj"
+            },
+            "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Ecommerce\\MegaERP.Modules.Ecommerce.Api\\MegaERP.Modules.Ecommerce.Api.csproj": {
+              "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Ecommerce\\MegaERP.Modules.Ecommerce.Api\\MegaERP.Modules.Ecommerce.Api.csproj"
             },
             "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Ecommerce\\MegaERP.Modules.Ecommerce.Infrastructure\\MegaERP.Modules.Ecommerce.Infrastructure.csproj": {
               "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Ecommerce\\MegaERP.Modules.Ecommerce.Infrastructure\\MegaERP.Modules.Ecommerce.Infrastructure.csproj"
