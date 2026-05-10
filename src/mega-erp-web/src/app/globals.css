@@ -1,56 +1,79 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
-  --primary: 261 89% 66%;
-  --primary-foreground: 0 0% 100%;
+@theme {
+  --color-primary: hsl(261 89% 66%);
+  --color-primary-foreground: hsl(0 0% 100%);
   
-  --secondary: 271 91% 65%;
-  --secondary-foreground: 0 0% 100%;
+  --color-secondary: hsl(271 91% 65%);
+  --color-secondary-foreground: hsl(0 0% 100%);
 
-  --background: 222 47% 98%;
-  --foreground: 222 47% 11%;
+  --color-background: hsl(222 47% 98%);
+  --color-foreground: hsl(222 47% 11%);
 
-  --surface: 0 0% 100%;
-  --surface-foreground: 222 47% 11%;
+  --color-surface: hsl(0 0% 100%);
+  --color-surface-foreground: hsl(222 47% 11%);
 
-  --border: 214 32% 91%;
-  --radius: 1rem;
+  --color-border: hsl(214 32% 91%);
+  --radius-xl: 1rem;
 }
 
-.dark {
-  --background: 222 47% 6%;
-  --foreground: 210 40% 98%;
-
-  --surface: 222 47% 11%;
-  --surface-foreground: 210 40% 98%;
-
-  --border: 217 33% 17%;
+@theme inline {
+  --color-background: hsl(222 47% 6%);
+  --color-foreground: hsl(210 40% 98%);
+  --color-surface: hsl(222 47% 11%);
+  --color-surface-foreground: hsl(210 40% 98%);
+  --color-border: hsl(217 33% 17%);
 }
 
 @layer base {
   body {
-    @apply bg-[var(--background)] text-[var(--foreground)] antialiased selection:bg-indigo-500/30;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
     font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
 @layer components {
   .premium-card {
-    @apply bg-[var(--surface)] border border-[var(--border)] rounded-[var(--radius)] shadow-sm 
-           backdrop-blur-md bg-opacity-70 dark:bg-opacity-40 transition-all duration-300
-           hover:shadow-indigo-500/10 hover:border-indigo-500/30 hover:-translate-y-1;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    backdrop-filter: blur(12px);
+    transition: all 0.3s ease-in-out;
+  }
+
+  .premium-card:hover {
+    border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px -5px color-mix(in srgb, var(--color-primary) 10%, transparent);
   }
 
   .premium-button {
-    @apply relative overflow-hidden rounded-[0.75rem] px-6 py-2.5 font-medium transition-all duration-300
-           bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/25
-           active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.75rem;
+    padding: 0.625rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease-in-out;
+    background-color: var(--color-primary);
+    color: white;
+  }
+
+  .premium-button:hover {
+    background-color: color-mix(in srgb, var(--color-primary) 80%, black);
+    box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--color-primary) 25%, transparent);
+  }
+
+  .premium-button:active {
+    transform: scale(0.95);
   }
 
   .glass-panel {
-    @apply bg-white/10 backdrop-blur-xl border border-white/10 dark:bg-black/20 dark:border-white/5;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 }
 
@@ -59,8 +82,12 @@
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  @apply bg-transparent;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-300 dark:bg-slate-700 rounded-full hover:bg-slate-400 dark:hover:bg-slate-600;
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
 }

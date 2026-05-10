@@ -4,7 +4,7 @@ import { LayoutDashboard, ShoppingCart, Users, CreditCard, Package, Truck } from
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-[#06080f] text-slate-900 dark:text-white selection:bg-indigo-500/30">
+    <main className="min-h-screen bg-slate-50 dark:bg-[#06080f] text-slate-900 dark:text-white">
       {/* Hero Section */}
       <div className="relative overflow-hidden pt-24 pb-16 px-6 lg:px-12 text-center">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-indigo-500/10 blur-[120px] rounded-full -z-10" />
