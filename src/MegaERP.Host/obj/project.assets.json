@@ -727,6 +727,34 @@
           "bin/placeholder/MegaERP.Modules.Ecommerce.Infrastructure.dll": {}
         }
       },
+      "MegaERP.Modules.HR.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "MegaERP.Shared.Core": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/MegaERP.Modules.HR.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MegaERP.Modules.HR.Core.dll": {}
+        }
+      },
+      "MegaERP.Modules.HR.Infrastructure/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "MegaERP.Modules.HR.Core": "1.0.0",
+          "MegaERP.Shared.Infrastructure": "1.0.0",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "9.0.0"
+        },
+        "compile": {
+          "bin/placeholder/MegaERP.Modules.HR.Infrastructure.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MegaERP.Modules.HR.Infrastructure.dll": {}
+        }
+      },
       "MegaERP.Modules.IAM.Api/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v9.0",
@@ -804,6 +832,34 @@
         },
         "runtime": {
           "bin/placeholder/MegaERP.Modules.Sales.Infrastructure.dll": {}
+        }
+      },
+      "MegaERP.Modules.Shipping.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "MegaERP.Shared.Core": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/MegaERP.Modules.Shipping.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MegaERP.Modules.Shipping.Core.dll": {}
+        }
+      },
+      "MegaERP.Modules.Shipping.Infrastructure/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "MegaERP.Modules.Shipping.Core": "1.0.0",
+          "MegaERP.Shared.Infrastructure": "1.0.0",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "9.0.0"
+        },
+        "compile": {
+          "bin/placeholder/MegaERP.Modules.Shipping.Infrastructure.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MegaERP.Modules.Shipping.Infrastructure.dll": {}
         }
       },
       "MegaERP.Shared.Core/1.0.0": {
@@ -1733,6 +1789,16 @@
       "path": "../Modules/Ecommerce/MegaERP.Modules.Ecommerce.Infrastructure/MegaERP.Modules.Ecommerce.Infrastructure.csproj",
       "msbuildProject": "../Modules/Ecommerce/MegaERP.Modules.Ecommerce.Infrastructure/MegaERP.Modules.Ecommerce.Infrastructure.csproj"
     },
+    "MegaERP.Modules.HR.Core/1.0.0": {
+      "type": "project",
+      "path": "../Modules/HR/MegaERP.Modules.HR.Core/MegaERP.Modules.HR.Core.csproj",
+      "msbuildProject": "../Modules/HR/MegaERP.Modules.HR.Core/MegaERP.Modules.HR.Core.csproj"
+    },
+    "MegaERP.Modules.HR.Infrastructure/1.0.0": {
+      "type": "project",
+      "path": "../Modules/HR/MegaERP.Modules.HR.Infrastructure/MegaERP.Modules.HR.Infrastructure.csproj",
+      "msbuildProject": "../Modules/HR/MegaERP.Modules.HR.Infrastructure/MegaERP.Modules.HR.Infrastructure.csproj"
+    },
     "MegaERP.Modules.IAM.Api/1.0.0": {
       "type": "project",
       "path": "../Modules/IAM/MegaERP.Modules.IAM.Api/MegaERP.Modules.IAM.Api.csproj",
@@ -1758,6 +1824,16 @@
       "path": "../Modules/Sales/MegaERP.Modules.Sales.Infrastructure/MegaERP.Modules.Sales.Infrastructure.csproj",
       "msbuildProject": "../Modules/Sales/MegaERP.Modules.Sales.Infrastructure/MegaERP.Modules.Sales.Infrastructure.csproj"
     },
+    "MegaERP.Modules.Shipping.Core/1.0.0": {
+      "type": "project",
+      "path": "../Modules/Shipping/MegaERP.Modules.Shipping.Core/MegaERP.Modules.Shipping.Core.csproj",
+      "msbuildProject": "../Modules/Shipping/MegaERP.Modules.Shipping.Core/MegaERP.Modules.Shipping.Core.csproj"
+    },
+    "MegaERP.Modules.Shipping.Infrastructure/1.0.0": {
+      "type": "project",
+      "path": "../Modules/Shipping/MegaERP.Modules.Shipping.Infrastructure/MegaERP.Modules.Shipping.Infrastructure.csproj",
+      "msbuildProject": "../Modules/Shipping/MegaERP.Modules.Shipping.Infrastructure/MegaERP.Modules.Shipping.Infrastructure.csproj"
+    },
     "MegaERP.Shared.Core/1.0.0": {
       "type": "project",
       "path": "../Shared/MegaERP.Shared.Core/MegaERP.Shared.Core.csproj",
@@ -1777,9 +1853,11 @@
       "MegaERP.Modules.CMS.Infrastructure >= 1.0.0",
       "MegaERP.Modules.Ecommerce.Api >= 1.0.0",
       "MegaERP.Modules.Ecommerce.Infrastructure >= 1.0.0",
+      "MegaERP.Modules.HR.Infrastructure >= 1.0.0",
       "MegaERP.Modules.IAM.Api >= 1.0.0",
       "MegaERP.Modules.IAM.Infrastructure >= 1.0.0",
       "MegaERP.Modules.Sales.Infrastructure >= 1.0.0",
+      "MegaERP.Modules.Shipping.Infrastructure >= 1.0.0",
       "MegaERP.Shared.Core >= 1.0.0",
       "MegaERP.Shared.Infrastructure >= 1.0.0",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 9.0.0",
@@ -1836,6 +1914,9 @@
             "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Ecommerce\\MegaERP.Modules.Ecommerce.Infrastructure\\MegaERP.Modules.Ecommerce.Infrastructure.csproj": {
               "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Ecommerce\\MegaERP.Modules.Ecommerce.Infrastructure\\MegaERP.Modules.Ecommerce.Infrastructure.csproj"
             },
+            "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\HR\\MegaERP.Modules.HR.Infrastructure\\MegaERP.Modules.HR.Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\HR\\MegaERP.Modules.HR.Infrastructure\\MegaERP.Modules.HR.Infrastructure.csproj"
+            },
             "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\IAM\\MegaERP.Modules.IAM.Api\\MegaERP.Modules.IAM.Api.csproj": {
               "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\IAM\\MegaERP.Modules.IAM.Api\\MegaERP.Modules.IAM.Api.csproj"
             },
@@ -1844,6 +1925,9 @@
             },
             "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Sales\\MegaERP.Modules.Sales.Infrastructure\\MegaERP.Modules.Sales.Infrastructure.csproj": {
               "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Sales\\MegaERP.Modules.Sales.Infrastructure\\MegaERP.Modules.Sales.Infrastructure.csproj"
+            },
+            "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Shipping\\MegaERP.Modules.Shipping.Infrastructure\\MegaERP.Modules.Shipping.Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Shipping\\MegaERP.Modules.Shipping.Infrastructure\\MegaERP.Modules.Shipping.Infrastructure.csproj"
             },
             "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Shared\\MegaERP.Shared.Core\\MegaERP.Shared.Core.csproj": {
               "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Shared\\MegaERP.Shared.Core\\MegaERP.Shared.Core.csproj"

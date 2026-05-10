@@ -14,9 +14,11 @@
           "MegaERP.Modules.CMS.Infrastructure": "1.0.0",
           "MegaERP.Modules.Ecommerce.Api": "1.0.0",
           "MegaERP.Modules.Ecommerce.Infrastructure": "1.0.0",
+          "MegaERP.Modules.HR.Infrastructure": "1.0.0",
           "MegaERP.Modules.IAM.Api": "1.0.0",
           "MegaERP.Modules.IAM.Infrastructure": "1.0.0",
           "MegaERP.Modules.Sales.Infrastructure": "1.0.0",
+          "MegaERP.Modules.Shipping.Infrastructure": "1.0.0",
           "MegaERP.Shared.Core": "1.0.0",
           "MegaERP.Shared.Infrastructure": "1.0.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "9.0.0",
@@ -423,6 +425,30 @@
           }
         }
       },
+      "MegaERP.Modules.HR.Core/1.0.0": {
+        "dependencies": {
+          "MegaERP.Shared.Core": "1.0.0"
+        },
+        "runtime": {
+          "MegaERP.Modules.HR.Core.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "MegaERP.Modules.HR.Infrastructure/1.0.0": {
+        "dependencies": {
+          "MegaERP.Modules.HR.Core": "1.0.0",
+          "MegaERP.Shared.Infrastructure": "1.0.0",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "9.0.0"
+        },
+        "runtime": {
+          "MegaERP.Modules.HR.Infrastructure.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "MegaERP.Modules.IAM.Api/1.0.0": {
         "dependencies": {
           "MegaERP.Modules.IAM.Core": "1.0.0",
@@ -484,6 +510,30 @@
         },
         "runtime": {
           "MegaERP.Modules.Sales.Infrastructure.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "MegaERP.Modules.Shipping.Core/1.0.0": {
+        "dependencies": {
+          "MegaERP.Shared.Core": "1.0.0"
+        },
+        "runtime": {
+          "MegaERP.Modules.Shipping.Core.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "MegaERP.Modules.Shipping.Infrastructure/1.0.0": {
+        "dependencies": {
+          "MegaERP.Modules.Shipping.Core": "1.0.0",
+          "MegaERP.Shared.Infrastructure": "1.0.0",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "9.0.0"
+        },
+        "runtime": {
+          "MegaERP.Modules.Shipping.Infrastructure.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -808,6 +858,16 @@
       "serviceable": false,
       "sha512": ""
     },
+    "MegaERP.Modules.HR.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MegaERP.Modules.HR.Infrastructure/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
     "MegaERP.Modules.IAM.Api/1.0.0": {
       "type": "project",
       "serviceable": false,
@@ -829,6 +889,16 @@
       "sha512": ""
     },
     "MegaERP.Modules.Sales.Infrastructure/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MegaERP.Modules.Shipping.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MegaERP.Modules.Shipping.Infrastructure/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

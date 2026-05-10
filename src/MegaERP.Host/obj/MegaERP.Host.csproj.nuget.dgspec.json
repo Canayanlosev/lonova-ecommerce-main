@@ -50,6 +50,9 @@
               "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Ecommerce\\MegaERP.Modules.Ecommerce.Infrastructure\\MegaERP.Modules.Ecommerce.Infrastructure.csproj": {
                 "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Ecommerce\\MegaERP.Modules.Ecommerce.Infrastructure\\MegaERP.Modules.Ecommerce.Infrastructure.csproj"
               },
+              "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\HR\\MegaERP.Modules.HR.Infrastructure\\MegaERP.Modules.HR.Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\HR\\MegaERP.Modules.HR.Infrastructure\\MegaERP.Modules.HR.Infrastructure.csproj"
+              },
               "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\IAM\\MegaERP.Modules.IAM.Api\\MegaERP.Modules.IAM.Api.csproj": {
                 "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\IAM\\MegaERP.Modules.IAM.Api\\MegaERP.Modules.IAM.Api.csproj"
               },
@@ -58,6 +61,9 @@
               },
               "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Sales\\MegaERP.Modules.Sales.Infrastructure\\MegaERP.Modules.Sales.Infrastructure.csproj": {
                 "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Sales\\MegaERP.Modules.Sales.Infrastructure\\MegaERP.Modules.Sales.Infrastructure.csproj"
+              },
+              "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Shipping\\MegaERP.Modules.Shipping.Infrastructure\\MegaERP.Modules.Shipping.Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Shipping\\MegaERP.Modules.Shipping.Infrastructure\\MegaERP.Modules.Shipping.Infrastructure.csproj"
               },
               "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Shared\\MegaERP.Shared.Core\\MegaERP.Shared.Core.csproj": {
                 "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Shared\\MegaERP.Shared.Core\\MegaERP.Shared.Core.csproj"
@@ -854,6 +860,153 @@
         }
       }
     },
+    "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\HR\\MegaERP.Modules.HR.Core\\MegaERP.Modules.HR.Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\HR\\MegaERP.Modules.HR.Core\\MegaERP.Modules.HR.Core.csproj",
+        "projectName": "MegaERP.Modules.HR.Core",
+        "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\HR\\MegaERP.Modules.HR.Core\\MegaERP.Modules.HR.Core.csproj",
+        "packagesPath": "C:\\Users\\cande\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\HR\\MegaERP.Modules.HR.Core\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\cande\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Shared\\MegaERP.Shared.Core\\MegaERP.Shared.Core.csproj": {
+                "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Shared\\MegaERP.Shared.Core\\MegaERP.Shared.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.310/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\HR\\MegaERP.Modules.HR.Infrastructure\\MegaERP.Modules.HR.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\HR\\MegaERP.Modules.HR.Infrastructure\\MegaERP.Modules.HR.Infrastructure.csproj",
+        "projectName": "MegaERP.Modules.HR.Infrastructure",
+        "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\HR\\MegaERP.Modules.HR.Infrastructure\\MegaERP.Modules.HR.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\cande\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\HR\\MegaERP.Modules.HR.Infrastructure\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\cande\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\HR\\MegaERP.Modules.HR.Core\\MegaERP.Modules.HR.Core.csproj": {
+                "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\HR\\MegaERP.Modules.HR.Core\\MegaERP.Modules.HR.Core.csproj"
+              },
+              "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Shared\\MegaERP.Shared.Infrastructure\\MegaERP.Shared.Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Shared\\MegaERP.Shared.Infrastructure\\MegaERP.Shared.Infrastructure.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.310/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
     "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\IAM\\MegaERP.Modules.IAM.Api\\MegaERP.Modules.IAM.Api.csproj": {
       "version": "1.0.0",
       "restore": {
@@ -1201,6 +1354,153 @@
             "projectReferences": {
               "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Sales\\MegaERP.Modules.Sales.Core\\MegaERP.Modules.Sales.Core.csproj": {
                 "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Sales\\MegaERP.Modules.Sales.Core\\MegaERP.Modules.Sales.Core.csproj"
+              },
+              "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Shared\\MegaERP.Shared.Infrastructure\\MegaERP.Shared.Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Shared\\MegaERP.Shared.Infrastructure\\MegaERP.Shared.Infrastructure.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.310/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Shipping\\MegaERP.Modules.Shipping.Core\\MegaERP.Modules.Shipping.Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Shipping\\MegaERP.Modules.Shipping.Core\\MegaERP.Modules.Shipping.Core.csproj",
+        "projectName": "MegaERP.Modules.Shipping.Core",
+        "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Shipping\\MegaERP.Modules.Shipping.Core\\MegaERP.Modules.Shipping.Core.csproj",
+        "packagesPath": "C:\\Users\\cande\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Shipping\\MegaERP.Modules.Shipping.Core\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\cande\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Shared\\MegaERP.Shared.Core\\MegaERP.Shared.Core.csproj": {
+                "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Shared\\MegaERP.Shared.Core\\MegaERP.Shared.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.310/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Shipping\\MegaERP.Modules.Shipping.Infrastructure\\MegaERP.Modules.Shipping.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Shipping\\MegaERP.Modules.Shipping.Infrastructure\\MegaERP.Modules.Shipping.Infrastructure.csproj",
+        "projectName": "MegaERP.Modules.Shipping.Infrastructure",
+        "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Shipping\\MegaERP.Modules.Shipping.Infrastructure\\MegaERP.Modules.Shipping.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\cande\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Shipping\\MegaERP.Modules.Shipping.Infrastructure\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\cande\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Shipping\\MegaERP.Modules.Shipping.Core\\MegaERP.Modules.Shipping.Core.csproj": {
+                "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Shipping\\MegaERP.Modules.Shipping.Core\\MegaERP.Modules.Shipping.Core.csproj"
               },
               "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Shared\\MegaERP.Shared.Infrastructure\\MegaERP.Shared.Infrastructure.csproj": {
                 "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Shared\\MegaERP.Shared.Infrastructure\\MegaERP.Shared.Infrastructure.csproj"

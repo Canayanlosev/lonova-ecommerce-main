@@ -10,3 +10,11 @@ C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\HR\MegaERP.Module
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\HR\MegaERP.Modules.HR.Infrastructure\obj\Debug\net9.0\MegaERP.Modules.HR.Infrastructure.pdb
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\HR\MegaERP.Modules.HR.Infrastructure\obj\Debug\net9.0\ref\MegaERP.Modules.HR.Infrastructure.dll
 C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\HR\MegaERP.Modules.HR.Infrastructure\obj\Debug\net9.0\MegaERP.Modules.HR.Infrastructure.sourcelink.json
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\HR\MegaERP.Modules.HR.Infrastructure\bin\Debug\net9.0\MegaERP.Modules.HR.Core.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\HR\MegaERP.Modules.HR.Infrastructure\bin\Debug\net9.0\MegaERP.Shared.Core.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\HR\MegaERP.Modules.HR.Infrastructure\bin\Debug\net9.0\MegaERP.Shared.Infrastructure.dll
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\HR\MegaERP.Modules.HR.Infrastructure\bin\Debug\net9.0\MegaERP.Modules.HR.Core.pdb
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\HR\MegaERP.Modules.HR.Infrastructure\bin\Debug\net9.0\MegaERP.Shared.Infrastructure.pdb
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\HR\MegaERP.Modules.HR.Infrastructure\bin\Debug\net9.0\MegaERP.Shared.Core.pdb
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\HR\MegaERP.Modules.HR.Infrastructure\obj\Debug\net9.0\MegaERP.Modules.HR.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\cande\.gemini\antigravity\scratch\MegaERP\src\Modules\HR\MegaERP.Modules.HR.Infrastructure\obj\Debug\net9.0\MegaERP..C19E21EF.Up2Date

@@ -4,6 +4,8 @@ using MegaERP.Modules.Ecommerce.Infrastructure;
 using MegaERP.Modules.Sales.Infrastructure;
 using MegaERP.Modules.Billing.Infrastructure;
 using MegaERP.Modules.Accounting.Infrastructure;
+using MegaERP.Modules.HR.Infrastructure;
+using MegaERP.Modules.Shipping.Infrastructure;
 using MegaERP.Shared.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -19,6 +21,8 @@ builder.Services.AddEcommerceInfrastructure(builder.Configuration);
 builder.Services.AddSalesInfrastructure(builder.Configuration);
 builder.Services.AddBillingInfrastructure(builder.Configuration);
 builder.Services.AddAccountingInfrastructure(builder.Configuration);
+builder.Services.AddHRInfrastructure(builder.Configuration);
+builder.Services.AddShippingInfrastructure(builder.Configuration);
 builder.Services.AddControllers();
 
 // JWT Authentication

@@ -10,7 +10,9 @@ Bu dosya, projeye daha sonra geri dönüldüğünde nerede kaldığımızı, nel
 - **CMS Modülü:** `DynamicContentType`, `DynamicContent` (JSONB desteği), `CMSDbContext` ve `ContentTypesController` oluşturuldu.
 - **Ecommerce Modülü:** `Product`, `Category` ve `ProductVariant` yapıları tamamlandı. Ürün ve kategori yönetimi için `ProductsController` ve `CategoriesController` (Authorize destekli) ve DTO'lar yazıldı.
 - **Sales Modülü:** `BasketItem`, `Order` ve `OrderItem` entity'leri, `SalesDbContext` ve PostgreSQL entegrasyonu tamamlandı.
-- **Git Altyapısı:** Proje yerel Git deposu olarak başlatıldı, `main` branch GitHub'a (`Canayanlosev/lonova-ecommerce-main`) force push ile gönderildi ve Sales modülü geliştirmeleri de eklendi.
+- **Billing Modülü:** `Invoice` ve `InvoiceItem` yapıları, `BillingDbContext` ve PostgreSQL entegrasyonu tamamlandı.
+- **Accounting Modülü:** `AccountingAccount` (Cari) ve `JournalEntry` yapıları, `AccountingDbContext` ve PostgreSQL entegrasyonu tamamlandı.
+- **Git Altyapısı:** Proje yerel Git deposu olarak başlatıldı, `main` branch GitHub'a gönderildi ve tüm modül geliştirmeleri (IAM, CMS, Ecommerce, Sales, Billing, Accounting) commit'lenip push edildi.
 - **Build:** Proje .NET 9 SDK ile başarıyla derlendi.
 
 ## 🟡 Nerede Kaldık? (Sıradaki İşlem)
