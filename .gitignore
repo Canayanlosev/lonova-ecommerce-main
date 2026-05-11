@@ -1,0 +1,19 @@
+# .NET build outputs
+bin/
+obj/
+
+# Node.js
+node_modules/
+.next/
+.env.local
+.env*.local
+
+# IDE
+.vs/
+.vscode/
+*.user
+*.suo
+
+# OS
+.DS_Store
+Thumbs.db
