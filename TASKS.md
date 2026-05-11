@@ -10,7 +10,7 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 
 - [x] TASK-01: TenantService Fix
 - [x] TASK-02: Global Exception Handling Middleware
-- [ ] TASK-03: FluentValidation Pipeline
+- [x] TASK-03: FluentValidation Pipeline
 - [ ] TASK-04: Ecommerce Tam CRUD
 - [ ] TASK-05: Basket (Sepet) API
 - [ ] TASK-06: Orders API Genişletme

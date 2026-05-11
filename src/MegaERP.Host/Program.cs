@@ -8,6 +8,8 @@ using MegaERP.Modules.HR.Infrastructure;
 using MegaERP.Modules.Shipping.Infrastructure;
 using MegaERP.Shared.Infrastructure;
 using MegaERP.Shared.Infrastructure.Middleware;
+using MegaERP.Shared.Infrastructure.Behaviors;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
@@ -47,7 +49,15 @@ builder.Services.AddMediatR(cfg => {
         typeof(MegaERP.Modules.Billing.Infrastructure.DependencyInjection).Assembly,
         typeof(MegaERP.Modules.Accounting.Infrastructure.DependencyInjection).Assembly
     );
+    cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
 });
+
+// FluentValidation — tüm modüllerdeki validator'ları tara
+builder.Services.AddValidatorsFromAssemblies([
+    typeof(MegaERP.Modules.IAM.Core.Validators.LoginRequestValidator).Assembly,
+    typeof(MegaERP.Modules.Ecommerce.Core.Validators.CreateProductRequestValidator).Assembly,
+    typeof(MegaERP.Modules.Sales.Core.Features.Orders.Commands.PlaceOrderCommand).Assembly,
+]);
 
 // JWT Authentication
 var secretKey = builder.Configuration["Jwt:SecretKey"] ?? "a_very_long_and_secure_secret_key_1234567890";
