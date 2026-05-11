@@ -15,7 +15,7 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 - [x] FTASK-03: Next.js Proxy - Route Koruma (Next.js 16'da proxy.ts)
 - [x] FTASK-04: Gerçek Login Akışı (Backend Entegrasyonu)
 - [x] FTASK-05: Toast Bildirimi & Error Boundary
-- [ ] FTASK-06: Dashboard - Gerçek Veri & Chart
+- [x] FTASK-06: Dashboard - Gerçek Veri & Chart
 - [x] FTASK-07: E-Commerce - Ürün Listesi & Detay Sayfası
 - [x] FTASK-08: E-Commerce - Ürün Ekle/Düzenle Formu
 - [x] FTASK-09: Sepet (Basket) Sayfası & Checkout
