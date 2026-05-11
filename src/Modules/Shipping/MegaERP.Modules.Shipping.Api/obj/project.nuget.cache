@@ -1,8 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "sk/+jaRx9sY=",
+  "dgSpecHash": "ww0jPBPlpw4=",
   "success": true,
-  "projectFilePath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Shipping\\MegaERP.Modules.Shipping.Api\\MegaERP.Modules.Shipping.Api.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Shipping/MegaERP.Modules.Shipping.Api/MegaERP.Modules.Shipping.Api.csproj",
+  "expectedPackageFiles": [
+    "/home/canayan/.nuget/packages/microsoft.netcore.app.ref/9.0.15/microsoft.netcore.app.ref.9.0.15.nupkg.sha512",
+    "/home/canayan/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.15/microsoft.aspnetcore.app.ref.9.0.15.nupkg.sha512"
+  ],
   "logs": []
 }

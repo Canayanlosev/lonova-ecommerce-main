@@ -1,0 +1,46 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_preview.css"><style>
+.wrap { padding: 22px 24px; }
+.title { font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.sub { font-size: 12px; color: #64748b; margin-bottom: 14px; }
+.row { display: flex; gap: 12px; }
+.tile { flex: 1; border-radius: 14px; padding: 18px; min-height: 110px; display: flex; align-items: center; justify-content: center; position: relative; }
+.dark { background: #06080f; border: 1px solid #1e293b; }
+.light { background: #f8fafc; border: 1px solid #e2e8f0; }
+.upload { border: 1.5px dashed #334155; background: #0a0f1d; }
+.lockup { display: flex; align-items: center; gap: 14px; }
+.word { font-size: 28px; font-weight: 900; letter-spacing: -0.05em; line-height: 1; }
+.tag { position: absolute; top: 6px; right: 8px; font-size: 9px; font-family: ui-monospace, monospace; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+.tenantLogo { width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: white; font-size: 22px; flex-shrink: 0; }
+.tenantName { font-size: 22px; font-weight: 900; letter-spacing: -0.04em; }
+.uploadInner { display: flex; flex-direction: column; align-items: center; gap: 6px; color: #64748b; }
+.uploadInner svg { width: 22px; height: 22px; }
+.uploadInner .l1 { font-size: 12px; font-weight: 600; color: #94a3b8; }
+.uploadInner .l2 { font-size: 10px; font-family: ui-monospace, monospace; }
+</style></head><body><div class="wrap">
+<div class="title">Storefront logo · platform default + per-tenant upload</div>
+<div class="sub">Lonova is the platform's consumer brand. Tenants override with their own store mark for their public storefront.</div>
+<div class="row">
+  <div class="tile dark">
+    <div class="tag">DEFAULT · DARK</div>
+    <div class="lockup">
+      <svg width="48" height="48" viewBox="0 0 48 48"><defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#a855f7"/></linearGradient></defs><circle cx="24" cy="24" r="20" fill="none" stroke="url(#g1)" stroke-width="5"/><circle cx="24" cy="24" r="7" fill="url(#g1)"/></svg>
+      <div class="word" style="color:#f8fafc">lonova<span style="color:#a855f7">.</span></div>
+    </div>
+  </div>
+  <div class="tile light">
+    <div class="tag">TENANT · CUSTOM</div>
+    <div class="lockup">
+      <div class="tenantLogo" style="background:linear-gradient(135deg,#10b981,#059669)">N</div>
+      <div class="tenantName" style="color:#0f172a">north<span style="color:#10b981">.shop</span></div>
+    </div>
+  </div>
+  <div class="tile upload">
+    <div class="tag">SLOT · EMPTY</div>
+    <div class="uploadInner">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <div class="l1">Mağaza logonu yükle</div>
+      <div class="l2">SVG / PNG · 2× retina</div>
+    </div>
+  </div>
+</div>
+</div></body></html>

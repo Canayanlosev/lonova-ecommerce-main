@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: hsl(261 89% 66%);
+  --color-primary-foreground: hsl(0 0% 100%);
+  
+  --color-secondary: hsl(271 91% 65%);
+  --color-secondary-foreground: hsl(0 0% 100%);
+
+  --color-background: hsl(222 47% 98%);
+  --color-foreground: hsl(222 47% 11%);
+
+  --color-surface: hsl(0 0% 100%);
+  --color-surface-foreground: hsl(222 47% 11%);
+
+  --color-border: hsl(214 32% 91%);
+  --radius-xl: 1rem;
+}
+
+@theme inline {
+  --color-background: hsl(222 47% 6%);
+  --color-foreground: hsl(210 40% 98%);
+  --color-surface: hsl(222 47% 11%);
+  --color-surface-foreground: hsl(210 40% 98%);
+  --color-border: hsl(217 33% 17%);
+}
+
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  .premium-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    backdrop-filter: blur(12px);
+    transition: all 0.3s ease-in-out;
+  }
+
+  .premium-card:hover {
+    border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px -5px color-mix(in srgb, var(--color-primary) 10%, transparent);
+  }
+
+  .premium-button {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.75rem;
+    padding: 0.625rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease-in-out;
+    background-color: var(--color-primary);
+    color: white;
+  }
+
+  .premium-button:hover {
+    background-color: color-mix(in srgb, var(--color-primary) 80%, black);
+    box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--color-primary) 25%, transparent);
+  }
+
+  .premium-button:active {
+    transform: scale(0.95);
+  }
+
+  .glass-panel {
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}

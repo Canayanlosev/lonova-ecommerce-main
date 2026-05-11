@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="320" height="80">
+  <defs>
+    <linearGradient id="brandGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"></stop>
+      <stop offset="1" stop-color="#94a3b8"></stop>
+    </linearGradient>
+    <filter id="indigoGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur"></feGaussianBlur>
+      <feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+    </filter>
+  </defs>
+  <rect x="6" y="10" width="60" height="60" rx="16" fill="#6366f1" filter="url(#indigoGlow)"></rect>
+  <path d="M22 26 L22 58 L46 58 M30 26 L30 50 L46 50" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+  <text x="82" y="54" font-family="Inter, system-ui, sans-serif" font-weight="900" font-size="40" letter-spacing="-2" fill="url(#brandGrad)">MegaERP</text>
+</svg>

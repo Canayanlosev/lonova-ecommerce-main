@@ -1,8 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "rsdupyJINeA=",
+  "dgSpecHash": "93z0d0gOA3I=",
   "success": true,
-  "projectFilePath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\HR\\MegaERP.Modules.HR.Api\\MegaERP.Modules.HR.Api.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/HR/MegaERP.Modules.HR.Api/MegaERP.Modules.HR.Api.csproj",
+  "expectedPackageFiles": [
+    "/home/canayan/.nuget/packages/microsoft.netcore.app.ref/9.0.15/microsoft.netcore.app.ref.9.0.15.nupkg.sha512",
+    "/home/canayan/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.15/microsoft.aspnetcore.app.ref.9.0.15.nupkg.sha512"
+  ],
   "logs": []
 }

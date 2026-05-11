@@ -1,0 +1,31 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_preview.css"><style>
+.wrap { padding: 24px; display: flex; flex-direction: column; gap: 10px; }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.lbl { font-size: 10px; color: #64748b; font-family: ui-monospace, monospace; text-transform: uppercase; letter-spacing: 0.05em; min-width: 70px; }
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 600; }
+.bg-success { background: rgba(16,185,129,0.12); color: #34d399; }
+.bg-warn { background: rgba(249,115,22,0.12); color: #fb923c; }
+.bg-danger { background: rgba(239,68,68,0.12); color: #f87171; }
+.bg-info { background: rgba(99,102,241,0.12); color: #818cf8; }
+.bg-neutral { background: rgba(148,163,184,0.12); color: #cbd5e1; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.pill { padding: 4px 10px; border-radius: 8px; background: #1e293b; font-size: 11px; font-family: ui-monospace, monospace; color: #cbd5e1; }
+</style></head><body><div class="wrap">
+<div class="row"><div class="lbl">STATUS</div>
+  <span class="badge bg-success"><span class="dot"></span>Paid</span>
+  <span class="badge bg-warn"><span class="dot"></span>Pending</span>
+  <span class="badge bg-info"><span class="dot"></span>In Transit</span>
+  <span class="badge bg-danger"><span class="dot"></span>Cancelled</span>
+  <span class="badge bg-neutral"><span class="dot"></span>Draft</span>
+</div>
+<div class="row"><div class="lbl">DELTA</div>
+  <span class="badge bg-success">+12%</span>
+  <span class="badge bg-success">+18%</span>
+  <span class="badge bg-danger">-3%</span>
+</div>
+<div class="row"><div class="lbl">PILL</div>
+  <span class="pill">ORD-20261</span>
+  <span class="pill">SKU-4421</span>
+  <span class="pill">TRK-20260511-A3F8</span>
+</div>
+</div></body></html>

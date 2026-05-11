@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="320" height="80">
+  <defs>
+    <linearGradient id="brandGradLight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0f172a"></stop>
+      <stop offset="1" stop-color="#64748b"></stop>
+    </linearGradient>
+  </defs>
+  <rect x="6" y="10" width="60" height="60" rx="16" fill="#6366f1"></rect>
+  <path d="M22 26 L22 58 L46 58 M30 26 L30 50 L46 50" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+  <text x="82" y="54" font-family="Inter, system-ui, sans-serif" font-weight="900" font-size="40" letter-spacing="-2" fill="url(#brandGradLight)">MegaERP</text>
+</svg>

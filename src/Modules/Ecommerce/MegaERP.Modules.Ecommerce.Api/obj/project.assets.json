@@ -1168,42 +1168,35 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\cande\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "/home/canayan/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Ecommerce\\MegaERP.Modules.Ecommerce.Api\\MegaERP.Modules.Ecommerce.Api.csproj",
+      "projectUniqueName": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Ecommerce/MegaERP.Modules.Ecommerce.Api/MegaERP.Modules.Ecommerce.Api.csproj",
       "projectName": "MegaERP.Modules.Ecommerce.Api",
-      "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Ecommerce\\MegaERP.Modules.Ecommerce.Api\\MegaERP.Modules.Ecommerce.Api.csproj",
-      "packagesPath": "C:\\Users\\cande\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Ecommerce\\MegaERP.Modules.Ecommerce.Api\\obj\\",
+      "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Ecommerce/MegaERP.Modules.Ecommerce.Api/MegaERP.Modules.Ecommerce.Api.csproj",
+      "packagesPath": "/home/canayan/.nuget/packages/",
+      "outputPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Ecommerce/MegaERP.Modules.Ecommerce.Api/obj/",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\cande\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/home/canayan/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Ecommerce\\MegaERP.Modules.Ecommerce.Core\\MegaERP.Modules.Ecommerce.Core.csproj": {
-              "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Ecommerce\\MegaERP.Modules.Ecommerce.Core\\MegaERP.Modules.Ecommerce.Core.csproj"
+            "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Ecommerce/MegaERP.Modules.Ecommerce.Core/MegaERP.Modules.Ecommerce.Core.csproj": {
+              "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Ecommerce/MegaERP.Modules.Ecommerce.Core/MegaERP.Modules.Ecommerce.Core.csproj"
             },
-            "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Ecommerce\\MegaERP.Modules.Ecommerce.Infrastructure\\MegaERP.Modules.Ecommerce.Infrastructure.csproj": {
-              "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Ecommerce\\MegaERP.Modules.Ecommerce.Infrastructure\\MegaERP.Modules.Ecommerce.Infrastructure.csproj"
+            "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Ecommerce/MegaERP.Modules.Ecommerce.Infrastructure/MegaERP.Modules.Ecommerce.Infrastructure.csproj": {
+              "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Ecommerce/MegaERP.Modules.Ecommerce.Infrastructure/MegaERP.Modules.Ecommerce.Infrastructure.csproj"
             }
           }
         }
@@ -1218,7 +1211,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.300"
+      "SdkAnalysisLevel": "10.0.100"
     },
     "frameworks": {
       "net9.0": {
@@ -1234,6 +1227,16 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[9.0.15, 9.0.15]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[9.0.15, 9.0.15]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -1242,7 +1245,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.310/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

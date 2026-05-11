@@ -1,0 +1,66 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_preview.css"><style>
+.wrap { padding: 22px 24px; background: #f8fafc; min-height: 280px; }
+.title { font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.sub { font-size: 12px; color: #64748b; margin-bottom: 16px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.field { background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 14px 16px; }
+.label { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+.row { display: flex; align-items: center; gap: 10px; }
+.dot { width: 24px; height: 24px; border-radius: 999px; cursor: pointer; }
+.dot.sel { box-shadow: 0 0 0 2px white, 0 0 0 4px #0f172a; }
+.input { font-size: 14px; font-weight: 700; color: #0f172a; letter-spacing: -0.02em; }
+.logoBox { width: 56px; height: 56px; border-radius: 12px; background: linear-gradient(135deg, #6366f1, #a855f7); display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 22px; flex-shrink: 0; }
+.logoBox.upload { background: #f1f5f9; border: 1.5px dashed #cbd5e1; color: #64748b; font-size: 11px; font-weight: 600; text-align: center; padding: 4px; line-height: 1.2; }
+.shape { display: flex; gap: 6px; }
+.shapeBtn { width: 28px; height: 28px; background: #0f172a; flex-shrink: 0; cursor: pointer; opacity: 0.4; }
+.shapeBtn.sel { opacity: 1; }
+.preview { grid-column: 1 / -1; background: #0f172a; border-radius: 14px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+.previewBrand { display: flex; align-items: center; gap: 12px; }
+.previewLogo { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #a855f7); display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 16px; }
+.previewName { color: white; font-weight: 900; font-size: 18px; letter-spacing: -0.03em; }
+.previewBtn { background: #6366f1; color: white; padding: 8px 16px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.previewLabel { font-size: 9px; font-family: ui-monospace, monospace; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+</style></head><body><div class="wrap">
+<div class="title">Tenant brand config · admin panel</div>
+<div class="sub">Each tenant configures their logo, primary color, shape and store name. The whole UI re-themes from these tokens.</div>
+<div class="grid">
+  <div class="field">
+    <div class="label">Logo</div>
+    <div class="row">
+      <div class="logoBox">A</div>
+      <div class="logoBox upload">SVG yükle</div>
+    </div>
+  </div>
+  <div class="field">
+    <div class="label">Mağaza adı</div>
+    <div class="input">Acme Co.</div>
+  </div>
+  <div class="field">
+    <div class="label">Primary color</div>
+    <div class="row">
+      <div class="dot sel" style="background:#6366f1"></div>
+      <div class="dot" style="background:#a855f7"></div>
+      <div class="dot" style="background:#10b981"></div>
+      <div class="dot" style="background:#f97316"></div>
+      <div class="dot" style="background:#ec4899"></div>
+      <div class="dot" style="background:#0ea5e9"></div>
+    </div>
+  </div>
+  <div class="field">
+    <div class="label">Logo şekli</div>
+    <div class="shape">
+      <div class="shapeBtn sel" style="border-radius:4px"></div>
+      <div class="shapeBtn sel" style="border-radius:10px; opacity:0.4"></div>
+      <div class="shapeBtn" style="border-radius:999px"></div>
+    </div>
+  </div>
+  <div class="preview">
+    <div class="previewBrand">
+      <div class="previewLogo">A</div>
+      <div class="previewName">Acme Co.</div>
+    </div>
+    <div class="previewBtn">Sipariş Ver</div>
+    <div class="previewLabel">LIVE PREVIEW</div>
+  </div>
+</div>
+</div></body></html>

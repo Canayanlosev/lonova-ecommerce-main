@@ -1,0 +1,20 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_preview.css"><style>
+.wrap { padding: 28px 24px; position: relative; }
+.glow { position: absolute; left: 50%; top: -40px; transform: translateX(-50%); width: 500px; height: 220px; background: #6366f1; opacity: 0.20; filter: blur(90px); border-radius: 50%; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; position: relative; }
+.shadow-card { background: #0f172a; border: 1px solid #1e293b; border-radius: 14px; padding: 16px; min-height: 80px; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px; }
+.s1 { box-shadow: 0 10px 25px -5px rgba(99,102,241,0.10); }
+.s2 { box-shadow: 0 10px 15px -3px rgba(99,102,241,0.25); }
+.s3 { box-shadow: 0 25px 50px -12px rgba(99,102,241,0.40); }
+.name { font-size: 11px; font-weight: 700; }
+.meta { font-size: 10px; font-family: ui-monospace, monospace; color: #94a3b8; }
+.title { font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; position: relative; }
+</style></head><body><div class="wrap">
+<div class="glow"></div>
+<div class="title">Glow system · primary-tinted shadows</div>
+<div class="grid">
+  <div class="shadow-card s1"><div class="name">Card hover</div><div class="meta">indigo / 10%</div></div>
+  <div class="shadow-card s2"><div class="name">Button hover</div><div class="meta">indigo / 25%</div></div>
+  <div class="shadow-card s3"><div class="name">Hero CTA</div><div class="meta">indigo / 40%</div></div>
+</div>
+</div></body></html>

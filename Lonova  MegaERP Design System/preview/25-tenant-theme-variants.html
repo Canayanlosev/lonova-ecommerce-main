@@ -1,0 +1,37 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_preview.css"><style>
+.wrap { padding: 22px 24px; }
+.title { font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.sub { font-size: 12px; color: #64748b; margin-bottom: 16px; }
+.row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.card { border-radius: 14px; padding: 16px; min-height: 130px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+.glow { position: absolute; top: -40px; right: -40px; width: 120px; height: 120px; border-radius: 999px; filter: blur(40px); opacity: 0.5; }
+.head { display: flex; align-items: center; gap: 10px; position: relative; z-index: 1; }
+.logo { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 14px; flex-shrink: 0; }
+.name { font-weight: 900; font-size: 16px; letter-spacing: -0.03em; }
+.dot { width: 7px; height: 7px; border-radius: 999px; display: inline-block; }
+.cta { padding: 7px 14px; border-radius: 999px; font-size: 11px; font-weight: 700; color: white; align-self: flex-start; position: relative; z-index: 1; }
+.tag { position: absolute; bottom: 8px; right: 10px; font-size: 8px; font-family: ui-monospace, monospace; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+</style></head><body><div class="wrap">
+<div class="title">Same UI · three tenants, three brands</div>
+<div class="sub">Tek bir tema-config token seti değişiyor: --primary, --logo-src, --tenant-name. Geri kalan her şey aynı kod.</div>
+<div class="row">
+  <div class="card" style="background:#06080f; border:1px solid #1e293b">
+    <div class="glow" style="background:#6366f1"></div>
+    <div class="head"><div class="logo" style="background:#6366f1">M</div><div class="name" style="color:#f8fafc">MegaERP</div></div>
+    <div class="cta" style="background:#6366f1">Yönetim Paneli</div>
+    <div class="tag">DEFAULT · INDIGO</div>
+  </div>
+  <div class="card" style="background:#0a0f08; border:1px solid #1a2e1a">
+    <div class="glow" style="background:#10b981"></div>
+    <div class="head"><div class="logo" style="background:#10b981">N</div><div class="name" style="color:#f8fafc">north.shop</div></div>
+    <div class="cta" style="background:#10b981">Sipariş Ver</div>
+    <div class="tag">TENANT · EMERALD</div>
+  </div>
+  <div class="card" style="background:#0f0808; border:1px solid #2e1414">
+    <div class="glow" style="background:#f97316"></div>
+    <div class="head"><div class="logo" style="background:#f97316; border-radius:999px">A</div><div class="name" style="color:#f8fafc">Acme Co.</div></div>
+    <div class="cta" style="background:#f97316">Hemen Al</div>
+    <div class="tag">TENANT · ORANGE / ROUND</div>
+  </div>
+</div>
+</div></body></html>

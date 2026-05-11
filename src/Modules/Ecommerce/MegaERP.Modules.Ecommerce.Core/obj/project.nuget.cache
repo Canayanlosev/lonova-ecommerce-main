@@ -1,13 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "uVdGQ1vuQWg=",
+  "dgSpecHash": "Umzv/PJqq8w=",
   "success": true,
-  "projectFilePath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Ecommerce\\MegaERP.Modules.Ecommerce.Core\\MegaERP.Modules.Ecommerce.Core.csproj",
+  "projectFilePath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Ecommerce/MegaERP.Modules.Ecommerce.Core/MegaERP.Modules.Ecommerce.Core.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\cande\\.nuget\\packages\\fluentvalidation\\11.11.0\\fluentvalidation.11.11.0.nupkg.sha512",
-    "C:\\Users\\cande\\.nuget\\packages\\mediatr\\12.4.1\\mediatr.12.4.1.nupkg.sha512",
-    "C:\\Users\\cande\\.nuget\\packages\\mediatr.contracts\\2.0.1\\mediatr.contracts.2.0.1.nupkg.sha512",
-    "C:\\Users\\cande\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.0\\microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512"
+    "/home/canayan/.nuget/packages/fluentvalidation/11.11.0/fluentvalidation.11.11.0.nupkg.sha512",
+    "/home/canayan/.nuget/packages/mediatr/12.4.1/mediatr.12.4.1.nupkg.sha512",
+    "/home/canayan/.nuget/packages/mediatr.contracts/2.0.1/mediatr.contracts.2.0.1.nupkg.sha512",
+    "/home/canayan/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/8.0.0/microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
+    "/home/canayan/.nuget/packages/microsoft.netcore.app.ref/9.0.15/microsoft.netcore.app.ref.9.0.15.nupkg.sha512",
+    "/home/canayan/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.15/microsoft.aspnetcore.app.ref.9.0.15.nupkg.sha512"
   ],
   "logs": []
 }

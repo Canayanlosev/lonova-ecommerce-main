@@ -1,0 +1,21 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_preview.css"><style>
+.wrap { padding: 24px; }
+.title { font-size: 12px; font-weight: 700; color: #94a3b8; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.08em; }
+.grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+.tile { aspect-ratio: 1/1; background: #1e293b; border: 1px solid #334155; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+.tile .name { font-size: 10px; font-weight: 700; }
+.tile .meta { font-size: 9px; font-family: ui-monospace, monospace; color: #94a3b8; }
+.r-sm { border-radius: 6px; } .r-md { border-radius: 8px; } .r-lg { border-radius: 12px; }
+.r-xl { border-radius: 16px; outline: 2px solid #6366f1; outline-offset: -10px; }
+.r-2xl { border-radius: 24px; } .r-full { border-radius: 50%; }
+</style></head><body><div class="wrap">
+<div class="title">Radii · --radius-xl (16px) is the brand</div>
+<div class="grid">
+  <div class="tile r-sm"><div class="name">sm</div><div class="meta">6px</div></div>
+  <div class="tile r-md"><div class="name">md</div><div class="meta">8px</div></div>
+  <div class="tile r-lg"><div class="name">lg</div><div class="meta">12px · btn</div></div>
+  <div class="tile r-xl"><div class="name">xl ★</div><div class="meta">16px · card</div></div>
+  <div class="tile r-2xl"><div class="name">2xl</div><div class="meta">24px · hero</div></div>
+  <div class="tile r-full"><div class="name">full</div><div class="meta">avatar</div></div>
+</div>
+</div></body></html>

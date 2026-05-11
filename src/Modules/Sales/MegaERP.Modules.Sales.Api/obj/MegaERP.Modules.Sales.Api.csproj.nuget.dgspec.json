@@ -1,31 +1,268 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Sales\\MegaERP.Modules.Sales.Api\\MegaERP.Modules.Sales.Api.csproj": {}
+    "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Sales/MegaERP.Modules.Sales.Api/MegaERP.Modules.Sales.Api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Sales\\MegaERP.Modules.Sales.Api\\MegaERP.Modules.Sales.Api.csproj": {
+    "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Sales/MegaERP.Modules.Sales.Api/MegaERP.Modules.Sales.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Sales\\MegaERP.Modules.Sales.Api\\MegaERP.Modules.Sales.Api.csproj",
+        "projectUniqueName": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Sales/MegaERP.Modules.Sales.Api/MegaERP.Modules.Sales.Api.csproj",
         "projectName": "MegaERP.Modules.Sales.Api",
-        "projectPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Sales\\MegaERP.Modules.Sales.Api\\MegaERP.Modules.Sales.Api.csproj",
-        "packagesPath": "C:\\Users\\cande\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\cande\\.gemini\\antigravity\\scratch\\MegaERP\\src\\Modules\\Sales\\MegaERP.Modules.Sales.Api\\obj\\",
+        "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Sales/MegaERP.Modules.Sales.Api/MegaERP.Modules.Sales.Api.csproj",
+        "packagesPath": "/home/canayan/.nuget/packages/",
+        "outputPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Sales/MegaERP.Modules.Sales.Api/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\cande\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/canayan/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Sales/MegaERP.Modules.Sales.Core/MegaERP.Modules.Sales.Core.csproj": {
+                "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Sales/MegaERP.Modules.Sales.Core/MegaERP.Modules.Sales.Core.csproj"
+              },
+              "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Sales/MegaERP.Modules.Sales.Infrastructure/MegaERP.Modules.Sales.Infrastructure.csproj": {
+                "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Sales/MegaERP.Modules.Sales.Infrastructure/MegaERP.Modules.Sales.Infrastructure.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[9.0.15, 9.0.15]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[9.0.15, 9.0.15]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Sales/MegaERP.Modules.Sales.Core/MegaERP.Modules.Sales.Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Sales/MegaERP.Modules.Sales.Core/MegaERP.Modules.Sales.Core.csproj",
+        "projectName": "MegaERP.Modules.Sales.Core",
+        "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Sales/MegaERP.Modules.Sales.Core/MegaERP.Modules.Sales.Core.csproj",
+        "packagesPath": "/home/canayan/.nuget/packages/",
+        "outputPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Sales/MegaERP.Modules.Sales.Core/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/canayan/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Core/MegaERP.Shared.Core.csproj": {
+                "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Core/MegaERP.Shared.Core.csproj"
+              },
+              "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Events/MegaERP.Shared.Events.csproj": {
+                "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Events/MegaERP.Shared.Events.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "MediatR": {
+              "target": "Package",
+              "version": "[12.4.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[9.0.15, 9.0.15]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[9.0.15, 9.0.15]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Sales/MegaERP.Modules.Sales.Infrastructure/MegaERP.Modules.Sales.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Sales/MegaERP.Modules.Sales.Infrastructure/MegaERP.Modules.Sales.Infrastructure.csproj",
+        "projectName": "MegaERP.Modules.Sales.Infrastructure",
+        "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Sales/MegaERP.Modules.Sales.Infrastructure/MegaERP.Modules.Sales.Infrastructure.csproj",
+        "packagesPath": "/home/canayan/.nuget/packages/",
+        "outputPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Sales/MegaERP.Modules.Sales.Infrastructure/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/canayan/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Sales/MegaERP.Modules.Sales.Core/MegaERP.Modules.Sales.Core.csproj": {
+                "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Sales/MegaERP.Modules.Sales.Core/MegaERP.Modules.Sales.Core.csproj"
+              },
+              "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Infrastructure/MegaERP.Shared.Infrastructure.csproj": {
+                "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Infrastructure/MegaERP.Shared.Infrastructure.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[9.0.15, 9.0.15]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[9.0.15, 9.0.15]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Core/MegaERP.Shared.Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Core/MegaERP.Shared.Core.csproj",
+        "projectName": "MegaERP.Shared.Core",
+        "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Core/MegaERP.Shared.Core.csproj",
+        "packagesPath": "/home/canayan/.nuget/packages/",
+        "outputPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Core/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/canayan/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -44,11 +281,21 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
+          "dependencies": {
+            "FluentValidation": {
+              "target": "Package",
+              "version": "[11.11.0, )"
+            },
+            "MediatR": {
+              "target": "Package",
+              "version": "[12.4.1, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -60,12 +307,203 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[9.0.15, 9.0.15]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[9.0.15, 9.0.15]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.310/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Events/MegaERP.Shared.Events.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Events/MegaERP.Shared.Events.csproj",
+        "projectName": "MegaERP.Shared.Events",
+        "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Events/MegaERP.Shared.Events.csproj",
+        "packagesPath": "/home/canayan/.nuget/packages/",
+        "outputPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Events/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/canayan/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Core/MegaERP.Shared.Core.csproj": {
+                "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Core/MegaERP.Shared.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "MediatR": {
+              "target": "Package",
+              "version": "[12.4.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[9.0.15, 9.0.15]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[9.0.15, 9.0.15]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Infrastructure/MegaERP.Shared.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Infrastructure/MegaERP.Shared.Infrastructure.csproj",
+        "projectName": "MegaERP.Shared.Infrastructure",
+        "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Infrastructure/MegaERP.Shared.Infrastructure.csproj",
+        "packagesPath": "/home/canayan/.nuget/packages/",
+        "outputPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Infrastructure/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/canayan/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Core/MegaERP.Shared.Core.csproj": {
+                "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Core/MegaERP.Shared.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "FluentValidation.AspNetCore": {
+              "target": "Package",
+              "version": "[11.3.0, )"
+            },
+            "MediatR": {
+              "target": "Package",
+              "version": "[12.4.1, )"
+            },
+            "Microsoft.AspNetCore.Http.Abstractions": {
+              "target": "Package",
+              "version": "[2.3.9, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Relational": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Microsoft.Extensions.DependencyInjection.Abstractions": {
+              "target": "Package",
+              "version": "[10.0.7, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[9.0.15, 9.0.15]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[9.0.15, 9.0.15]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
