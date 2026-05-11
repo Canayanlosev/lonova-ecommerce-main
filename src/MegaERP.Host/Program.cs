@@ -7,6 +7,7 @@ using MegaERP.Modules.Accounting.Infrastructure;
 using MegaERP.Modules.HR.Infrastructure;
 using MegaERP.Modules.Shipping.Infrastructure;
 using MegaERP.Shared.Infrastructure;
+using MegaERP.Shared.Infrastructure.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
@@ -75,6 +76,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 

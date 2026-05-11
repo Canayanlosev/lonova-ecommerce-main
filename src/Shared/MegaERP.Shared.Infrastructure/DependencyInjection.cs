@@ -1,4 +1,5 @@
 using MegaERP.Shared.Core.Interfaces;
+using MegaERP.Shared.Infrastructure.Middleware;
 using MegaERP.Shared.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,7 +11,8 @@ public static class DependencyInjection
     {
         services.AddHttpContextAccessor();
         services.AddScoped<ITenantService, TenantService>();
-        
+        services.AddTransient<ExceptionHandlingMiddleware>();
+
         return services;
     }
 }
