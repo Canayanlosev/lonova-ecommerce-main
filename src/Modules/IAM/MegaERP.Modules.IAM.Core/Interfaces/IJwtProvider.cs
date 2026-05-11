@@ -4,5 +4,5 @@ namespace MegaERP.Modules.IAM.Core.Interfaces;
 
 public interface IJwtProvider
 {
-    string Generate(ApplicationUser user);
+    string Generate(ApplicationUser user, IList<string> roles);
 }

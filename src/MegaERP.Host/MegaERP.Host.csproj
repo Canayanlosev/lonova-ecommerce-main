@@ -23,8 +23,11 @@
     <ProjectReference Include="..\Modules\Sales\MegaERP.Modules.Sales.Infrastructure\MegaERP.Modules.Sales.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Sales\MegaERP.Modules.Sales.Api\MegaERP.Modules.Sales.Api.csproj" />
     <ProjectReference Include="..\Modules\Billing\MegaERP.Modules.Billing.Infrastructure\MegaERP.Modules.Billing.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Billing\MegaERP.Modules.Billing.Api\MegaERP.Modules.Billing.Api.csproj" />
     <ProjectReference Include="..\Modules\Accounting\MegaERP.Modules.Accounting.Infrastructure\MegaERP.Modules.Accounting.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Accounting\MegaERP.Modules.Accounting.Api\MegaERP.Modules.Accounting.Api.csproj" />
     <ProjectReference Include="..\Modules\HR\MegaERP.Modules.HR.Infrastructure\MegaERP.Modules.HR.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\HR\MegaERP.Modules.HR.Api\MegaERP.Modules.HR.Api.csproj" />
     <ProjectReference Include="..\Modules\Shipping\MegaERP.Modules.Shipping.Infrastructure\MegaERP.Modules.Shipping.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Shipping\MegaERP.Modules.Shipping.Api\MegaERP.Modules.Shipping.Api.csproj" />
   </ItemGroup>

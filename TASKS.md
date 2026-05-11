@@ -15,11 +15,11 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 - [x] TASK-05: Basket (Sepet) API
 - [x] TASK-06: Orders API Genişletme
 - [x] TASK-07: Shipping Modülü API
-- [ ] TASK-08: Billing Modülü API
-- [ ] TASK-09: HR Modülü API
-- [ ] TASK-10: Accounting Modülü API
-- [ ] TASK-11: RBAC - Rol Tabanlı Yetkilendirme
-- [ ] TASK-12: CORS + Rate Limiting + Güvenlik
+- [x] TASK-08: Billing Modülü API
+- [x] TASK-09: HR Modülü API
+- [x] TASK-10: Accounting Modülü API
+- [x] TASK-11: RBAC - Rol Tabanlı Yetkilendirme
+- [x] TASK-12: CORS + Rate Limiting + Güvenlik
 
 ---
 

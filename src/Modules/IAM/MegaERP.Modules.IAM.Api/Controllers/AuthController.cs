@@ -3,6 +3,7 @@ using MegaERP.Modules.IAM.Core.Entities;
 using MegaERP.Modules.IAM.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace MegaERP.Modules.IAM.Api.Controllers;
 
@@ -20,6 +21,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
+    [EnableRateLimiting("auth")]
     public async Task<ActionResult<AuthResponse>> Login(LoginRequest request)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
@@ -29,12 +31,14 @@ public class AuthController : ControllerBase
             return Unauthorized("Invalid credentials");
         }
 
-        var token = _jwtProvider.Generate(user);
+        var roles = await _userManager.GetRolesAsync(user);
+        var token = _jwtProvider.Generate(user, roles);
 
         return Ok(new AuthResponse(token, user.Email!, user.FirstName, user.LastName));
     }
 
     [HttpPost("register")]
+    [EnableRateLimiting("auth")]
     public async Task<ActionResult> Register(RegisterRequest request)
     {
         var user = new ApplicationUser

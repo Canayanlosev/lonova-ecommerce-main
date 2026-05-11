@@ -11,9 +11,11 @@ using MegaERP.Shared.Infrastructure.Middleware;
 using MegaERP.Shared.Infrastructure.Behaviors;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using System.Text;
+using System.Threading.RateLimiting;
 using MegaERP.Modules.IAM.Core.Entities;
 using MegaERP.Modules.IAM.Infrastructure.Persistence;
 using MegaERP.Modules.CMS.Infrastructure.Persistence;
@@ -25,6 +27,38 @@ using MegaERP.Modules.HR.Infrastructure.Persistence;
 using MegaERP.Modules.Shipping.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// CORS
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? ["http://localhost:3000", "https://localhost:3000"];
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+        policy.WithOrigins(allowedOrigins)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials());
+});
+
+// Rate Limiting — 60 requests/minute per IP for auth endpoints, 200/min for others
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("auth", o =>
+    {
+        o.Window = TimeSpan.FromMinutes(1);
+        o.PermitLimit = 20;
+        o.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        o.QueueLimit = 0;
+    });
+    options.AddFixedWindowLimiter("api", o =>
+    {
+        o.Window = TimeSpan.FromMinutes(1);
+        o.PermitLimit = 200;
+        o.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        o.QueueLimit = 5;
+    });
+    options.RejectionStatusCode = 429;
+});
 
 // Add services to the container.
 builder.Services.AddSharedInfrastructure();
@@ -92,10 +126,23 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
+// Security headers
+app.Use(async (context, next) =>
+{
+    context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+    context.Response.Headers["X-Frame-Options"] = "DENY";
+    context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
+    context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+    await next();
+});
+
+app.UseCors();
+app.UseRateLimiter();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers().RequireRateLimiting("api");
 
 // Initialize Database and Seed User
 using (var scope = app.Services.CreateScope())
@@ -106,10 +153,19 @@ using (var scope = app.Services.CreateScope())
         var iamContext = services.GetRequiredService<IAMDbContext>();
         iamContext.Database.EnsureCreated();
 
+        // Seed Roles
+        var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
+        foreach (var role in new[] { "Admin", "Manager", "Employee", "Customer" })
+        {
+            if (!await roleManager.RoleExistsAsync(role))
+                await roleManager.CreateAsync(new ApplicationRole { Name = role });
+        }
+
         // Seed User
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var userEmail = "canayan@megaerp.com";
-        if (await userManager.FindByEmailAsync(userEmail) == null)
+        var existingUser = await userManager.FindByEmailAsync(userEmail);
+        if (existingUser == null)
         {
             var user = new ApplicationUser
             {
@@ -119,7 +175,13 @@ using (var scope = app.Services.CreateScope())
                 LastName = "Ayan",
                 IsActive = true
             };
-            await userManager.CreateAsync(user, "67890memo");
+            var result = await userManager.CreateAsync(user, "67890memo");
+            if (result.Succeeded)
+                await userManager.AddToRoleAsync(user, "Admin");
+        }
+        else if (!await userManager.IsInRoleAsync(existingUser, "Admin"))
+        {
+            await userManager.AddToRoleAsync(existingUser, "Admin");
         }
 
         // Other contexts

@@ -1,5 +1,6 @@
 using MegaERP.Modules.IAM.Core.Entities;
 using MegaERP.Modules.IAM.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,7 @@ namespace MegaERP.Modules.IAM.Api.Controllers;
 
 [ApiController]
 [Route("api/iam/tenants")]
+[Authorize(Roles = "Admin")]
 public class TenantsController : ControllerBase
 {
     private readonly IAMDbContext _context;

@@ -17,9 +17,9 @@ public class JwtProvider : IJwtProvider
         _configuration = configuration;
     }
 
-    public string Generate(ApplicationUser user)
+    public string Generate(ApplicationUser user, IList<string> roles)
     {
-        var claims = new Claim[]
+        var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.Id),
             new(JwtRegisteredClaimNames.Email, user.Email ?? ""),
@@ -27,6 +27,8 @@ public class JwtProvider : IJwtProvider
             new("lastName", user.LastName),
             new("tenantId", user.TenantId?.ToString() ?? "")
         };
+        foreach (var role in roles)
+            claims.Add(new Claim(ClaimTypes.Role, role));
 
         var secretKey = _configuration["Jwt:SecretKey"] ?? "a_very_long_and_secure_secret_key_1234567890";
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));

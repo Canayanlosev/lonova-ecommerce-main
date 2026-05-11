@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MegaERP.Modules.Billing.Core\MegaERP.Modules.Billing.Core.csproj" />
+    <ProjectReference Include="..\MegaERP.Modules.Billing.Infrastructure\MegaERP.Modules.Billing.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
