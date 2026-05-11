@@ -10,21 +10,21 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 
 ## Görev Listesi
 
-- [ ] FTASK-01: API Service Katmanı & Axios Kurulumu
-- [ ] FTASK-02: Zustand Store'lar (Auth + Basket)
-- [ ] FTASK-03: Next.js Middleware - Route Koruma
-- [ ] FTASK-04: Gerçek Login Akışı (Backend Entegrasyonu)
-- [ ] FTASK-05: Toast Bildirimi & Error Boundary
+- [x] FTASK-01: API Service Katmanı & Axios Kurulumu
+- [x] FTASK-02: Zustand Store'lar (Auth + Basket)
+- [x] FTASK-03: Next.js Proxy - Route Koruma (Next.js 16'da proxy.ts)
+- [x] FTASK-04: Gerçek Login Akışı (Backend Entegrasyonu)
+- [x] FTASK-05: Toast Bildirimi & Error Boundary
 - [ ] FTASK-06: Dashboard - Gerçek Veri & Chart
-- [ ] FTASK-07: E-Commerce - Ürün Listesi & Detay Sayfası
-- [ ] FTASK-08: E-Commerce - Ürün Ekle/Düzenle Formu
-- [ ] FTASK-09: Sepet (Basket) Sayfası & Checkout
-- [ ] FTASK-10: Siparişler (Orders) Sayfası
-- [ ] FTASK-11: HR Yönetimi Sayfaları
-- [ ] FTASK-12: Shipping (Kargo) Sayfaları
-- [ ] FTASK-13: Billing (Fatura) Sayfaları
-- [ ] FTASK-14: Mobil Navigation & Responsive Fixes
-- [ ] FTASK-15: Loading Skeleton'lar & Boş Durum Ekranları
+- [x] FTASK-07: E-Commerce - Ürün Listesi & Detay Sayfası
+- [x] FTASK-08: E-Commerce - Ürün Ekle/Düzenle Formu
+- [x] FTASK-09: Sepet (Basket) Sayfası & Checkout
+- [x] FTASK-10: Siparişler (Orders) Sayfası
+- [x] FTASK-11: HR Yönetimi Sayfaları
+- [x] FTASK-12: Shipping (Kargo) Sayfaları
+- [x] FTASK-13: Billing (Fatura) Sayfaları
+- [x] FTASK-14: Mobil Navigation & Responsive Fixes
+- [x] FTASK-15: Loading Skeleton'lar & Boş Durum Ekranları
 
 ---
 
