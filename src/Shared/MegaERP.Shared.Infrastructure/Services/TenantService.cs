@@ -14,8 +14,13 @@ public class TenantService : ITenantService
 
     public Guid? GetTenantId()
     {
-        // This would normally be resolved after looking up the tenant by identifier
-        return null; 
+        var context = _httpContextAccessor.HttpContext;
+        if (context == null) return null;
+
+        var tenantIdClaim = context.User.FindFirst("tenantId")?.Value;
+        if (string.IsNullOrEmpty(tenantIdClaim)) return null;
+
+        return Guid.TryParse(tenantIdClaim, out var tenantId) ? tenantId : null;
     }
 
     public string? GetTenantIdentifier()

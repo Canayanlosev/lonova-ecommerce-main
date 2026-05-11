@@ -1,3 +1,4 @@
+using System.Reflection;
 using MegaERP.Shared.Core.Entities;
 using MegaERP.Shared.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -37,21 +38,28 @@ public abstract class BaseDbContext : DbContext
         return base.SaveChangesAsync(cancellationToken);
     }
 
+    protected Guid? CurrentTenantId => _tenantService.GetTenantId();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Global Query Filter for Multi-tenancy
-        var tenantId = _tenantService.GetTenantId();
-        
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
             if (typeof(BaseTenantEntity).IsAssignableFrom(entityType.ClrType))
             {
-                // This is a simplified version. For real multi-tenancy, you might need a more robust filter
-                // that doesn't just use the current tenantId value at OnModelCreating time
-                // but a dynamic one.
+                var method = typeof(BaseDbContext)
+                    .GetMethod(nameof(ApplyTenantQueryFilter), BindingFlags.NonPublic | BindingFlags.Instance)!
+                    .MakeGenericMethod(entityType.ClrType);
+                method.Invoke(this, [modelBuilder]);
             }
         }
 
         base.OnModelCreating(modelBuilder);
+    }
+
+    private void ApplyTenantQueryFilter<T>(ModelBuilder modelBuilder) where T : BaseTenantEntity
+    {
+        // CurrentTenantId is evaluated at query time (not model build time) because
+        // it's a property on the DbContext instance, which is Scoped per request.
+        modelBuilder.Entity<T>().HasQueryFilter(e => CurrentTenantId == null || e.TenantId == CurrentTenantId);
     }
 }

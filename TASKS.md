@@ -8,7 +8,7 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 
 ## Görev Listesi
 
-- [ ] TASK-01: TenantService Fix
+- [x] TASK-01: TenantService Fix
 - [ ] TASK-02: Global Exception Handling Middleware
 - [ ] TASK-03: FluentValidation Pipeline
 - [ ] TASK-04: Ecommerce Tam CRUD

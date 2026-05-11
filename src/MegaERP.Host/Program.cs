@@ -42,9 +42,9 @@ builder.Services.AddMediatR(cfg => {
         typeof(MegaERP.Modules.IAM.Infrastructure.DependencyInjection).Assembly,
         typeof(MegaERP.Modules.CMS.Infrastructure.DependencyInjection).Assembly,
         typeof(MegaERP.Modules.Ecommerce.Infrastructure.DependencyInjection).Assembly,
-        typeof(MegaERP.Modules.Sales.Core.Features.Orders.Commands.PlaceOrderCommand).Assembly,
-        typeof(MegaERP.Modules.Billing.Core.Events.CreateInvoiceOnOrderPlacedHandler).Assembly,
-        typeof(MegaERP.Modules.Accounting.Core.Events.AccountingEntryOnOrderPlacedHandler).Assembly
+        typeof(MegaERP.Modules.Sales.Infrastructure.DependencyInjection).Assembly,
+        typeof(MegaERP.Modules.Billing.Infrastructure.DependencyInjection).Assembly,
+        typeof(MegaERP.Modules.Accounting.Infrastructure.DependencyInjection).Assembly
     );
 });
 
