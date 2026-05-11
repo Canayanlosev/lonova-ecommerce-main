@@ -15,7 +15,7 @@ public class Shipment : BaseTenantEntity
     public string TrackingNumber { get; set; } = string.Empty;
     public DateTime ShippedDate { get; set; } = DateTime.UtcNow;
     public DateTime? EstimatedDeliveryDate { get; set; }
-    public Guid ShippingMethodId { get; set; }
+    public Guid? ShippingMethodId { get; set; }
     public virtual ShippingMethod? ShippingMethod { get; set; }
     public string Status { get; set; } = "Shipped"; // Shipped, InTransit, Delivered, Returned
 }

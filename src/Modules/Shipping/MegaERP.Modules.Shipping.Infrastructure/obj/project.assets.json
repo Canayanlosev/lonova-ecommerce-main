@@ -1142,6 +1142,7 @@
   },
   "projectFileDependencyGroups": {
     "net9.0": [
+      "MediatR >= 12.4.1",
       "MegaERP.Modules.Shipping.Core >= 1.0.0",
       "MegaERP.Shared.Infrastructure >= 1.0.0",
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 9.0.0"
@@ -1197,6 +1198,10 @@
       "net9.0": {
         "targetAlias": "net9.0",
         "dependencies": {
+          "MediatR": {
+            "target": "Package",
+            "version": "[12.4.1, )"
+          },
           "Npgsql.EntityFrameworkCore.PostgreSQL": {
             "target": "Package",
             "version": "[9.0.0, )"

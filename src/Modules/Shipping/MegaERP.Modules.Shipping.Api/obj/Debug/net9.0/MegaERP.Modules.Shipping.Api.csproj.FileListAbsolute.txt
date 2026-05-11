@@ -22,3 +22,15 @@ C:/Users/cande/.gemini/antigravity/scratch/MegaERP/src/Modules/Shipping/MegaERP.
 /home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Shipping/MegaERP.Modules.Shipping.Api/obj/Debug/net9.0/refint/MegaERP.Modules.Shipping.Api.dll
 /home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Shipping/MegaERP.Modules.Shipping.Api/obj/Debug/net9.0/MegaERP.Modules.Shipping.Api.pdb
 /home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Shipping/MegaERP.Modules.Shipping.Api/obj/Debug/net9.0/ref/MegaERP.Modules.Shipping.Api.dll
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Shipping/MegaERP.Modules.Shipping.Api/bin/Debug/net9.0/MegaERP.Modules.Shipping.Core.dll
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Shipping/MegaERP.Modules.Shipping.Api/bin/Debug/net9.0/MegaERP.Modules.Shipping.Infrastructure.dll
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Shipping/MegaERP.Modules.Shipping.Api/bin/Debug/net9.0/MegaERP.Shared.Core.dll
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Shipping/MegaERP.Modules.Shipping.Api/bin/Debug/net9.0/MegaERP.Shared.Events.dll
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Shipping/MegaERP.Modules.Shipping.Api/bin/Debug/net9.0/MegaERP.Shared.Infrastructure.dll
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Shipping/MegaERP.Modules.Shipping.Api/bin/Debug/net9.0/MegaERP.Modules.Shipping.Core.pdb
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Shipping/MegaERP.Modules.Shipping.Api/bin/Debug/net9.0/MegaERP.Modules.Shipping.Infrastructure.pdb
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Shipping/MegaERP.Modules.Shipping.Api/bin/Debug/net9.0/MegaERP.Shared.Core.pdb
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Shipping/MegaERP.Modules.Shipping.Api/bin/Debug/net9.0/MegaERP.Shared.Events.pdb
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Shipping/MegaERP.Modules.Shipping.Api/bin/Debug/net9.0/MegaERP.Shared.Infrastructure.pdb
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Shipping/MegaERP.Modules.Shipping.Api/obj/Debug/net9.0/MegaERP.Modules.Shipping.Api.csproj.AssemblyReference.cache
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Shipping/MegaERP.Modules.Shipping.Api/obj/Debug/net9.0/MegaERP..864121E8.Up2Date

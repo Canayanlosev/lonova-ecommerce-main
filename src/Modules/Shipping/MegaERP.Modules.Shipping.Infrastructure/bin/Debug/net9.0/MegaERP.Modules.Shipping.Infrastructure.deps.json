@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v9.0": {
       "MegaERP.Modules.Shipping.Infrastructure/1.0.0": {
         "dependencies": {
+          "MediatR": "12.4.1",
           "MegaERP.Modules.Shipping.Core": "1.0.0",
           "MegaERP.Shared.Infrastructure": "1.0.0",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "9.0.0"

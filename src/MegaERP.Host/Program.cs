@@ -47,7 +47,8 @@ builder.Services.AddMediatR(cfg => {
         typeof(MegaERP.Modules.Ecommerce.Infrastructure.DependencyInjection).Assembly,
         typeof(MegaERP.Modules.Sales.Infrastructure.DependencyInjection).Assembly,
         typeof(MegaERP.Modules.Billing.Infrastructure.DependencyInjection).Assembly,
-        typeof(MegaERP.Modules.Accounting.Infrastructure.DependencyInjection).Assembly
+        typeof(MegaERP.Modules.Accounting.Infrastructure.DependencyInjection).Assembly,
+        typeof(MegaERP.Modules.Shipping.Infrastructure.DependencyInjection).Assembly
     );
     cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
 });

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MegaERP.Modules.Shipping.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d07a5c1dd3ad0b20a8f12e10bd0bea0a0c07a54c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b7cf6961820c8519431a310890d66cc792219609")]
 [assembly: System.Reflection.AssemblyProductAttribute("MegaERP.Modules.Shipping.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MegaERP.Modules.Shipping.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
