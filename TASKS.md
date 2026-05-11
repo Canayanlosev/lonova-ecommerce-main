@@ -13,7 +13,7 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 - [x] TASK-03: FluentValidation Pipeline
 - [x] TASK-04: Ecommerce Tam CRUD
 - [x] TASK-05: Basket (Sepet) API
-- [ ] TASK-06: Orders API Genişletme
+- [x] TASK-06: Orders API Genişletme
 - [ ] TASK-07: Shipping Modülü API
 - [ ] TASK-08: Billing Modülü API
 - [ ] TASK-09: HR Modülü API
