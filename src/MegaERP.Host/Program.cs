@@ -6,6 +6,7 @@ using MegaERP.Modules.Billing.Infrastructure;
 using MegaERP.Modules.Accounting.Infrastructure;
 using MegaERP.Modules.HR.Infrastructure;
 using MegaERP.Modules.Shipping.Infrastructure;
+using MegaERP.Modules.Catalog.Infrastructure;
 using MegaERP.Shared.Infrastructure;
 using MegaERP.Shared.Infrastructure.Middleware;
 using MegaERP.Shared.Infrastructure.Behaviors;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.OpenApi;
 using System.Text;
 using System.Threading.RateLimiting;
 using MegaERP.Modules.IAM.Core.Entities;
@@ -25,6 +27,7 @@ using MegaERP.Modules.Billing.Infrastructure.Persistence;
 using MegaERP.Modules.Accounting.Infrastructure.Persistence;
 using MegaERP.Modules.HR.Infrastructure.Persistence;
 using MegaERP.Modules.Shipping.Infrastructure.Persistence;
+using MegaERP.Modules.Catalog.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,6 +73,7 @@ builder.Services.AddBillingInfrastructure(builder.Configuration);
 builder.Services.AddAccountingInfrastructure(builder.Configuration);
 builder.Services.AddHRInfrastructure(builder.Configuration);
 builder.Services.AddShippingInfrastructure(builder.Configuration);
+builder.Services.AddCatalogInfrastructure(builder.Configuration);
 builder.Services.AddControllers();
 
 // MediatR Registration for all modules
@@ -111,16 +115,46 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "MegaERP API",
+        Version = "v1",
+        Description = "Lonova / MegaERP — IAM, E-Commerce, Sales, Billing, HR, Accounting, Shipping modülleri"
+    });
+
+    // JWT Bearer auth butonu
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Login'den aldığın JWT token'ı buraya yapıştır. Örnek: eyJhbGci..."
+    });
+    // JWT auth kilidini tüm endpoint'lere ekle
+    options.OperationFilter<BearerAuthOperationFilter>();
+
+    // Controller XML comment desteği (opsiyonel)
+    options.CustomSchemaIds(type => type.FullName?.Replace("+", "."));
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(options =>
 {
-    app.MapOpenApi();
-}
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "MegaERP API v1");
+    options.RoutePrefix = "swagger";
+    options.DocumentTitle = "MegaERP API";
+    options.DisplayRequestDuration();
+    options.EnableDeepLinking();
+    options.DefaultModelsExpandDepth(-1); // schema bölümünü gizle
+});
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
@@ -192,6 +226,7 @@ using (var scope = app.Services.CreateScope())
         services.GetRequiredService<AccountingDbContext>().Database.EnsureCreated();
         services.GetRequiredService<HRDbContext>().Database.EnsureCreated();
         services.GetRequiredService<ShippingDbContext>().Database.EnsureCreated();
+        services.GetRequiredService<CatalogDbContext>().Database.EnsureCreated();
     }
     catch (Exception ex)
     {
@@ -199,28 +234,20 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
-
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+// Swagger UI'da kilit ikonunu tüm endpoint'lerde göster
+public class BearerAuthOperationFilter : Swashbuckle.AspNetCore.SwaggerGen.IOperationFilter
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    public void Apply(Microsoft.OpenApi.OpenApiOperation operation, Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext context)
+    {
+        operation.Security ??= [];
+        operation.Security.Add(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecuritySchemeReference("Bearer"),
+                new List<string>()
+            }
+        });
+    }
 }

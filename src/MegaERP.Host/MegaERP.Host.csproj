@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.7" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +31,8 @@
     <ProjectReference Include="..\Modules\HR\MegaERP.Modules.HR.Api\MegaERP.Modules.HR.Api.csproj" />
     <ProjectReference Include="..\Modules\Shipping\MegaERP.Modules.Shipping.Infrastructure\MegaERP.Modules.Shipping.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Shipping\MegaERP.Modules.Shipping.Api\MegaERP.Modules.Shipping.Api.csproj" />
+    <ProjectReference Include="..\Modules\Catalog\MegaERP.Modules.Catalog.Infrastructure\MegaERP.Modules.Catalog.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Catalog\MegaERP.Modules.Catalog.Api\MegaERP.Modules.Catalog.Api.csproj" />
   </ItemGroup>
 
 </Project>

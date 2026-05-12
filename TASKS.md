@@ -20,6 +20,14 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 - [x] TASK-10: Accounting Modülü API
 - [x] TASK-11: RBAC - Rol Tabanlı Yetkilendirme
 - [x] TASK-12: CORS + Rate Limiting + Güvenlik
+- [x] TASK-13: Catalog Module — N-seviye Kategori Ağacı
+- [ ] TASK-14: Marketplace Module — Public Ürün Listesi ve Arama API
+- [ ] TASK-15: Alıcı Auth — Marketplace Kullanıcı Kaydı ve JWT
+- [ ] TASK-16: Store (Mağaza) Modeli — Bir Tenant Çoklu Mağaza
+- [ ] TASK-17: WMS — Çoklu Depo ve Raf-Konum Hiyerarşisi
+- [ ] TASK-18: WMS — Tedarikçi Yönetimi ve Satın Alma Siparişi (PO)
+- [ ] TASK-19: SiteBuilder — Sayfa ve Blok Modeli
+- [ ] TASK-20: Swagger XML Dokümantasyonu — Tüm Controller'lar
 
 ---
 
@@ -378,3 +386,188 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 - CORS hataları yok
 - Rate limit aşımında 429
 - JWT secret config'den okunuyor, kod içinde hardcoded yok
+
+---
+
+## TASK-13: Catalog Module — N-seviye Kategori Ağacı
+
+**Hedef:** Kıyafet > Kadın > T-Shirt gibi sonsuz derinlikte kategori; her node'da slug, ikon, attribute şablonu.
+
+**Dosyalar:**
+- YENİ: `src/Modules/Catalog/MegaERP.Modules.Catalog.Core/` (Core katmanı)
+- YENİ: `src/Modules/Catalog/MegaERP.Modules.Catalog.Infrastructure/` (DbContext + repo)
+- YENİ: `src/Modules/Catalog/MegaERP.Modules.Catalog.Api/` (Controller)
+- GÜNCELLENECEKLer: `MegaERP.Host.csproj`, `Program.cs`
+
+**Adımlar:**
+1. `Category` entity: `Id`, `Name`, `Slug`, `ParentId` (nullable), `Level`, `IconUrl`, `AttributeSchemaJson`, `IsActive`
+2. `CatalogDbContext` → schema: `catalog`
+3. `CatalogRepository` + recursive category tree sorgusu
+4. `GET /api/catalog/categories` — tam ağaç (JSON tree)
+5. `GET /api/catalog/categories/{slug}/tree` — alt ağaç
+6. `POST/PUT/DELETE /api/catalog/categories` — Admin only
+7. Host projesine DI kaydı + `EnsureCreated`
+
+**Tamamlanma Kriteri:**
+- `dotnet build` hatasız
+- `GET /api/catalog/categories` → nested JSON tree dönüyor
+- `POST /api/catalog/categories` → Admin JWT ile category oluşturuluyor
+
+---
+
+## TASK-14: Marketplace Module — Public Ürün Listesi ve Arama API
+
+**Hedef:** Kimlik doğrulamasız çalışan public endpoint'ler; fiyat/marka/puan filtresi, sayfalama.
+
+**Dosyalar:**
+- YENİ: `src/Modules/Marketplace/MegaERP.Modules.Marketplace.Core/`
+- YENİ: `src/Modules/Marketplace/MegaERP.Modules.Marketplace.Infrastructure/`
+- YENİ: `src/Modules/Marketplace/MegaERP.Modules.Marketplace.Api/`
+
+**Adımlar:**
+1. `MarketplaceProductDto`: ürün + mağaza adı + min fiyat + puan alanları
+2. `GET /api/marketplace/products?category=&minPrice=&maxPrice=&brand=&sort=&page=` → `[AllowAnonymous]`
+3. `GET /api/marketplace/products/{slug}` — detay + tüm satıcılar
+4. `GET /api/marketplace/categories` — public category tree (Catalog modülünden okur)
+5. `OutputCache` middleware ile 60s response caching
+6. Host'a DI kaydı
+
+**Tamamlanma Kriteri:**
+- JWT olmadan `GET /api/marketplace/products` çalışıyor
+- Filtre parametreleri (category, minPrice, maxPrice, sort) işleniyor
+- Sayfalama (page, pageSize) çalışıyor
+
+---
+
+## TASK-15: Alıcı Auth — Marketplace Kullanıcı Kaydı ve JWT
+
+**Hedef:** Marketplace alıcıları firma kullanıcılarından ayrı; `BuyerUser` entity, kendi JWT scope'u.
+
+**Dosyalar:**
+- `src/Modules/IAM/` (BuyerUser entity genişletme)
+- `src/Modules/Marketplace/` (auth endpoint'leri)
+
+**Adımlar:**
+1. `BuyerUser` entity: ayrı tablo `marketplace."BuyerUsers"` (Id, Email, PasswordHash, FirstName, LastName, IsActive)
+2. `POST /api/marketplace/auth/register` — şifre hash, BuyerUser oluştur
+3. `POST /api/marketplace/auth/login` — JWT döner, claim'de `scope: buyer`
+4. `POST /api/marketplace/auth/refresh` — refresh token
+5. Buyer-only endpoint'lere `scope: buyer` claim kontrolü
+
+**Tamamlanma Kriteri:**
+- Buyer register → login → JWT alıyor
+- JWT claim'de `"scope": "buyer"` var
+- Firma kullanıcısı buyer endpoint'lere erişemiyor
+
+---
+
+## TASK-16: Store (Mağaza) Modeli — Bir Tenant Çoklu Mağaza
+
+**Hedef:** Tenant altında birden fazla Store; ürünler Store'a bağlı.
+
+**Dosyalar:**
+- `src/Modules/Ecommerce/` (Store entity, Product'a StoreId FK)
+- `src/Modules/IAM/` (Store-Tenant ilişkisi)
+
+**Adımlar:**
+1. `Store` entity: `Id`, `TenantId`, `Name`, `Slug`, `LogoUrl`, `IsActive`
+2. `Product`'a `StoreId` FK ekle
+3. `GET/POST/PUT/DELETE /api/ecommerce/stores` (Admin/Manager)
+4. Marketplace API ürün listesinde mağaza adı + slug dön
+5. EF migration (EnsureCreated yeterli)
+
+**Tamamlanma Kriteri:**
+- Store CRUD çalışıyor
+- Ürün oluştururken StoreId verilebiliyor
+- Marketplace ürünlerinde mağaza bilgisi dönüyor
+
+---
+
+## TASK-17: WMS — Çoklu Depo ve Raf-Konum Hiyerarşisi
+
+**Hedef:** Birden fazla depo, her depoda Zone > Aisle > Rack > Bin hiyerarşisi.
+
+**Dosyalar:**
+- YENİ: `src/Modules/WMS/MegaERP.Modules.WMS.Core/`
+- YENİ: `src/Modules/WMS/MegaERP.Modules.WMS.Infrastructure/`
+- YENİ: `src/Modules/WMS/MegaERP.Modules.WMS.Api/`
+
+**Adımlar:**
+1. Entity'ler: `Warehouse`, `Zone`, `Aisle`, `Rack`, `Bin`, `StockLocation` (ProductId, BinId, Quantity)
+2. `StockMovement` entity: MovementType (In/Out/Transfer/Loss), ProductId, FromBinId?, ToBinId?, Quantity, Note
+3. CRUD endpoint'ler: `/api/wms/warehouses`, `/zones`, `/bins`
+4. `GET /api/wms/stock` — ürün bazlı stok durumu
+5. `POST /api/wms/stock-movements` — stok hareketi kaydet
+6. Minimum stok uyarısı: `MinStockLevel` eşiği geçince `StockAlert` oluştur
+
+**Tamamlanma Kriteri:**
+- Warehouse CRUD çalışıyor
+- Stok hareketi kaydedilebiliyor
+- Stok durumu endpoint'i doğru veri dönüyor
+
+---
+
+## TASK-18: WMS — Tedarikçi Yönetimi ve Satın Alma Siparişi (PO)
+
+**Hedef:** Tedarikçi kaydı ve PO oluşturma/takip akışı.
+
+**Dosyalar:**
+- `src/Modules/WMS/` (Supplier, PurchaseOrder entity'leri)
+
+**Adımlar:**
+1. `Supplier` entity: Id, TenantId, Name, ContactEmail, ContactPhone, Address
+2. `PurchaseOrder` entity + `PurchaseOrderItem` entity
+3. PO durumu: `Draft > Sent > PartialReceived > Received > Cancelled`
+4. `CRUD /api/wms/suppliers`
+5. `CRUD /api/wms/purchase-orders`
+6. `PUT /api/wms/purchase-orders/{id}/receive` — teslim al, StockMovement (In) otomatik oluşsun
+7. `PUT /api/wms/purchase-orders/{id}/status` — durum güncelle
+
+**Tamamlanma Kriteri:**
+- Supplier CRUD çalışıyor
+- PO oluşturulup durumu güncellenebiliyor
+- PO teslim alındığında stok otomatik artıyor
+
+---
+
+## TASK-19: SiteBuilder — Sayfa ve Blok Modeli
+
+**Hedef:** Firma sitesi için sayfa ve blok kayıtları; JSON tabanlı blok içeriği.
+
+**Dosyalar:**
+- YENİ: `src/Modules/SiteBuilder/MegaERP.Modules.SiteBuilder.Core/`
+- YENİ: `src/Modules/SiteBuilder/MegaERP.Modules.SiteBuilder.Infrastructure/`
+- YENİ: `src/Modules/SiteBuilder/MegaERP.Modules.SiteBuilder.Api/`
+
+**Adımlar:**
+1. `SitePage` entity: Id, StoreId, Slug, Title, IsPublished, CreatedAt
+2. `PageBlock` entity: Id, PageId, BlockType, Order, ContentJson
+3. `BlockType` enum: Hero, ProductGrid, About, FAQ, Contact, Custom
+4. `CRUD /api/site-builder/pages`
+5. `CRUD /api/site-builder/pages/{pageId}/blocks`
+6. `GET /api/site-builder/render/{storeSlug}/{pageSlug}` — public, JSON döner, `[AllowAnonymous]`
+
+**Tamamlanma Kriteri:**
+- Sayfa ve blok CRUD çalışıyor
+- Public render endpoint JWT gerektirmiyor
+- ContentJson bloğun içeriğini taşıyor
+
+---
+
+## TASK-20: Swagger XML Dokümantasyonu — Tüm Controller'lar
+
+**Hedef:** Her public endpoint'te `/// <summary>` yorumu; Swagger UI'da açıklamalar görünsün.
+
+**Dosyalar:**
+- Tüm `*Controller.cs` dosyaları
+- `MegaERP.Host.csproj`
+
+**Adımlar:**
+1. `MegaERP.Host.csproj`'a `<GenerateDocumentationFile>true</GenerateDocumentationFile>` ekle
+2. `SwaggerGen`'e `IncludeXmlComments(xmlPath)` ekle
+3. Her controller action'a `/// <summary>`, `/// <param>`, `/// <returns>` ekle
+4. Build + Swagger UI'da doğrula
+
+**Tamamlanma Kriteri:**
+- `dotnet build` XML üretiyor
+- Swagger UI'da endpoint açıklamaları görünüyor

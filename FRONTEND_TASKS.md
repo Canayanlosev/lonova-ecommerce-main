@@ -25,6 +25,13 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 - [x] FTASK-13: Billing (Fatura) Sayfaları
 - [x] FTASK-14: Mobil Navigation & Responsive Fixes
 - [x] FTASK-15: Loading Skeleton'lar & Boş Durum Ekranları
+- [ ] FTASK-16: Marketplace Layout ve Ana Sayfa
+- [ ] FTASK-17: Kategori Ağacı Mega-Menü ve Kategori Sayfası
+- [ ] FTASK-18: Ürün Detay Sayfası — Galeri, Varyant, Satıcı Listesi
+- [ ] FTASK-19: Alıcı Auth Sayfaları ve Hesabım
+- [ ] FTASK-20: Firma Paneli — Store (Mağaza) Yönetimi
+- [ ] FTASK-21: WMS Arayüzü — Depo ve Stok Yönetimi
+- [ ] FTASK-22: Site Builder Editörü
 
 ---
 
@@ -505,3 +512,185 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 - Hiçbir sayfa yüklenirken boş/kopuk görünmüyor
 - Veri yokken anlamlı boş durum ekranı var
 - Hata durumunda kullanıcıya açıklama ve aksiyon sunuluyor
+
+---
+
+## FTASK-16: Marketplace Layout ve Ana Sayfa
+
+**Hedef:** Public Navbar (logo, arama, sepet, giriş), Footer, hero section, featured ürünler. Kimlik doğrulaması gerekmez.
+
+**Dosyalar:**
+- YENİ: `src/app/(marketplace)/layout.tsx` — ayrı marketplace layout
+- YENİ: `src/app/(marketplace)/page.tsx` — ana sayfa
+- YENİ: `src/components/marketplace/MarketplaceNavbar.tsx`
+- YENİ: `src/components/marketplace/MarketplaceFooter.tsx`
+- YENİ: `src/lib/services/marketplace.service.ts`
+
+**Adımlar:**
+1. `(marketplace)` route group oluştur — firma dashboard layout'undan tamamen ayrı
+2. `MarketplaceNavbar`: logo, arama input, kategori linki, sepet badge, alıcı login butonu
+3. Hero section: başlık, alt başlık, CTA buton (statik içerik)
+4. `FeaturedProducts`: `/api/marketplace/products?sort=popular` çek, 8'li grid
+5. Kategori vitrin kartları: üst 6 kategori göster (`/api/catalog/categories`)
+6. `MarketplaceFooter`: link grupları, telif hakkı
+
+**Tasarım:** TailwindCSS, indigo/mor palet, `premium-card` sınıfları korunur.
+
+**Tamamlanma Kriteri:**
+- `http://localhost:3000/` açılıyor, login gerekmez
+- Featured products API'den çekiliyor (yoksa skeleton gösterir)
+- Responsive (mobile hamburger menü)
+
+---
+
+## FTASK-17: Kategori Ağacı Mega-Menü ve Kategori Sayfası
+
+**Hedef:** Hover'da açılan çok sütunlu mega-menü; `/kategori/[...slug]` sayfası ile filtreleme.
+
+**Dosyalar:**
+- YENİ: `src/components/marketplace/MegaMenu.tsx`
+- YENİ: `src/app/(marketplace)/kategori/[...slug]/page.tsx`
+- YENİ: `src/components/marketplace/ProductFilters.tsx`
+- YENİ: `src/components/marketplace/ProductGrid.tsx`
+
+**Adımlar:**
+1. `/api/catalog/categories` tree'yi çek, recursive `MegaMenu` render et (3 sütun)
+2. Kategori sayfası: breadcrumb (slug'dan türetilir), sol filtre paneli, sağ ürün grid
+3. Filtreler: fiyat aralığı slider, marka checkbox listesi, puan yıldız filtresi
+4. URL query params ile filtre senkronizasyonu (`useSearchParams`)
+5. Numbered pagination (sayfa numaralı)
+6. Ürün grid: `ProductCard` komponenti (görsel, isim, fiyat, mağaza adı, puan)
+
+**Tamamlanma Kriteri:**
+- `/kategori/elektronik` gibi URL'ler çalışıyor
+- Filtreler URL'e yansıyor (browser geri butonu çalışıyor)
+- Pagination çalışıyor
+
+---
+
+## FTASK-18: Ürün Detay Sayfası — Galeri, Varyant, Satıcı Listesi
+
+**Hedef:** `/urun/[slug]` — görsel galeri, renk/beden seçimi, stoğa göre buton durumu.
+
+**Dosyalar:**
+- YENİ: `src/app/(marketplace)/urun/[slug]/page.tsx`
+- YENİ: `src/components/marketplace/ProductGallery.tsx`
+- YENİ: `src/components/marketplace/VariantSelector.tsx`
+- YENİ: `src/components/marketplace/SellerList.tsx`
+
+**Adımlar:**
+1. Görsel galeri: thumbnail listesi + büyük görsel, hover zoom efekti
+2. Varyant seçici: renk swatch (renkli daireler), beden butonları
+3. Seçili varyanta göre fiyat + stok sayısı güncelleme
+4. "Sepete Ekle" butonu — alıcı login yoksa `/alici-auth/giris`'e yönlendir
+5. Satıcı karşılaştırma tablosu (birden fazla satıcı varsa fiyat/kargo süresi)
+6. Ürün açıklaması + teknik özellikler tab'ı (Framer Motion tab geçişi)
+
+**Tamamlanma Kriteri:**
+- Varyant seçimi fiyatı güncelliyor
+- Sepete ekle → login değilse redirect
+- Çoklu satıcı tablosu gösteriliyor
+
+---
+
+## FTASK-19: Alıcı Auth Sayfaları ve Hesabım
+
+**Hedef:** Alıcı login/register; `/hesabim/siparisler`, `/hesabim/adresler` sayfaları.
+
+**Dosyalar:**
+- YENİ: `src/app/alici-auth/giris/page.tsx`
+- YENİ: `src/app/alici-auth/kayit/page.tsx`
+- YENİ: `src/app/(marketplace)/hesabim/siparisler/page.tsx`
+- YENİ: `src/app/(marketplace)/hesabim/adresler/page.tsx`
+- YENİ: `src/store/buyerAuth.store.ts`
+
+**Adımlar:**
+1. `buyerAuth` Zustand store — firma auth'dan tamamen bağımsız (`buyer_token` cookie)
+2. `/alici-auth/giris` sayfası — email/şifre, backend `/api/marketplace/auth/login`
+3. `/alici-auth/kayit` sayfası — ad/soyad/email/şifre, backend `/api/marketplace/auth/register`
+4. Buyer JWT cookie'ye yaz (proxy.ts'e `/hesabim/*` koruma kuralı ekle)
+5. `/hesabim/siparisler` — buyer'ın siparişleri listesi + detay linki
+6. `/hesabim/adresler` — adres defteri CRUD (yerel state ile başla)
+
+**Tamamlanma Kriteri:**
+- Alıcı register → login → `/hesabim` yönlendirme
+- Firma kullanıcısı `/hesabim`'a erişemez (farklı cookie)
+- Çıkış yapınca buyer_token silinir
+
+---
+
+## FTASK-20: Firma Paneli — Store (Mağaza) Yönetimi
+
+**Hedef:** Bir tenant birden fazla mağaza açabilsin; dashboard'da mağaza seçici.
+
+**Dosyalar:**
+- YENİ: `src/app/dashboard/stores/page.tsx`
+- YENİ: `src/app/dashboard/stores/new/page.tsx`
+- YENİ: `src/app/dashboard/stores/[id]/edit/page.tsx`
+- GÜNCELLENECEK: `src/components/Sidebar.tsx` (mağaza seçici dropdown)
+
+**Adımlar:**
+1. `/dashboard/stores` sayfası — mağaza listesi tablosu + "Yeni Mağaza" butonu
+2. Mağaza oluşturma/düzenleme formu: ad, slug, logo URL, durum
+3. Sidebar'a aktif mağaza seçici dropdown ekle
+4. Seçili StoreId Zustand store'da tut, ürün listesinde filtre uygula
+5. Mağaza logo gösterimi (img tag, fallback ikon)
+
+**Tamamlanma Kriteri:**
+- Store listesi CRUD çalışıyor
+- Sidebar'da mağaza seçici var
+- Seçili mağazaya göre ürün listesi filtreleniyor
+
+---
+
+## FTASK-21: WMS Arayüzü — Depo ve Stok Yönetimi
+
+**Hedef:** `/dashboard/wms` — depo listesi, stok durumu, hareket geçmişi.
+
+**Dosyalar:**
+- YENİ: `src/app/dashboard/wms/page.tsx`
+- YENİ: `src/app/dashboard/wms/warehouses/page.tsx`
+- YENİ: `src/app/dashboard/wms/stock/page.tsx`
+- YENİ: `src/app/dashboard/wms/purchase-orders/page.tsx`
+- YENİ: `src/lib/services/wms.service.ts`
+
+**Adımlar:**
+1. WMS ana sayfa: özet kartlar (toplam depo, toplam SKU, düşük stok uyarı sayısı)
+2. Depo listesi + seçili depoda zone/rack tree görünümü (accordion)
+3. Stok tablosu: ürün adı, SKU, toplam miktar, minimum eşik, durum badge
+4. Stok hareketi formu: tip seçici (Giriş/Çıkış/Transfer), ürün, miktar, not
+5. PO listesi + yeni PO oluşturma sihirbazı (tedarikçi seç → kalem ekle → kaydet)
+6. Düşük stok uyarıları bildirim banner'ı
+
+**Tamamlanma Kriteri:**
+- Depo ve stok verileri görüntüleniyor
+- Stok hareketi formu çalışıyor
+- PO oluşturulabiliyor
+
+---
+
+## FTASK-22: Site Builder Editörü
+
+**Hedef:** `/dashboard/site-builder` — blok tabanlı sayfa düzenleyici, önizleme.
+
+**Dosyalar:**
+- YENİ: `src/app/dashboard/site-builder/page.tsx`
+- YENİ: `src/app/dashboard/site-builder/[pageId]/page.tsx`
+- YENİ: `src/components/site-builder/BlockEditor.tsx`
+- YENİ: `src/components/site-builder/BlockCanvas.tsx`
+- YENİ: `src/components/site-builder/BlockPalette.tsx`
+- YENİ: `src/lib/services/sitebuilder.service.ts`
+
+**Adımlar:**
+1. Sayfa listesi + "Yeni Sayfa" butonu
+2. Editör layout: sol BlockPalette + orta BlockCanvas + sağ içerik editör paneli
+3. `BlockPalette`: Hero, ProductGrid, About, FAQ, Contact, Custom blok tipleri (drag başlatır)
+4. `BlockCanvas`: blokları listeler, sürükle-bırak sıralama (`@hello-pangea/dnd`)
+5. Sağ panel: seçili bloğun ContentJson alanlarını form olarak düzenle (title, text, imageUrl)
+6. "Yayınla" butonu → `PUT /api/site-builder/pages/{id}` `isPublished=true`
+7. "Önizle" butonu → yeni sekmede `/api/site-builder/render/{storeSlug}/{slug}` JSON göster
+
+**Tamamlanma Kriteri:**
+- Sayfa oluşturulup blok eklenebiliyor
+- Bloklar sürükle-bırak ile sıralanabiliyor
+- Yayınla butonu çalışıyor
