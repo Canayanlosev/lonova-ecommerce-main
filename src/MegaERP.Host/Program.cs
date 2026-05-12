@@ -9,6 +9,7 @@ using MegaERP.Modules.Shipping.Infrastructure;
 using MegaERP.Modules.Catalog.Infrastructure;
 using MegaERP.Modules.Marketplace.Infrastructure;
 using MegaERP.Modules.WMS.Infrastructure;
+using MegaERP.Modules.SiteBuilder.Infrastructure;
 using MegaERP.Shared.Infrastructure;
 using MegaERP.Shared.Infrastructure.Middleware;
 using MegaERP.Shared.Infrastructure.Behaviors;
@@ -31,6 +32,7 @@ using MegaERP.Modules.HR.Infrastructure.Persistence;
 using MegaERP.Modules.Shipping.Infrastructure.Persistence;
 using MegaERP.Modules.Catalog.Infrastructure.Persistence;
 using MegaERP.Modules.WMS.Infrastructure.Persistence;
+using MegaERP.Modules.SiteBuilder.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,6 +81,7 @@ builder.Services.AddShippingInfrastructure(builder.Configuration);
 builder.Services.AddCatalogInfrastructure(builder.Configuration);
 builder.Services.AddMarketplaceInfrastructure(builder.Configuration);
 builder.Services.AddWMSInfrastructure(builder.Configuration);
+builder.Services.AddSiteBuilderInfrastructure(builder.Configuration);
 builder.Services.AddControllers();
 
 // MediatR Registration for all modules
@@ -140,11 +143,14 @@ builder.Services.AddSwaggerGen(options =>
         In = ParameterLocation.Header,
         Description = "Login'den aldığın JWT token'ı buraya yapıştır. Örnek: eyJhbGci..."
     });
-    // JWT auth kilidini tüm endpoint'lere ekle
     options.OperationFilter<BearerAuthOperationFilter>();
-
-    // Controller XML comment desteği (opsiyonel)
     options.CustomSchemaIds(type => type.FullName?.Replace("+", "."));
+
+    // XML doc comments
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (System.IO.File.Exists(xmlPath))
+        options.IncludeXmlComments(xmlPath);
 });
 
 var app = builder.Build();
@@ -233,6 +239,7 @@ using (var scope = app.Services.CreateScope())
         services.GetRequiredService<ShippingDbContext>().Database.EnsureCreated();
         services.GetRequiredService<CatalogDbContext>().Database.EnsureCreated();
         services.GetRequiredService<WMSDbContext>().Database.EnsureCreated();
+        services.GetRequiredService<SiteBuilderDbContext>().Database.EnsureCreated();
     }
     catch (Exception ex)
     {

@@ -889,6 +889,51 @@
           "bin/placeholder/MegaERP.Modules.Shipping.Infrastructure.dll": {}
         }
       },
+      "MegaERP.Modules.SiteBuilder.Api/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "MegaERP.Modules.SiteBuilder.Core": "1.0.0",
+          "MegaERP.Modules.SiteBuilder.Infrastructure": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/MegaERP.Modules.SiteBuilder.Api.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MegaERP.Modules.SiteBuilder.Api.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
+      "MegaERP.Modules.SiteBuilder.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "MegaERP.Shared.Core": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/MegaERP.Modules.SiteBuilder.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MegaERP.Modules.SiteBuilder.Core.dll": {}
+        }
+      },
+      "MegaERP.Modules.SiteBuilder.Infrastructure/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "MegaERP.Modules.SiteBuilder.Core": "1.0.0",
+          "MegaERP.Shared.Infrastructure": "1.0.0",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "10.0.1"
+        },
+        "compile": {
+          "bin/placeholder/MegaERP.Modules.SiteBuilder.Infrastructure.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MegaERP.Modules.SiteBuilder.Infrastructure.dll": {}
+        }
+      },
       "MegaERP.Modules.WMS.Api/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v10.0",
@@ -1887,6 +1932,21 @@
       "path": "../Modules/Shipping/MegaERP.Modules.Shipping.Infrastructure/MegaERP.Modules.Shipping.Infrastructure.csproj",
       "msbuildProject": "../Modules/Shipping/MegaERP.Modules.Shipping.Infrastructure/MegaERP.Modules.Shipping.Infrastructure.csproj"
     },
+    "MegaERP.Modules.SiteBuilder.Api/1.0.0": {
+      "type": "project",
+      "path": "../Modules/SiteBuilder/MegaERP.Modules.SiteBuilder.Api/MegaERP.Modules.SiteBuilder.Api.csproj",
+      "msbuildProject": "../Modules/SiteBuilder/MegaERP.Modules.SiteBuilder.Api/MegaERP.Modules.SiteBuilder.Api.csproj"
+    },
+    "MegaERP.Modules.SiteBuilder.Core/1.0.0": {
+      "type": "project",
+      "path": "../Modules/SiteBuilder/MegaERP.Modules.SiteBuilder.Core/MegaERP.Modules.SiteBuilder.Core.csproj",
+      "msbuildProject": "../Modules/SiteBuilder/MegaERP.Modules.SiteBuilder.Core/MegaERP.Modules.SiteBuilder.Core.csproj"
+    },
+    "MegaERP.Modules.SiteBuilder.Infrastructure/1.0.0": {
+      "type": "project",
+      "path": "../Modules/SiteBuilder/MegaERP.Modules.SiteBuilder.Infrastructure/MegaERP.Modules.SiteBuilder.Infrastructure.csproj",
+      "msbuildProject": "../Modules/SiteBuilder/MegaERP.Modules.SiteBuilder.Infrastructure/MegaERP.Modules.SiteBuilder.Infrastructure.csproj"
+    },
     "MegaERP.Modules.WMS.Api/1.0.0": {
       "type": "project",
       "path": "../Modules/WMS/MegaERP.Modules.WMS.Api/MegaERP.Modules.WMS.Api.csproj",
@@ -1940,6 +2000,8 @@
       "MegaERP.Modules.Sales.Infrastructure >= 1.0.0",
       "MegaERP.Modules.Shipping.Api >= 1.0.0",
       "MegaERP.Modules.Shipping.Infrastructure >= 1.0.0",
+      "MegaERP.Modules.SiteBuilder.Api >= 1.0.0",
+      "MegaERP.Modules.SiteBuilder.Infrastructure >= 1.0.0",
       "MegaERP.Modules.WMS.Api >= 1.0.0",
       "MegaERP.Modules.WMS.Infrastructure >= 1.0.0",
       "MegaERP.Shared.Core >= 1.0.0",
@@ -2034,6 +2096,12 @@
             },
             "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Shipping/MegaERP.Modules.Shipping.Infrastructure/MegaERP.Modules.Shipping.Infrastructure.csproj": {
               "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Shipping/MegaERP.Modules.Shipping.Infrastructure/MegaERP.Modules.Shipping.Infrastructure.csproj"
+            },
+            "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/SiteBuilder/MegaERP.Modules.SiteBuilder.Api/MegaERP.Modules.SiteBuilder.Api.csproj": {
+              "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/SiteBuilder/MegaERP.Modules.SiteBuilder.Api/MegaERP.Modules.SiteBuilder.Api.csproj"
+            },
+            "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/SiteBuilder/MegaERP.Modules.SiteBuilder.Infrastructure/MegaERP.Modules.SiteBuilder.Infrastructure.csproj": {
+              "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/SiteBuilder/MegaERP.Modules.SiteBuilder.Infrastructure/MegaERP.Modules.SiteBuilder.Infrastructure.csproj"
             },
             "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/WMS/MegaERP.Modules.WMS.Api/MegaERP.Modules.WMS.Api.csproj": {
               "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/WMS/MegaERP.Modules.WMS.Api/MegaERP.Modules.WMS.Api.csproj"

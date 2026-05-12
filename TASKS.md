@@ -26,8 +26,8 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 - [ ] TASK-16: Store (Mağaza) Modeli — Bir Tenant Çoklu Mağaza
 - [x] TASK-17: WMS — Çoklu Depo ve Raf-Konum Hiyerarşisi
 - [x] TASK-18: WMS — Tedarikçi Yönetimi ve Satın Alma Siparişi (PO)
-- [ ] TASK-19: SiteBuilder — Sayfa ve Blok Modeli
-- [ ] TASK-20: Swagger XML Dokümantasyonu — Tüm Controller'lar
+- [x] TASK-19: SiteBuilder — Sayfa ve Blok Modeli
+- [x] TASK-20: Swagger XML Dokümantasyonu — Tüm Controller'lar
 
 ---
 

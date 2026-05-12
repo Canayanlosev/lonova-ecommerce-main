@@ -4,6 +4,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,6 +39,8 @@
     <ProjectReference Include="..\Modules\Marketplace\MegaERP.Modules.Marketplace.Api\MegaERP.Modules.Marketplace.Api.csproj" />
     <ProjectReference Include="..\Modules\WMS\MegaERP.Modules.WMS.Infrastructure\MegaERP.Modules.WMS.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\WMS\MegaERP.Modules.WMS.Api\MegaERP.Modules.WMS.Api.csproj" />
+    <ProjectReference Include="..\Modules\SiteBuilder\MegaERP.Modules.SiteBuilder.Infrastructure\MegaERP.Modules.SiteBuilder.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\SiteBuilder\MegaERP.Modules.SiteBuilder.Api\MegaERP.Modules.SiteBuilder.Api.csproj" />
   </ItemGroup>
 
 </Project>
