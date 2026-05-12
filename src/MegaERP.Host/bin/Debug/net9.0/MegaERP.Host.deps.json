@@ -8,16 +8,21 @@
     ".NETCoreApp,Version=v9.0": {
       "MegaERP.Host/1.0.0": {
         "dependencies": {
+          "MegaERP.Modules.Accounting.Api": "1.0.0",
           "MegaERP.Modules.Accounting.Infrastructure": "1.0.0",
+          "MegaERP.Modules.Billing.Api": "1.0.0",
           "MegaERP.Modules.Billing.Infrastructure": "1.0.0",
           "MegaERP.Modules.CMS.Api": "1.0.0",
           "MegaERP.Modules.CMS.Infrastructure": "1.0.0",
           "MegaERP.Modules.Ecommerce.Api": "1.0.0",
           "MegaERP.Modules.Ecommerce.Infrastructure": "1.0.0",
+          "MegaERP.Modules.HR.Api": "1.0.0",
           "MegaERP.Modules.HR.Infrastructure": "1.0.0",
           "MegaERP.Modules.IAM.Api": "1.0.0",
           "MegaERP.Modules.IAM.Infrastructure": "1.0.0",
+          "MegaERP.Modules.Sales.Api": "1.0.0",
           "MegaERP.Modules.Sales.Infrastructure": "1.0.0",
+          "MegaERP.Modules.Shipping.Api": "1.0.0",
           "MegaERP.Modules.Shipping.Infrastructure": "1.0.0",
           "MegaERP.Shared.Core": "1.0.0",
           "MegaERP.Shared.Infrastructure": "1.0.0",
@@ -276,6 +281,18 @@
           }
         }
       },
+      "MegaERP.Modules.Accounting.Api/1.0.0": {
+        "dependencies": {
+          "MegaERP.Modules.Accounting.Core": "1.0.0",
+          "MegaERP.Modules.Accounting.Infrastructure": "1.0.0"
+        },
+        "runtime": {
+          "MegaERP.Modules.Accounting.Api.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "MegaERP.Modules.Accounting.Core/1.0.0": {
         "dependencies": {
           "MediatR": "12.4.1",
@@ -298,6 +315,18 @@
         },
         "runtime": {
           "MegaERP.Modules.Accounting.Infrastructure.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "MegaERP.Modules.Billing.Api/1.0.0": {
+        "dependencies": {
+          "MegaERP.Modules.Billing.Core": "1.0.0",
+          "MegaERP.Modules.Billing.Infrastructure": "1.0.0"
+        },
+        "runtime": {
+          "MegaERP.Modules.Billing.Api.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -404,6 +433,18 @@
           }
         }
       },
+      "MegaERP.Modules.HR.Api/1.0.0": {
+        "dependencies": {
+          "MegaERP.Modules.HR.Core": "1.0.0",
+          "MegaERP.Modules.HR.Infrastructure": "1.0.0"
+        },
+        "runtime": {
+          "MegaERP.Modules.HR.Api.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "MegaERP.Modules.HR.Core/1.0.0": {
         "dependencies": {
           "MegaERP.Shared.Core": "1.0.0"
@@ -469,6 +510,18 @@
           }
         }
       },
+      "MegaERP.Modules.Sales.Api/1.0.0": {
+        "dependencies": {
+          "MegaERP.Modules.Sales.Core": "1.0.0",
+          "MegaERP.Modules.Sales.Infrastructure": "1.0.0"
+        },
+        "runtime": {
+          "MegaERP.Modules.Sales.Api.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "MegaERP.Modules.Sales.Core/1.0.0": {
         "dependencies": {
           "MediatR": "12.4.1",
@@ -495,6 +548,18 @@
           }
         }
       },
+      "MegaERP.Modules.Shipping.Api/1.0.0": {
+        "dependencies": {
+          "MegaERP.Modules.Shipping.Core": "1.0.0",
+          "MegaERP.Modules.Shipping.Infrastructure": "1.0.0"
+        },
+        "runtime": {
+          "MegaERP.Modules.Shipping.Api.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "MegaERP.Modules.Shipping.Core/1.0.0": {
         "dependencies": {
           "MegaERP.Shared.Core": "1.0.0",
@@ -509,6 +574,7 @@
       },
       "MegaERP.Modules.Shipping.Infrastructure/1.0.0": {
         "dependencies": {
+          "MediatR": "12.4.1",
           "MegaERP.Modules.Shipping.Core": "1.0.0",
           "MegaERP.Shared.Infrastructure": "1.0.0",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "9.0.0"
@@ -736,12 +802,22 @@
       "path": "system.identitymodel.tokens.jwt/8.0.1",
       "hashPath": "system.identitymodel.tokens.jwt.8.0.1.nupkg.sha512"
     },
+    "MegaERP.Modules.Accounting.Api/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
     "MegaERP.Modules.Accounting.Core/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
     "MegaERP.Modules.Accounting.Infrastructure/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MegaERP.Modules.Billing.Api/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -786,6 +862,11 @@
       "serviceable": false,
       "sha512": ""
     },
+    "MegaERP.Modules.HR.Api/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
     "MegaERP.Modules.HR.Core/1.0.0": {
       "type": "project",
       "serviceable": false,
@@ -811,12 +892,22 @@
       "serviceable": false,
       "sha512": ""
     },
+    "MegaERP.Modules.Sales.Api/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
     "MegaERP.Modules.Sales.Core/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
     "MegaERP.Modules.Sales.Infrastructure/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MegaERP.Modules.Shipping.Api/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

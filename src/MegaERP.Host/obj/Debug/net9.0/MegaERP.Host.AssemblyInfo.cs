@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MegaERP.Host")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d07a5c1dd3ad0b20a8f12e10bd0bea0a0c07a54c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8af8e358011e29efed4d2d5f70ed728f0cbd73ac")]
 [assembly: System.Reflection.AssemblyProductAttribute("MegaERP.Host")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MegaERP.Host")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

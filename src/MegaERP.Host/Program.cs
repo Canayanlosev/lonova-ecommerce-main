@@ -8,6 +8,7 @@ using MegaERP.Modules.HR.Infrastructure;
 using MegaERP.Modules.Shipping.Infrastructure;
 using MegaERP.Modules.Catalog.Infrastructure;
 using MegaERP.Modules.Marketplace.Infrastructure;
+using MegaERP.Modules.WMS.Infrastructure;
 using MegaERP.Shared.Infrastructure;
 using MegaERP.Shared.Infrastructure.Middleware;
 using MegaERP.Shared.Infrastructure.Behaviors;
@@ -29,6 +30,7 @@ using MegaERP.Modules.Accounting.Infrastructure.Persistence;
 using MegaERP.Modules.HR.Infrastructure.Persistence;
 using MegaERP.Modules.Shipping.Infrastructure.Persistence;
 using MegaERP.Modules.Catalog.Infrastructure.Persistence;
+using MegaERP.Modules.WMS.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,6 +78,7 @@ builder.Services.AddHRInfrastructure(builder.Configuration);
 builder.Services.AddShippingInfrastructure(builder.Configuration);
 builder.Services.AddCatalogInfrastructure(builder.Configuration);
 builder.Services.AddMarketplaceInfrastructure(builder.Configuration);
+builder.Services.AddWMSInfrastructure(builder.Configuration);
 builder.Services.AddControllers();
 
 // MediatR Registration for all modules
@@ -229,6 +232,7 @@ using (var scope = app.Services.CreateScope())
         services.GetRequiredService<HRDbContext>().Database.EnsureCreated();
         services.GetRequiredService<ShippingDbContext>().Database.EnsureCreated();
         services.GetRequiredService<CatalogDbContext>().Database.EnsureCreated();
+        services.GetRequiredService<WMSDbContext>().Database.EnsureCreated();
     }
     catch (Exception ex)
     {

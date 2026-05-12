@@ -190,3 +190,13 @@ C:/Users/cande/.gemini/antigravity/scratch/MegaERP/src/MegaERP.Host/bin/Debug/ne
 /home/canayan/Downloads/lonova-ecommerce-main-main/src/MegaERP.Host/obj/Debug/net9.0/MegaERP..99847220.Up2Date
 /home/canayan/Downloads/lonova-ecommerce-main-main/src/MegaERP.Host/obj/Debug/net9.0/MegaERP.Host.genruntimeconfig.cache
 /home/canayan/Downloads/lonova-ecommerce-main-main/src/MegaERP.Host/obj/Debug/net9.0/ref/MegaERP.Host.dll
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/MegaERP.Host/bin/Debug/net9.0/MegaERP.Modules.Sales.Api.dll
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/MegaERP.Host/bin/Debug/net9.0/MegaERP.Modules.Shipping.Api.dll
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/MegaERP.Host/bin/Debug/net9.0/MegaERP.Modules.Sales.Api.pdb
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/MegaERP.Host/bin/Debug/net9.0/MegaERP.Modules.Shipping.Api.pdb
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/MegaERP.Host/bin/Debug/net9.0/MegaERP.Modules.Billing.Api.dll
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/MegaERP.Host/bin/Debug/net9.0/MegaERP.Modules.Billing.Api.pdb
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/MegaERP.Host/bin/Debug/net9.0/MegaERP.Modules.HR.Api.dll
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/MegaERP.Host/bin/Debug/net9.0/MegaERP.Modules.HR.Api.pdb
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/MegaERP.Host/bin/Debug/net9.0/MegaERP.Modules.Accounting.Api.dll
+/home/canayan/Downloads/lonova-ecommerce-main-main/src/MegaERP.Host/bin/Debug/net9.0/MegaERP.Modules.Accounting.Api.pdb

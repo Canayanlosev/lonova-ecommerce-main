@@ -24,8 +24,8 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 - [x] TASK-14: Marketplace Module — Public Ürün Listesi ve Arama API
 - [ ] TASK-15: Alıcı Auth — Marketplace Kullanıcı Kaydı ve JWT
 - [ ] TASK-16: Store (Mağaza) Modeli — Bir Tenant Çoklu Mağaza
-- [ ] TASK-17: WMS — Çoklu Depo ve Raf-Konum Hiyerarşisi
-- [ ] TASK-18: WMS — Tedarikçi Yönetimi ve Satın Alma Siparişi (PO)
+- [x] TASK-17: WMS — Çoklu Depo ve Raf-Konum Hiyerarşisi
+- [x] TASK-18: WMS — Tedarikçi Yönetimi ve Satın Alma Siparişi (PO)
 - [ ] TASK-19: SiteBuilder — Sayfa ve Blok Modeli
 - [ ] TASK-20: Swagger XML Dokümantasyonu — Tüm Controller'lar
 
