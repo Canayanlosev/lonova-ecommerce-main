@@ -28,10 +28,10 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 - [x] FTASK-16: Marketplace Layout ve Ana Sayfa
 - [x] FTASK-17: Kategori Ağacı Mega-Menü ve Kategori Sayfası
 - [x] FTASK-18: Ürün Detay Sayfası — Galeri, Varyant, Satıcı Listesi
-- [ ] FTASK-19: Alıcı Auth Sayfaları ve Hesabım
-- [ ] FTASK-20: Firma Paneli — Store (Mağaza) Yönetimi
-- [ ] FTASK-21: WMS Arayüzü — Depo ve Stok Yönetimi
-- [ ] FTASK-22: Site Builder Editörü
+- [x] FTASK-19: Alıcı Auth Sayfaları ve Hesabım
+- [x] FTASK-20: Firma Paneli — Store (Mağaza) Yönetimi
+- [x] FTASK-21: WMS Arayüzü — Depo ve Stok Yönetimi
+- [x] FTASK-22: Site Builder Editörü
 
 ---
 
