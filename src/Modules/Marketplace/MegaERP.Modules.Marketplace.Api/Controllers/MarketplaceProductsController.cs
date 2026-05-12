@@ -68,14 +68,9 @@ public class MarketplaceProductsController : ControllerBase
             .ToListAsync();
 
         var items = products.Select(p => new MarketplaceProductDto(
-            p.Id,
-            p.Name,
-            p.Description,
-            p.Sku,
-            p.BasePrice,
-            p.CategoryId,
-            p.Category?.Name,
-            p.Variants.Select(v => new MarketplaceVariantDto(v.Id, v.Name, v.Sku, v.PriceOverride > 0 ? v.PriceOverride : p.BasePrice, v.StockQuantity)).ToList()
+            p.Id, p.Name, p.Description, p.Sku, p.Slug, p.ImageUrl,
+            p.BasePrice, p.CategoryId, p.Category?.Name,
+            p.Variants.Select(v => new MarketplaceVariantDto(v.Id, v.Name, v.VariantType, v.ColorHex, v.Sku, v.PriceOverride > 0 ? v.PriceOverride : p.BasePrice, v.StockQuantity)).ToList()
         )).ToList();
 
         return Ok(new MarketplaceProductListResponse(items, totalCount, page, pageSize));
@@ -94,9 +89,9 @@ public class MarketplaceProductsController : ControllerBase
             throw new KeyNotFoundException($"Ürün bulunamadı: {id}");
 
         return Ok(new MarketplaceProductDto(
-            p.Id, p.Name, p.Description, p.Sku, p.BasePrice, p.CategoryId,
-            p.Category?.Name,
-            p.Variants.Select(v => new MarketplaceVariantDto(v.Id, v.Name, v.Sku, v.PriceOverride > 0 ? v.PriceOverride : p.BasePrice, v.StockQuantity)).ToList()
+            p.Id, p.Name, p.Description, p.Sku, p.Slug, p.ImageUrl,
+            p.BasePrice, p.CategoryId, p.Category?.Name,
+            p.Variants.Select(v => new MarketplaceVariantDto(v.Id, v.Name, v.VariantType, v.ColorHex, v.Sku, v.PriceOverride > 0 ? v.PriceOverride : p.BasePrice, v.StockQuantity)).ToList()
         ));
     }
 

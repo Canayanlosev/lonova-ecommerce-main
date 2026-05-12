@@ -4,19 +4,113 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronRight, ShoppingCart, Star, Package } from 'lucide-react'
+import { ChevronRight, ShoppingCart, Star, Package, Check } from 'lucide-react'
 import { marketplaceService, type MarketplaceProduct, type MarketplaceVariant } from '@/lib/services/marketplace.service'
 import { useBuyerCartStore } from '@/store/buyerCart.store'
+
+// Group variants by type for multi-dimension selection
+function groupVariants(variants: MarketplaceVariant[]) {
+  return variants.reduce<Record<string, MarketplaceVariant[]>>((acc, v) => {
+    const t = v.variantType || 'Variant'
+    ;(acc[t] ??= []).push(v)
+    return acc
+  }, {})
+}
+
+// For multi-type variants, find the matching variant by selected values
+function findVariant(variants: MarketplaceVariant[], selected: Record<string, string>): MarketplaceVariant | null {
+  if (Object.keys(selected).length === 0) return null
+  // simple: find variant whose name matches all selected values (e.g. "M" or "Siyah")
+  return variants.find((v) =>
+    Object.values(selected).some((val) => v.name === val)
+  ) ?? null
+}
+
+interface VariantSelectorProps {
+  type: string
+  variants: MarketplaceVariant[]
+  selected: string | undefined
+  onSelect: (name: string) => void
+}
+
+function VariantSelector({ type, variants, selected, onSelect }: VariantSelectorProps) {
+  const isColor = type === 'Renk'
+
+  return (
+    <div>
+      <p className="text-sm font-medium text-foreground mb-2">
+        {type}
+        {selected && <span className="ml-2 text-slate-400 font-normal">{selected}</span>}
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {variants.map((v) => {
+          const outOfStock = v.stockQuantity === 0
+          const isSelected = selected === v.name
+
+          if (isColor && v.colorHex) {
+            return (
+              <button
+                key={v.id}
+                title={v.name}
+                onClick={() => !outOfStock && onSelect(v.name)}
+                disabled={outOfStock}
+                className={`w-9 h-9 rounded-full border-2 transition-all relative ${
+                  isSelected ? 'border-primary scale-110 shadow-lg' : 'border-transparent hover:border-slate-400'
+                } ${outOfStock ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
+                style={{ backgroundColor: v.colorHex }}
+              >
+                {isSelected && (
+                  <Check className="w-4 h-4 text-white absolute inset-0 m-auto drop-shadow" />
+                )}
+                {outOfStock && (
+                  <span className="absolute inset-0 flex items-center justify-center">
+                    <span className="w-full h-[2px] bg-red-400 rotate-45 block" />
+                  </span>
+                )}
+              </button>
+            )
+          }
+
+          // Size / number / storage buttons
+          return (
+            <button
+              key={v.id}
+              onClick={() => !outOfStock && onSelect(v.name)}
+              disabled={outOfStock}
+              className={`min-w-[44px] h-10 px-3 rounded-lg text-sm font-medium border transition-all relative ${
+                isSelected
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : outOfStock
+                  ? 'border-border text-slate-600 cursor-not-allowed line-through'
+                  : 'border-border text-foreground hover:border-primary cursor-pointer'
+              }`}
+            >
+              {v.name}
+              {v.price !== undefined && v.price > 0 && !outOfStock && (
+                <span className="absolute -top-1.5 -right-1.5 text-[9px] bg-primary text-white rounded px-0.5 leading-tight">
+                  {v.price.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}₺
+                </span>
+              )}
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
 
   const [product, setProduct] = useState<MarketplaceProduct | null>(null)
-  const [selectedVariant, setSelectedVariant] = useState<MarketplaceVariant | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'description' | 'specs'>('description')
   const [adding, setAdding] = useState(false)
+  const [addedFeedback, setAddedFeedback] = useState(false)
+
+  // selected[variantType] = variantName
+  const [selected, setSelected] = useState<Record<string, string>>({})
   const setCart = useBuyerCartStore((s) => s.setCart)
 
   useEffect(() => {
@@ -24,7 +118,14 @@ export default function ProductDetailPage() {
     marketplaceService.getProduct(id)
       .then((p) => {
         setProduct(p)
-        if (p.variants.length > 0) setSelectedVariant(p.variants[0])
+        // Auto-select first in-stock variant per type
+        const groups = groupVariants(p.variants)
+        const autoSelect: Record<string, string> = {}
+        for (const [type, variants] of Object.entries(groups)) {
+          const first = variants.find((v) => v.stockQuantity > 0) ?? variants[0]
+          if (first) autoSelect[type] = first.name
+        }
+        setSelected(autoSelect)
       })
       .catch(() => router.push('/'))
       .finally(() => setLoading(false))
@@ -47,21 +148,42 @@ export default function ProductDetailPage() {
 
   if (!product) return null
 
-  const price = selectedVariant ? selectedVariant.price : product.basePrice
-  const stock = selectedVariant ? selectedVariant.stockQuantity : 99
-  const inStock = stock > 0
+  const groups = groupVariants(product.variants)
+  const hasVariants = product.variants.length > 0
+  const allTypesSelected = Object.keys(groups).every((t) => selected[t])
+
+  // Resolve active variant from selections
+  let activeVariant: MarketplaceVariant | null = null
+  if (hasVariants) {
+    const selectedNames = Object.values(selected)
+    // If single-type, direct lookup; multi-type uses first matching
+    if (Object.keys(groups).length === 1) {
+      const type = Object.keys(groups)[0]
+      activeVariant = groups[type]?.find((v) => v.name === selected[type]) ?? null
+    } else {
+      activeVariant = findVariant(product.variants, selected)
+    }
+  }
+
+  const price = activeVariant && activeVariant.price > 0 ? activeVariant.price : product.basePrice
+  const stock = activeVariant ? activeVariant.stockQuantity : (hasVariants ? 0 : 99)
+  const inStock = hasVariants ? (allTypesSelected ? stock > 0 : false) : true
+
+  const handleSelect = (type: string, name: string) => {
+    setSelected((prev) => ({ ...prev, [type]: name }))
+  }
 
   const handleAddToCart = async () => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('buyer-token') : null
-    if (!token) {
-      router.push('/alici-auth/giris')
-      return
-    }
-    if (!product) return
+    if (!token) { router.push('/alici-auth/giris'); return }
+    if (hasVariants && !allTypesSelected) return
+
     setAdding(true)
     try {
-      const cart = await marketplaceService.addToCart(product.id, selectedVariant?.id)
+      const cart = await marketplaceService.addToCart(product.id, activeVariant?.id)
       setCart(cart)
+      setAddedFeedback(true)
+      setTimeout(() => setAddedFeedback(false), 2000)
     } catch {
       router.push('/alici-auth/giris')
     } finally {
@@ -69,13 +191,15 @@ export default function ProductDetailPage() {
     }
   }
 
+  const needsSelection = hasVariants && !allTypesSelected
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1 text-sm text-slate-400 mb-8">
         <Link href="/" className="hover:text-primary transition-colors">Ana Sayfa</Link>
         <ChevronRight className="w-3 h-3" />
-        <Link href="/kategori" className="hover:text-primary transition-colors">{product.categoryName ?? 'Kategori'}</Link>
+        <span className="hover:text-primary transition-colors cursor-pointer">{product.categoryName ?? 'Kategori'}</span>
         <ChevronRight className="w-3 h-3" />
         <span className="text-foreground font-medium truncate max-w-48">{product.name}</span>
       </nav>
@@ -104,10 +228,10 @@ export default function ProductDetailPage() {
           <div>
             <p className="text-sm text-primary font-medium mb-1">{product.categoryName}</p>
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground">{product.name}</h1>
-            <p className="text-sm text-slate-400 mt-1">SKU: {selectedVariant?.sku ?? product.sku}</p>
+            <p className="text-sm text-slate-400 mt-1">SKU: {activeVariant?.sku ?? product.sku}</p>
           </div>
 
-          {/* Rating placeholder */}
+          {/* Rating */}
           <div className="flex items-center gap-2">
             <div className="flex">
               {[1, 2, 3, 4, 5].map((s) => (
@@ -122,47 +246,50 @@ export default function ProductDetailPage() {
             <p className="text-3xl font-bold text-primary">
               {price.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
             </p>
-            <p className={`text-sm mt-1 ${inStock ? 'text-green-400' : 'text-red-400'}`}>
-              {inStock ? `Stokta var (${stock} adet)` : 'Stokta yok'}
-            </p>
+            {activeVariant && (
+              <p className={`text-sm mt-1 ${activeVariant.stockQuantity > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {activeVariant.stockQuantity > 0
+                  ? `Stokta var (${activeVariant.stockQuantity} adet)`
+                  : 'Stokta yok'}
+              </p>
+            )}
+            {!hasVariants && <p className="text-sm mt-1 text-green-400">Stokta var</p>}
           </div>
 
-          {/* Variant selector */}
-          {product.variants.length > 1 && (
-            <div>
-              <p className="text-sm font-medium text-foreground mb-2">Varyant seçin:</p>
-              <div className="flex flex-wrap gap-2">
-                {product.variants.map((v) => (
-                  <button
-                    key={v.id}
-                    onClick={() => setSelectedVariant(v)}
-                    className={`px-4 py-2 rounded-lg text-sm border transition-all ${
-                      selectedVariant?.id === v.id
-                        ? 'border-primary bg-primary/10 text-primary font-medium'
-                        : 'border-border text-foreground hover:border-primary'
-                    }`}
-                  >
-                    {v.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Variant selectors — grouped by type */}
+          {Object.entries(groups).map(([type, variants]) => (
+            <VariantSelector
+              key={type}
+              type={type}
+              variants={variants}
+              selected={selected[type]}
+              onSelect={(name) => handleSelect(type, name)}
+            />
+          ))}
 
-          {/* Actions */}
-          <div className="flex gap-3">
+          {/* Add to cart */}
+          <div className="flex gap-3 pt-2">
             <button
               onClick={handleAddToCart}
-              disabled={!inStock || adding}
+              disabled={!inStock || adding || needsSelection}
               className="flex-1 premium-button flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <ShoppingCart className={`w-4 h-4 ${adding ? 'animate-bounce' : ''}`} />
-              {adding ? 'Ekleniyor...' : inStock ? 'Sepete Ekle' : 'Stokta Yok'}
+              {addedFeedback ? (
+                <><Check className="w-4 h-4" /> Sepete Eklendi!</>
+              ) : adding ? (
+                <><ShoppingCart className="w-4 h-4 animate-bounce" /> Ekleniyor...</>
+              ) : needsSelection ? (
+                <><ShoppingCart className="w-4 h-4" /> {Object.keys(groups).filter(t => !selected[t]).join(', ')} seçin</>
+              ) : !inStock ? (
+                <><ShoppingCart className="w-4 h-4" /> Stokta Yok</>
+              ) : (
+                <><ShoppingCart className="w-4 h-4" /> Sepete Ekle</>
+              )}
             </button>
           </div>
 
           <p className="text-xs text-slate-500">
-            Satın almak için <Link href="/auth/login" className="text-primary hover:underline">giriş yapmanız</Link> gerekebilir.
+            Satın almak için <Link href="/alici-auth/giris" className="text-primary hover:underline">giriş yapmanız</Link> gerekebilir.
           </p>
         </div>
       </div>
@@ -193,12 +320,18 @@ export default function ProductDetailPage() {
             <div className="space-y-2">
               <div className="flex gap-4 text-sm">
                 <span className="text-slate-400 w-32 shrink-0">SKU</span>
-                <span className="text-foreground">{product.sku}</span>
+                <span className="text-foreground">{activeVariant?.sku ?? product.sku}</span>
               </div>
               <div className="flex gap-4 text-sm">
                 <span className="text-slate-400 w-32 shrink-0">Kategori</span>
                 <span className="text-foreground">{product.categoryName}</span>
               </div>
+              {Object.entries(selected).map(([type, val]) => (
+                <div key={type} className="flex gap-4 text-sm">
+                  <span className="text-slate-400 w-32 shrink-0">{type}</span>
+                  <span className="text-foreground">{val}</span>
+                </div>
+              ))}
               <div className="flex gap-4 text-sm">
                 <span className="text-slate-400 w-32 shrink-0">Varyant sayısı</span>
                 <span className="text-foreground">{product.variants.length}</span>

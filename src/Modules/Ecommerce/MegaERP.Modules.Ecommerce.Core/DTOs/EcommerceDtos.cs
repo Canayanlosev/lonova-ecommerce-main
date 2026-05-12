@@ -9,19 +9,26 @@ public record CategoryDto(Guid Id, string Name, string? Description, Guid? Paren
 public record CreateCategoryRequest(string Name, string? Description, Guid? ParentCategoryId);
 
 public record ProductDto(
-    Guid Id, 
-    string Name, 
-    string? Description, 
-    decimal BasePrice, 
-    string Sku, 
+    Guid Id,
+    string Name,
+    string? Description,
+    decimal BasePrice,
+    string Sku,
+    string? Slug,
+    string? ImageUrl,
     Guid CategoryId,
     List<ProductVariantDto> Variants);
 
-public record ProductVariantDto(Guid Id, string Name, string Sku, decimal PriceOverride, int StockQuantity);
+public record ProductVariantDto(Guid Id, string Name, string VariantType, string? ColorHex, string Sku, decimal PriceOverride, int StockQuantity);
+
+public record CreateVariantRequest(string Name, string VariantType, string? ColorHex, string Sku, decimal PriceOverride, int StockQuantity);
+public record UpdateVariantRequest(string Name, string VariantType, string? ColorHex, string Sku, decimal PriceOverride, int StockQuantity);
 
 public record CreateProductRequest(
-    string Name, 
-    string? Description, 
-    decimal BasePrice, 
-    string Sku, 
+    string Name,
+    string? Description,
+    decimal BasePrice,
+    string Sku,
+    string? Slug,
+    string? ImageUrl,
     Guid CategoryId);
