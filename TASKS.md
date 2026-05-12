@@ -21,7 +21,7 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 - [x] TASK-11: RBAC - Rol Tabanlı Yetkilendirme
 - [x] TASK-12: CORS + Rate Limiting + Güvenlik
 - [x] TASK-13: Catalog Module — N-seviye Kategori Ağacı
-- [ ] TASK-14: Marketplace Module — Public Ürün Listesi ve Arama API
+- [x] TASK-14: Marketplace Module — Public Ürün Listesi ve Arama API
 - [ ] TASK-15: Alıcı Auth — Marketplace Kullanıcı Kaydı ve JWT
 - [ ] TASK-16: Store (Mağaza) Modeli — Bir Tenant Çoklu Mağaza
 - [ ] TASK-17: WMS — Çoklu Depo ve Raf-Konum Hiyerarşisi

@@ -7,6 +7,7 @@ using MegaERP.Modules.Accounting.Infrastructure;
 using MegaERP.Modules.HR.Infrastructure;
 using MegaERP.Modules.Shipping.Infrastructure;
 using MegaERP.Modules.Catalog.Infrastructure;
+using MegaERP.Modules.Marketplace.Infrastructure;
 using MegaERP.Shared.Infrastructure;
 using MegaERP.Shared.Infrastructure.Middleware;
 using MegaERP.Shared.Infrastructure.Behaviors;
@@ -74,6 +75,7 @@ builder.Services.AddAccountingInfrastructure(builder.Configuration);
 builder.Services.AddHRInfrastructure(builder.Configuration);
 builder.Services.AddShippingInfrastructure(builder.Configuration);
 builder.Services.AddCatalogInfrastructure(builder.Configuration);
+builder.Services.AddMarketplaceInfrastructure(builder.Configuration);
 builder.Services.AddControllers();
 
 // MediatR Registration for all modules

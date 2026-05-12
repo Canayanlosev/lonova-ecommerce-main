@@ -33,6 +33,8 @@
     <ProjectReference Include="..\Modules\Shipping\MegaERP.Modules.Shipping.Api\MegaERP.Modules.Shipping.Api.csproj" />
     <ProjectReference Include="..\Modules\Catalog\MegaERP.Modules.Catalog.Infrastructure\MegaERP.Modules.Catalog.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Catalog\MegaERP.Modules.Catalog.Api\MegaERP.Modules.Catalog.Api.csproj" />
+    <ProjectReference Include="..\Modules\Marketplace\MegaERP.Modules.Marketplace.Infrastructure\MegaERP.Modules.Marketplace.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Marketplace\MegaERP.Modules.Marketplace.Api\MegaERP.Modules.Marketplace.Api.csproj" />
   </ItemGroup>
 
 </Project>

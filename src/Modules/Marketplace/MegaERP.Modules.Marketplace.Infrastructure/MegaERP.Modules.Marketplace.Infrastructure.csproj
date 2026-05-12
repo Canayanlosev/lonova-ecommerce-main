@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MegaERP.Modules.Marketplace.Core\MegaERP.Modules.Marketplace.Core.csproj" />
+    <ProjectReference Include="..\..\Ecommerce\MegaERP.Modules.Ecommerce.Infrastructure\MegaERP.Modules.Ecommerce.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Catalog\MegaERP.Modules.Catalog.Infrastructure\MegaERP.Modules.Catalog.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Shared\MegaERP.Shared.Infrastructure\MegaERP.Shared.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

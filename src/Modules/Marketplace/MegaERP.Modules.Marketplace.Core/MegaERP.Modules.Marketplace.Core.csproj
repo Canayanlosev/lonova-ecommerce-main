@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\MegaERP.Shared.Core\MegaERP.Shared.Core.csproj" />
+    <ProjectReference Include="..\..\Ecommerce\MegaERP.Modules.Ecommerce.Core\MegaERP.Modules.Ecommerce.Core.csproj" />
+    <ProjectReference Include="..\..\Catalog\MegaERP.Modules.Catalog.Core\MegaERP.Modules.Catalog.Core.csproj" />
+  </ItemGroup>
+
+</Project>
