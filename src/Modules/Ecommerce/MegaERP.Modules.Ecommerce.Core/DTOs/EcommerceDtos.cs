@@ -1,5 +1,9 @@
 namespace MegaERP.Modules.Ecommerce.Core.DTOs;
 
+public record StoreDto(Guid Id, string Name, string Slug, string? LogoUrl, bool IsActive);
+public record CreateStoreRequest(string Name, string Slug, string? LogoUrl, bool IsActive = true);
+public record UpdateStoreRequest(string Name, string Slug, string? LogoUrl, bool IsActive);
+
 public record CategoryDto(Guid Id, string Name, string? Description, Guid? ParentCategoryId);
 
 public record CreateCategoryRequest(string Name, string? Description, Guid? ParentCategoryId);

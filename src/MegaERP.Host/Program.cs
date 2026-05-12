@@ -33,6 +33,8 @@ using MegaERP.Modules.Shipping.Infrastructure.Persistence;
 using MegaERP.Modules.Catalog.Infrastructure.Persistence;
 using MegaERP.Modules.WMS.Infrastructure.Persistence;
 using MegaERP.Modules.SiteBuilder.Infrastructure.Persistence;
+using MegaERP.Modules.Marketplace.Infrastructure.Persistence;
+using MegaERP.Modules.Marketplace.Core.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,6 +82,7 @@ builder.Services.AddHRInfrastructure(builder.Configuration);
 builder.Services.AddShippingInfrastructure(builder.Configuration);
 builder.Services.AddCatalogInfrastructure(builder.Configuration);
 builder.Services.AddMarketplaceInfrastructure(builder.Configuration);
+builder.Services.AddScoped<IPasswordHasher<BuyerUser>, PasswordHasher<BuyerUser>>();
 builder.Services.AddWMSInfrastructure(builder.Configuration);
 builder.Services.AddSiteBuilderInfrastructure(builder.Configuration);
 builder.Services.AddControllers();
@@ -240,6 +243,7 @@ using (var scope = app.Services.CreateScope())
         services.GetRequiredService<CatalogDbContext>().Database.EnsureCreated();
         services.GetRequiredService<WMSDbContext>().Database.EnsureCreated();
         services.GetRequiredService<SiteBuilderDbContext>().Database.EnsureCreated();
+        services.GetRequiredService<MarketplaceDbContext>().Database.EnsureCreated();
     }
     catch (Exception ex)
     {

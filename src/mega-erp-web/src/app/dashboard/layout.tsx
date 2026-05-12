@@ -3,7 +3,8 @@
 import React from "react";
 import {
   LayoutDashboard, ShoppingCart, Users, CreditCard,
-  Package, Truck, Settings, LogOut, Bell, Menu, X, Receipt
+  Package, Truck, Settings, LogOut, Bell, Menu, X, Receipt,
+  Store, Warehouse, Layout
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -20,6 +21,9 @@ const navItems = [
   { icon: Users, label: "İK Yönetimi", href: "/dashboard/hr" },
   { icon: Truck, label: "Kargo", href: "/dashboard/shipping" },
   { icon: CreditCard, label: "Muhasebe", href: "/dashboard/accounting" },
+  { icon: Store, label: "Mağazalar", href: "/dashboard/stores" },
+  { icon: Warehouse, label: "Depo (WMS)", href: "/dashboard/wms" },
+  { icon: Layout, label: "Site Builder", href: "/dashboard/site-builder" },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {

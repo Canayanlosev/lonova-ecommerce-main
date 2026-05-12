@@ -1,3 +1,5 @@
+using MegaERP.Modules.Marketplace.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -7,7 +9,11 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddMarketplaceInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        // Marketplace module reads from EcommerceDbContext and CatalogDbContext (already registered)
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+        services.AddDbContext<MarketplaceDbContext>(options =>
+            options.UseNpgsql(connectionString));
+
         return services;
     }
 }

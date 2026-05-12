@@ -15,6 +15,7 @@ public class EcommerceDbContext : BaseDbContext
     public DbSet<Product> Products => Set<Product>();
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<ProductVariant> ProductVariants => Set<ProductVariant>();
+    public DbSet<Store> Stores => Set<Store>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -45,6 +46,15 @@ public class EcommerceDbContext : BaseDbContext
             entity.HasOne(e => e.Product)
                 .WithMany(p => p.Variants)
                 .HasForeignKey(e => e.ProductId);
+        });
+
+        modelBuilder.Entity<Store>(entity =>
+        {
+            entity.ToTable("Stores");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Slug).IsRequired().HasMaxLength(100);
+            entity.HasIndex(e => new { e.TenantId, e.Slug }).IsUnique();
         });
 
         base.OnModelCreating(modelBuilder);

@@ -22,8 +22,8 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 - [x] TASK-12: CORS + Rate Limiting + Güvenlik
 - [x] TASK-13: Catalog Module — N-seviye Kategori Ağacı
 - [x] TASK-14: Marketplace Module — Public Ürün Listesi ve Arama API
-- [ ] TASK-15: Alıcı Auth — Marketplace Kullanıcı Kaydı ve JWT
-- [ ] TASK-16: Store (Mağaza) Modeli — Bir Tenant Çoklu Mağaza
+- [x] TASK-15: Alıcı Auth — Marketplace Kullanıcı Kaydı ve JWT
+- [x] TASK-16: Store (Mağaza) Modeli — Bir Tenant Çoklu Mağaza
 - [x] TASK-17: WMS — Çoklu Depo ve Raf-Konum Hiyerarşisi
 - [x] TASK-18: WMS — Tedarikçi Yönetimi ve Satın Alma Siparişi (PO)
 - [x] TASK-19: SiteBuilder — Sayfa ve Blok Modeli
