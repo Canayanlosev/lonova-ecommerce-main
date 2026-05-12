@@ -3,8 +3,10 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ChevronRight, ShoppingCart, Star, Package } from 'lucide-react'
 import { marketplaceService, type MarketplaceProduct, type MarketplaceVariant } from '@/lib/services/marketplace.service'
+import { useBuyerCartStore } from '@/store/buyerCart.store'
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -14,6 +16,8 @@ export default function ProductDetailPage() {
   const [selectedVariant, setSelectedVariant] = useState<MarketplaceVariant | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'description' | 'specs'>('description')
+  const [adding, setAdding] = useState(false)
+  const setCart = useBuyerCartStore((s) => s.setCart)
 
   useEffect(() => {
     if (!id) return
@@ -47,14 +51,22 @@ export default function ProductDetailPage() {
   const stock = selectedVariant ? selectedVariant.stockQuantity : 99
   const inStock = stock > 0
 
-  const handleAddToCart = () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('auth-token') : null
+  const handleAddToCart = async () => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('buyer-token') : null
     if (!token) {
-      router.push('/auth/login')
+      router.push('/alici-auth/giris')
       return
     }
-    // TODO: integrate buyer cart API
-    alert('Sepete eklendi! (Alıcı cart entegrasyonu yakında)')
+    if (!product) return
+    setAdding(true)
+    try {
+      const cart = await marketplaceService.addToCart(product.id, selectedVariant?.id)
+      setCart(cart)
+    } catch {
+      router.push('/alici-auth/giris')
+    } finally {
+      setAdding(false)
+    }
   }
 
   return (
@@ -70,8 +82,21 @@ export default function ProductDetailPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
         {/* Product image */}
-        <div className="aspect-square bg-gradient-to-br from-slate-800 to-slate-700 rounded-2xl flex items-center justify-center">
-          <Package className="w-24 h-24 text-slate-500" />
+        <div className="aspect-square bg-gradient-to-br from-slate-800 to-slate-700 rounded-2xl overflow-hidden relative">
+          {product.imageUrl ? (
+            <Image
+              src={product.imageUrl}
+              alt={product.name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              priority
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <Package className="w-24 h-24 text-slate-500" />
+            </div>
+          )}
         </div>
 
         {/* Product info */}
@@ -128,11 +153,11 @@ export default function ProductDetailPage() {
           <div className="flex gap-3">
             <button
               onClick={handleAddToCart}
-              disabled={!inStock}
+              disabled={!inStock || adding}
               className="flex-1 premium-button flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <ShoppingCart className="w-4 h-4" />
-              {inStock ? 'Sepete Ekle' : 'Stokta Yok'}
+              <ShoppingCart className={`w-4 h-4 ${adding ? 'animate-bounce' : ''}`} />
+              {adding ? 'Ekleniyor...' : inStock ? 'Sepete Ekle' : 'Stokta Yok'}
             </button>
           </div>
 

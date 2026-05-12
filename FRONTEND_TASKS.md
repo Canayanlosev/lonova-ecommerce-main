@@ -694,3 +694,5 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 - Sayfa oluşturulup blok eklenebiliyor
 - Bloklar sürükle-bırak ile sıralanabiliyor
 - Yayınla butonu çalışıyor
+- [ ] FTASK-23: Marketplace Sepet UI — Mini-cart, /sepet sayfası, checkout
+- [ ] FTASK-24: Ürün Görseli Marketplace'te Göster

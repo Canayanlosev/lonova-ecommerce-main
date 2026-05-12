@@ -571,3 +571,6 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 **Tamamlanma Kriteri:**
 - `dotnet build` XML üretiyor
 - Swagger UI'da endpoint açıklamaları görünüyor
+- [ ] TASK-21: Ürün Görseli + Slug Alanları
+- [ ] TASK-22: Buyer Cart API — Alıcı Sepeti
+- [ ] TASK-23: Buyer Checkout + Sipariş Takibi

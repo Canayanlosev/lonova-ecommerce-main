@@ -35,6 +35,8 @@ using MegaERP.Modules.WMS.Infrastructure.Persistence;
 using MegaERP.Modules.SiteBuilder.Infrastructure.Persistence;
 using MegaERP.Modules.Marketplace.Infrastructure.Persistence;
 using MegaERP.Modules.Marketplace.Core.Entities;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -226,24 +228,41 @@ using (var scope = app.Services.CreateScope())
             var result = await userManager.CreateAsync(user, "67890memo");
             if (result.Succeeded)
                 await userManager.AddToRoleAsync(user, "Admin");
+            else
+                Console.WriteLine($"Seed user error: {string.Join(", ", result.Errors.Select(e => e.Description))}");
         }
         else if (!await userManager.IsInRoleAsync(existingUser, "Admin"))
         {
             await userManager.AddToRoleAsync(existingUser, "Admin");
         }
 
-        // Other contexts
-        services.GetRequiredService<CMSDbContext>().Database.EnsureCreated();
-        services.GetRequiredService<EcommerceDbContext>().Database.EnsureCreated();
-        services.GetRequiredService<SalesDbContext>().Database.EnsureCreated();
-        services.GetRequiredService<BillingDbContext>().Database.EnsureCreated();
-        services.GetRequiredService<AccountingDbContext>().Database.EnsureCreated();
-        services.GetRequiredService<HRDbContext>().Database.EnsureCreated();
-        services.GetRequiredService<ShippingDbContext>().Database.EnsureCreated();
-        services.GetRequiredService<CatalogDbContext>().Database.EnsureCreated();
-        services.GetRequiredService<WMSDbContext>().Database.EnsureCreated();
-        services.GetRequiredService<SiteBuilderDbContext>().Database.EnsureCreated();
-        services.GetRequiredService<MarketplaceDbContext>().Database.EnsureCreated();
+        // Other contexts — use CreateTables() to bypass EnsureCreated's HasTables() check
+        // which skips creation when ANY tables exist in the DB (Npgsql behavior).
+        // Each call is isolated so a duplicate-table error on one context doesn't block the rest.
+        static void EnsureSchema(Microsoft.EntityFrameworkCore.DbContext ctx)
+        {
+            try
+            {
+                var creator = (RelationalDatabaseCreator)ctx.Database.GetService<IDatabaseCreator>();
+                creator.CreateTables();
+            }
+            catch (Exception ex) when (ex.Message.Contains("already exists"))
+            {
+                // Tables already exist — safe to ignore on subsequent startups
+            }
+        }
+
+        EnsureSchema(services.GetRequiredService<CMSDbContext>());
+        EnsureSchema(services.GetRequiredService<EcommerceDbContext>());
+        EnsureSchema(services.GetRequiredService<SalesDbContext>());
+        EnsureSchema(services.GetRequiredService<BillingDbContext>());
+        EnsureSchema(services.GetRequiredService<AccountingDbContext>());
+        EnsureSchema(services.GetRequiredService<HRDbContext>());
+        EnsureSchema(services.GetRequiredService<ShippingDbContext>());
+        EnsureSchema(services.GetRequiredService<CatalogDbContext>());
+        EnsureSchema(services.GetRequiredService<WMSDbContext>());
+        EnsureSchema(services.GetRequiredService<SiteBuilderDbContext>());
+        EnsureSchema(services.GetRequiredService<MarketplaceDbContext>());
     }
     catch (Exception ex)
     {

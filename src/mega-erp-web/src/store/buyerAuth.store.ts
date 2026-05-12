@@ -23,13 +23,15 @@ export const useBuyerAuthStore = create<BuyerAuthState>()(
       buyer: null,
       isAuthenticated: false,
       login: (token, buyer) => {
-        if (typeof document !== 'undefined') {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('buyer-token', token)
           document.cookie = `buyer-token=${token}; path=/; max-age=${60 * 60 * 8}; SameSite=Strict`
         }
         set({ token, buyer, isAuthenticated: true })
       },
       logout: () => {
-        if (typeof document !== 'undefined') {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('buyer-token')
           document.cookie = 'buyer-token=; path=/; max-age=0'
         }
         set({ token: null, buyer: null, isAuthenticated: false })
