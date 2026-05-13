@@ -63,6 +63,10 @@ public record CheckoutResponse(
 
 public record InstallmentOption(int Count, decimal MonthlyAmount, decimal TotalAmount, string Label);
 
+public record CreateReviewRequest(int Rating, string? Comment);
+public record ProductReviewDto(Guid Id, Guid BuyerUserId, string BuyerName, int Rating, string? Comment, DateTime CreatedAt);
+public record ProductReviewsResponse(List<ProductReviewDto> Items, int TotalCount, decimal AverageRating, int Page, int PageSize);
+
 public record MarketplaceProductDto(
     Guid Id,
     string Name,
@@ -73,7 +77,9 @@ public record MarketplaceProductDto(
     decimal BasePrice,
     Guid CategoryId,
     string? CategoryName,
-    List<MarketplaceVariantDto> Variants
+    List<MarketplaceVariantDto> Variants,
+    decimal AverageRating = 0,
+    int ReviewCount = 0
 );
 
 public record MarketplaceVariantDto(

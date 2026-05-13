@@ -1,6 +1,7 @@
 using MegaERP.Modules.Catalog.Infrastructure.Persistence;
 using MegaERP.Modules.Ecommerce.Infrastructure.Persistence;
 using MegaERP.Modules.Marketplace.Core.DTOs;
+using MegaERP.Modules.Marketplace.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +15,13 @@ public class MarketplaceProductsController : ControllerBase
 {
     private readonly EcommerceDbContext _ecommerceContext;
     private readonly CatalogDbContext _catalogContext;
+    private readonly MarketplaceDbContext _mkt;
 
-    public MarketplaceProductsController(EcommerceDbContext ecommerceContext, CatalogDbContext catalogContext)
+    public MarketplaceProductsController(EcommerceDbContext ecommerceContext, CatalogDbContext catalogContext, MarketplaceDbContext mkt)
     {
         _ecommerceContext = ecommerceContext;
         _catalogContext = catalogContext;
+        _mkt = mkt;
     }
 
     /// <summary>Lists marketplace products with optional filtering and pagination. No authentication required.</summary>
@@ -67,11 +70,24 @@ public class MarketplaceProductsController : ControllerBase
             .Take(pageSize)
             .ToListAsync();
 
-        var items = products.Select(p => new MarketplaceProductDto(
-            p.Id, p.Name, p.Description, p.Sku, p.Slug, p.ImageUrl,
-            p.BasePrice, p.CategoryId, p.Category?.Name,
-            p.Variants.Select(v => new MarketplaceVariantDto(v.Id, v.Name, v.VariantType, v.ColorHex, v.Sku, v.PriceOverride > 0 ? v.PriceOverride : p.BasePrice, v.StockQuantity)).ToList()
-        )).ToList();
+        var productIds = products.Select(p => p.Id).ToList();
+        var reviewStats = await _mkt.ProductReviews
+            .Where(r => productIds.Contains(r.ProductId))
+            .GroupBy(r => r.ProductId)
+            .Select(g => new { ProductId = g.Key, Avg = g.Average(r => (double)r.Rating), Count = g.Count() })
+            .ToListAsync();
+
+        var items = products.Select(p =>
+        {
+            var stats = reviewStats.FirstOrDefault(s => s.ProductId == p.Id);
+            return new MarketplaceProductDto(
+                p.Id, p.Name, p.Description, p.Sku, p.Slug, p.ImageUrl,
+                p.BasePrice, p.CategoryId, p.Category?.Name,
+                p.Variants.Select(v => new MarketplaceVariantDto(v.Id, v.Name, v.VariantType, v.ColorHex, v.Sku, v.PriceOverride > 0 ? v.PriceOverride : p.BasePrice, v.StockQuantity)).ToList(),
+                stats is not null ? (decimal)Math.Round(stats.Avg, 1) : 0,
+                stats?.Count ?? 0
+            );
+        }).ToList();
 
         return Ok(new MarketplaceProductListResponse(items, totalCount, page, pageSize));
     }
@@ -88,10 +104,14 @@ public class MarketplaceProductsController : ControllerBase
         if (p is null)
             throw new KeyNotFoundException($"Ürün bulunamadı: {id}");
 
+        var reviews = await _mkt.ProductReviews.Where(r => r.ProductId == id).ToListAsync();
+        var avgRating = reviews.Count > 0 ? (decimal)Math.Round(reviews.Average(r => (double)r.Rating), 1) : 0;
+
         return Ok(new MarketplaceProductDto(
             p.Id, p.Name, p.Description, p.Sku, p.Slug, p.ImageUrl,
             p.BasePrice, p.CategoryId, p.Category?.Name,
-            p.Variants.Select(v => new MarketplaceVariantDto(v.Id, v.Name, v.VariantType, v.ColorHex, v.Sku, v.PriceOverride > 0 ? v.PriceOverride : p.BasePrice, v.StockQuantity)).ToList()
+            p.Variants.Select(v => new MarketplaceVariantDto(v.Id, v.Name, v.VariantType, v.ColorHex, v.Sku, v.PriceOverride > 0 ? v.PriceOverride : p.BasePrice, v.StockQuantity)).ToList(),
+            avgRating, reviews.Count
         ));
     }
 

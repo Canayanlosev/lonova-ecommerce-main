@@ -33,6 +33,25 @@ export interface MarketplaceProduct {
   categoryId: string
   categoryName?: string
   variants: MarketplaceVariant[]
+  averageRating: number
+  reviewCount: number
+}
+
+export interface ProductReviewDto {
+  id: string
+  buyerUserId: string
+  buyerName: string
+  rating: number
+  comment?: string
+  createdAt: string
+}
+
+export interface ProductReviewsResponse {
+  items: ProductReviewDto[]
+  totalCount: number
+  averageRating: number
+  page: number
+  pageSize: number
 }
 
 export interface MarketplaceProductListResponse {
@@ -211,5 +230,20 @@ export const marketplaceService = {
   getOrders: async (): Promise<BuyerOrderDto[]> => {
     const { data } = await buyerApi().get('/api/marketplace/orders')
     return data
+  },
+
+  // Reviews
+  getReviews: async (productId: string, page = 1, pageSize = 10): Promise<ProductReviewsResponse> => {
+    const { data } = await publicApi.get(`/api/marketplace/products/${productId}/reviews?page=${page}&pageSize=${pageSize}`)
+    return data
+  },
+
+  createReview: async (productId: string, rating: number, comment?: string): Promise<ProductReviewDto> => {
+    const { data } = await buyerApi().post(`/api/marketplace/products/${productId}/reviews`, { rating, comment })
+    return data
+  },
+
+  deleteReview: async (productId: string, reviewId: string): Promise<void> => {
+    await buyerApi().delete(`/api/marketplace/products/${productId}/reviews/${reviewId}`)
   },
 }

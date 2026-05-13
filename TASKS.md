@@ -571,6 +571,43 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 **Tamamlanma Kriteri:**
 - `dotnet build` XML üretiyor
 - Swagger UI'da endpoint açıklamaları görünüyor
-- [ ] TASK-21: Ürün Görseli + Slug Alanları
-- [ ] TASK-22: Buyer Cart API — Alıcı Sepeti
-- [ ] TASK-23: Buyer Checkout + Sipariş Takibi
+- [x] TASK-21: Ürün Görseli + Slug Alanları
+- [x] TASK-22: Buyer Cart API — Alıcı Sepeti
+- [x] TASK-23: Buyer Checkout + Sipariş Takibi
+
+- [ ] TASK-24: Sipariş İptal ve İade Talebi
+  Hedef: Alıcı Pending/Processing siparişini iptal edebilsin; iade talebi oluşturabilsin.
+  Dosyalar: BuyerOrdersController.cs, BuyerOrder.cs, MarketplaceDtos.cs
+  Adımlar:
+    1. BuyerOrder'a CancelledAt, CancelReason, RefundStatus alanları ekle
+    2. PUT /api/marketplace/orders/{id}/cancel — sadece Pending/Processing ise izin ver
+    3. POST /api/marketplace/orders/{id}/refund-request — RefundStatus=Requested
+    4. SQL migration (ALTER TABLE)
+
+- [ ] TASK-25: Ürün Yorumları ve Puan Sistemi
+  Hedef: Alıcılar satın aldıkları ürüne yorum + 1-5 yıldız bırakabilsin.
+  Dosyalar: Marketplace modülü — yeni ProductReview entity + controller
+  Adımlar:
+    1. ProductReview entity (Id, ProductId, BuyerUserId, Rating, Comment, CreatedAt)
+    2. MarketplaceDbContext'e ekle + EnsureSchema
+    3. POST /api/marketplace/products/{id}/reviews (auth gerekli, bir kez)
+    4. GET /api/marketplace/products/{id}/reviews (public, sayfalı)
+    5. Ürün listesinde averageRating + reviewCount dön
+
+- [ ] TASK-26: Sipariş Kargolama — Takip Numarası ve Durum Güncellemesi
+  Hedef: Firma panelinden sipariş kargoya verildiğinde takip no girilebilsin.
+  Dosyalar: BuyerOrdersController.cs veya yeni AdminOrdersController.cs
+  Adımlar:
+    1. BuyerOrder'a TrackingNumber, CarrierName alanları ekle
+    2. PUT /api/marketplace/admin/orders/{id}/ship (firm JWT, rol kontrolü)
+    3. Status → Shipped, TrackingNumber set et
+    4. GET /api/marketplace/admin/orders — firm'ın tüm siparişleri (sayfalı)
+
+- [ ] TASK-27: Alıcı Adres Defteri
+  Hedef: Alıcı birden fazla teslimat adresi kaydedip ödeme sırasında seçebilsin.
+  Dosyalar: Marketplace modülü — yeni BuyerAddress entity + controller
+  Adımlar:
+    1. BuyerAddress entity (Id, BuyerUserId, Title, RecipientName, Phone, City, District, AddressLine, PostalCode, IsDefault)
+    2. CRUD /api/marketplace/addresses
+    3. PUT /api/marketplace/addresses/{id}/set-default
+    4. Checkout isteğinde AddressId ile mevcut adres kullanılabilsin

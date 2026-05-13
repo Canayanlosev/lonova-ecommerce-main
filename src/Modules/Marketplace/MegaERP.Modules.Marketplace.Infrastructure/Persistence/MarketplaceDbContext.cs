@@ -11,6 +11,7 @@ public class MarketplaceDbContext : DbContext
     public DbSet<BuyerCartItem> CartItems => Set<BuyerCartItem>();
     public DbSet<BuyerOrder> Orders => Set<BuyerOrder>();
     public DbSet<BuyerOrderItem> OrderItems => Set<BuyerOrderItem>();
+    public DbSet<ProductReview> ProductReviews => Set<ProductReview>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -49,6 +50,15 @@ public class MarketplaceDbContext : DbContext
         {
             e.ToTable("OrderItems");
             e.HasKey(x => x.Id);
+        });
+
+        modelBuilder.Entity<ProductReview>(e =>
+        {
+            e.ToTable("ProductReviews");
+            e.HasKey(x => x.Id);
+            e.HasIndex(x => new { x.ProductId, x.BuyerUserId }).IsUnique();
+            e.Property(x => x.Comment).HasMaxLength(1000);
+            e.Property(x => x.BuyerName).HasMaxLength(200);
         });
     }
 }

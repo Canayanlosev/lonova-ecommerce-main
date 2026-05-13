@@ -694,5 +694,43 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 - Sayfa oluşturulup blok eklenebiliyor
 - Bloklar sürükle-bırak ile sıralanabiliyor
 - Yayınla butonu çalışıyor
-- [ ] FTASK-23: Marketplace Sepet UI — Mini-cart, /sepet sayfası, checkout
-- [ ] FTASK-24: Ürün Görseli Marketplace'te Göster
+- [x] FTASK-23: Marketplace Sepet UI — Mini-cart, /sepet sayfası, checkout
+- [x] FTASK-24: Ürün Görseli Marketplace'te Göster
+
+- [ ] FTASK-25: Ürün Yorum ve Puan UI
+  Hedef: Ürün detay sayfasında yorumlar sekmesi; giriş yapmış alıcılar yorum yazabilsin.
+  Dosyalar: src/app/(marketplace)/urun/[id]/page.tsx
+  Adımlar:
+    1. Ürün detay sayfasına "Yorumlar" tab'ı ekle
+    2. Yıldız rating input bileşeni (1-5, hover efektli)
+    3. Yorum listesi: kullanıcı adı baş harfleri avatar, tarih, puan yıldızları, metin
+    4. Yorum formu: sadece giriş yapmış alıcılara göster
+    5. Ortalama puan + kaç yorum olduğu ürün başlığının altında göster
+
+- [ ] FTASK-26: Marketplace Arama Sayfası
+  Hedef: /ara?q=... sayfası — anlık arama sonuçları, filtreler, kategori drill-down.
+  Dosyalar: src/app/(marketplace)/ara/page.tsx
+  Adımlar:
+    1. URL'deki ?q= parametresini oku, /api/marketplace/products?search= ile çek
+    2. Sonuç grid'i (ProductCard bileşeni yeniden kullan)
+    3. Sol panel: fiyat aralığı slider, kategori filtresi
+    4. Sıralama dropdown: en düşük/yüksek fiyat, en yeni
+    5. Boş sonuç state: "... için sonuç bulunamadı" + öneriler
+
+- [ ] FTASK-27: Sipariş İptal ve Takip Numarası UI
+  Hedef: /hesabim/siparisler'de iptal butonu + kargo takip numarası göster.
+  Dosyalar: src/app/(marketplace)/hesabim/siparisler/page.tsx
+  Adımlar:
+    1. Pending/Processing siparişlerde "Siparişi İptal Et" butonu göster
+    2. İptal onay dialog'u (iptal sebebi dropdown)
+    3. Shipped siparişlerde kargo firma + takip no göster
+    4. marketplaceService'e cancelOrder() metodu ekle
+
+- [ ] FTASK-28: Dashboard Satış Analitik Sayfası
+  Hedef: /dashboard/analytics — günlük gelir grafiği, top ürünler, sipariş sayıları.
+  Dosyalar: src/app/dashboard/analytics/page.tsx
+  Adımlar:
+    1. Son 30 günlük günlük gelir çizgi grafiği (Recharts LineChart)
+    2. En çok satan 5 ürün bar grafiği
+    3. Özet kartlar: toplam gelir, sipariş sayısı, ortalama sepet, aktif alıcı
+    4. /api/marketplace/admin/analytics endpoint'ini çağır (TASK-26 ile birlikte)
