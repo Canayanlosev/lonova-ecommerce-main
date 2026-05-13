@@ -93,8 +93,57 @@ export interface BuyerOrderDto {
   id: string
   totalAmount: number
   status: string
+  paymentStatus: string
+  paymentMethod: string
+  installmentCount: number
+  installmentAmount: number
+  cardLastFour?: string
+  cardBrand?: string
+  recipientName: string
+  phone: string
+  city: string
+  district: string
+  addressLine: string
+  postalCode: string
   createdAt: string
   items: BuyerOrderItemDto[]
+}
+
+export interface CheckoutAddress {
+  recipientName: string
+  phone: string
+  city: string
+  district: string
+  addressLine: string
+  postalCode: string
+}
+
+export interface CheckoutCard {
+  cardNumber: string
+  cardHolder: string
+  expiryMonth: string
+  expiryYear: string
+  cvv: string
+  installmentCount: number
+}
+
+export interface CheckoutRequest {
+  address: CheckoutAddress
+  paymentMethod: 'Card' | 'BankTransfer' | 'CashOnDelivery'
+  card?: CheckoutCard
+}
+
+export interface CheckoutResponse {
+  success: boolean
+  errorMessage?: string
+  order?: BuyerOrderDto
+}
+
+export interface InstallmentOption {
+  count: number
+  monthlyAmount: number
+  totalAmount: number
+  label: string
 }
 
 export const marketplaceService = {
@@ -148,8 +197,13 @@ export const marketplaceService = {
     await buyerApi().delete('/api/marketplace/cart')
   },
 
-  checkout: async (): Promise<BuyerOrderDto> => {
-    const { data } = await buyerApi().post('/api/marketplace/cart/checkout')
+  checkout: async (request: CheckoutRequest): Promise<CheckoutResponse> => {
+    const { data } = await buyerApi().post('/api/marketplace/checkout', request)
+    return data
+  },
+
+  getInstallments: async (amount: number): Promise<InstallmentOption[]> => {
+    const { data } = await buyerApi().get(`/api/marketplace/checkout/installments?amount=${amount}`)
     return data
   },
 

@@ -14,7 +14,6 @@ export default function CartPage() {
   const { items, total, setCart, clear } = useBuyerCartStore()
   const { isAuthenticated } = useBuyerAuthStore()
   const [loading, setLoading] = useState(true)
-  const [checkingOut, setCheckingOut] = useState(false)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -41,17 +40,8 @@ export default function CartPage() {
     setCart(cart)
   }
 
-  const handleCheckout = async () => {
-    setCheckingOut(true)
-    try {
-      await marketplaceService.checkout()
-      clear()
-      router.push('/hesabim/siparisler')
-    } catch {
-      alert('Sipariş oluşturulurken hata oluştu.')
-    } finally {
-      setCheckingOut(false)
-    }
+  const handleCheckout = () => {
+    router.push('/odeme')
   }
 
   if (loading) {
@@ -153,10 +143,9 @@ export default function CartPage() {
           </div>
           <button
             onClick={handleCheckout}
-            disabled={checkingOut}
-            className="w-full premium-button flex items-center justify-center gap-2 disabled:opacity-60"
+            className="w-full premium-button flex items-center justify-center gap-2"
           >
-            {checkingOut ? 'Sipariş oluşturuluyor...' : 'Siparişi Tamamla'}
+            Ödemeye Geç
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

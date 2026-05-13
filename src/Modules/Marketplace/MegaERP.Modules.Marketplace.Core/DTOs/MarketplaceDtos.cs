@@ -9,7 +9,59 @@ public record CartItemDto(Guid Id, Guid ProductId, Guid? VariantId, string Produ
 public record CartDto(List<CartItemDto> Items, decimal Total, int ItemCount);
 
 public record BuyerOrderItemDto(Guid ProductId, Guid? VariantId, string ProductName, string? VariantName, string? ImageUrl, decimal UnitPrice, int Quantity);
-public record BuyerOrderDto(Guid Id, decimal TotalAmount, string Status, DateTime CreatedAt, List<BuyerOrderItemDto> Items);
+
+public record BuyerOrderDto(
+    Guid Id,
+    decimal TotalAmount,
+    string Status,
+    string PaymentStatus,
+    string PaymentMethod,
+    int InstallmentCount,
+    decimal InstallmentAmount,
+    string? CardLastFour,
+    string? CardBrand,
+    string RecipientName,
+    string Phone,
+    string City,
+    string District,
+    string AddressLine,
+    string PostalCode,
+    DateTime CreatedAt,
+    List<BuyerOrderItemDto> Items
+);
+
+public record CheckoutAddressDto(
+    string RecipientName,
+    string Phone,
+    string City,
+    string District,
+    string AddressLine,
+    string PostalCode
+);
+
+// Card payment — CardNumber is plaintext, we store only last 4
+public record CheckoutCardDto(
+    string CardNumber,
+    string CardHolder,
+    string ExpiryMonth,
+    string ExpiryYear,
+    string Cvv,
+    int InstallmentCount = 1
+);
+
+public record CheckoutRequest(
+    CheckoutAddressDto Address,
+    string PaymentMethod,          // Card | BankTransfer | CashOnDelivery
+    CheckoutCardDto? Card          // required when PaymentMethod == "Card"
+);
+
+public record CheckoutResponse(
+    bool Success,
+    string? ErrorMessage,
+    BuyerOrderDto? Order
+);
+
+public record InstallmentOption(int Count, decimal MonthlyAmount, decimal TotalAmount, string Label);
 
 public record MarketplaceProductDto(
     Guid Id,
