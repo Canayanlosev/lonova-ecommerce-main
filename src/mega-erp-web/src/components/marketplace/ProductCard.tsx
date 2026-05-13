@@ -67,9 +67,11 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <div className="flex items-center gap-1 mb-3">
           {[1, 2, 3, 4, 5].map((s) => (
-            <Star key={s} className={`w-3 h-3 ${s <= 4 ? 'text-yellow-400 fill-yellow-400' : 'text-slate-600'}`} />
+            <Star key={s} className={`w-3 h-3 ${s <= Math.round(product.averageRating) ? 'text-yellow-400 fill-yellow-400' : 'text-slate-600'}`} />
           ))}
-          <span className="text-xs text-slate-400 ml-1">(24)</span>
+          {product.reviewCount > 0
+            ? <span className="text-xs text-slate-400 ml-1">({product.reviewCount})</span>
+            : <span className="text-xs text-slate-600 ml-1">Yorum yok</span>}
         </div>
 
         <div className="flex items-center justify-between">
