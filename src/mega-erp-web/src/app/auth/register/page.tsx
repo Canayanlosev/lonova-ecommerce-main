@@ -54,11 +54,16 @@ export default function RegisterPage() {
 
       <Card className="w-full max-w-md shadow-2xl border-indigo-500/10">
         <CardHeader className="text-center">
-          <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/30">
-            <UserPlus className="text-white w-8 h-8" />
+          <div className="inline-flex items-center gap-2.5 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-500/25">
+              <span className="text-white font-black text-base">C</span>
+            </div>
+            <span className="font-black text-xl tracking-tight">
+              <span className="text-foreground">Canayan</span><span className="text-blue-500">Web</span>
+            </span>
           </div>
-          <CardTitle className="text-3xl tracking-tight">Hesap Oluştur</CardTitle>
-          <p className="text-slate-500 dark:text-slate-400 text-sm">MegaERP'e katılın</p>
+          <CardTitle className="text-3xl tracking-tight">Firma Kaydı</CardTitle>
+          <p className="text-slate-500 dark:text-slate-400 text-sm">CanayanWeb'e ücretsiz katılın</p>
         </CardHeader>
         <CardContent>
           {success ? (

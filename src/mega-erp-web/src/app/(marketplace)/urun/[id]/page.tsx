@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronRight, ShoppingCart, Star, Package, Check, Send, Trash2 } from 'lucide-react'
+import { ChevronRight, ShoppingCart, Star, Package, Check, Send, Trash2, ZoomIn, X } from 'lucide-react'
 import {
   marketplaceService,
   type MarketplaceProduct,
@@ -150,6 +150,7 @@ export default function ProductDetailPage() {
 
   const [product, setProduct] = useState<MarketplaceProduct | null>(null)
   const [loading, setLoading] = useState(true)
+  const [zoomOpen, setZoomOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<'description' | 'specs' | 'reviews'>('description')
   const [adding, setAdding] = useState(false)
   const [addedFeedback, setAddedFeedback] = useState(false)
@@ -270,15 +271,50 @@ export default function ProductDetailPage() {
       </nav>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
-        <div className="aspect-square bg-gradient-to-br from-slate-800 to-slate-700 rounded-2xl overflow-hidden relative">
+        <div
+          className={`aspect-square bg-gradient-to-br from-slate-800 to-slate-700 rounded-2xl overflow-hidden relative group/img ${product.imageUrl ? 'cursor-zoom-in' : ''}`}
+          onClick={() => product.imageUrl && setZoomOpen(true)}
+        >
           {product.imageUrl ? (
-            <Image src={product.imageUrl} alt={product.name} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" priority />
+            <>
+              <Image src={product.imageUrl} alt={product.name} fill className="object-cover group-hover/img:scale-105 transition-transform duration-300" sizes="(max-width: 1024px) 100vw, 50vw" priority />
+              <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/20 transition-colors flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-white/0 group-hover/img:bg-white/20 flex items-center justify-center transition-all opacity-0 group-hover/img:opacity-100 backdrop-blur-sm">
+                  <ZoomIn className="w-5 h-5 text-white" />
+                </div>
+              </div>
+            </>
           ) : (
             <div className="w-full h-full flex items-center justify-center">
               <Package className="w-24 h-24 text-slate-500" />
             </div>
           )}
         </div>
+
+        {/* Lightbox */}
+        {zoomOpen && product.imageUrl && (
+          <div
+            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+            onClick={() => setZoomOpen(false)}
+          >
+            <button
+              className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+              onClick={() => setZoomOpen(false)}
+            >
+              <X className="w-5 h-5 text-white" />
+            </button>
+            <div className="relative max-w-3xl max-h-[85vh] w-full h-full" onClick={e => e.stopPropagation()}>
+              <Image
+                src={product.imageUrl}
+                alt={product.name}
+                fill
+                className="object-contain"
+                sizes="90vw"
+                priority
+              />
+            </div>
+          </div>
+        )}
 
         <div className="space-y-6">
           <div>

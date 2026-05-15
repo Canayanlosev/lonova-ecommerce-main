@@ -3,8 +3,8 @@ import { MarketplaceNavbar } from '@/components/marketplace/MarketplaceNavbar'
 import { MarketplaceFooter } from '@/components/marketplace/MarketplaceFooter'
 
 export const metadata: Metadata = {
-  title: 'Lonova Marketplace',
-  description: 'Binlerce ürün, en uygun fiyatlarla.',
+  title: 'CanayanWeb | Kurumsal Ticaret Platformu',
+  description: 'Binlerce ürün, güvenilir satıcılar ve kurumsal çözümler.',
 }
 
 export default function MarketplaceLayout({ children }: { children: React.ReactNode }) {

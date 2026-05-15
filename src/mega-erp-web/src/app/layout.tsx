@@ -9,8 +9,8 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "MegaERP | Next-Gen Enterprise System",
-  description: "Highly scalable, modular, multi-tenant ERP ecosystem.",
+  title: "CanayanWeb | Kurumsal Ticaret Platformu",
+  description: "Türkiye'nin en güçlü kurumsal ticaret ve yönetim platformu.",
 };
 
 export default function RootLayout({
@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="tr" className="dark">
       <body className={`${outfit.variable} font-sans antialiased`}>
         {children}
         <ToastContainer />

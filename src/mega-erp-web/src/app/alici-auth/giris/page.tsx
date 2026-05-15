@@ -43,11 +43,13 @@ export default function BuyerLoginPage() {
       >
         <div className="premium-card p-8">
           <div className="text-center mb-8">
-            <Link href="/" className="inline-flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-                <Store className="w-5 h-5 text-white" />
+            <Link href="/" className="inline-flex items-center gap-2.5 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-500/25">
+                <span className="text-white font-black text-base">C</span>
               </div>
-              <span className="font-bold text-xl text-foreground">Lonova</span>
+              <span className="font-black text-xl tracking-tight">
+                <span className="text-foreground">Canayan</span><span className="text-blue-500">Web</span>
+              </span>
             </Link>
             <h1 className="text-2xl font-bold text-foreground">Alıcı Girişi</h1>
             <p className="text-sm text-slate-400 mt-1">Marketplace hesabınıza giriş yapın</p>

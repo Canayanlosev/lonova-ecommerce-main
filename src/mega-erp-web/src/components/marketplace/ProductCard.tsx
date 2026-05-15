@@ -18,9 +18,16 @@ export function ProductCard({ product }: ProductCardProps) {
   const setCart = useBuyerCartStore((s) => s.setCart)
   const [adding, setAdding] = useState(false)
 
-  const price = product.variants.length > 0
-    ? Math.min(...product.variants.map((v) => v.price))
-    : product.basePrice
+  const variantPrices = product.variants.map(v => v.price)
+  const price = variantPrices.length > 0 ? Math.min(...variantPrices) : product.basePrice
+  const minVariantPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : product.basePrice
+  const discountPercent = product.basePrice > 0 && minVariantPrice < product.basePrice
+    ? Math.round((1 - minVariantPrice / product.basePrice) * 100)
+    : 0
+  const allStocks = product.variants.map(v => v.stockQuantity)
+  const isOutOfStock = allStocks.length > 0 && allStocks.every(q => q === 0)
+  const minStock = allStocks.length > 0 ? Math.min(...allStocks.filter(q => q > 0)) : null
+  const isLowStock = !isOutOfStock && minStock !== null && minStock <= 5
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault()
@@ -49,12 +56,32 @@ export function ProductCard({ product }: ProductCardProps) {
             src={product.imageUrl}
             alt={product.name}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            className={`object-cover group-hover:scale-105 transition-transform duration-300 ${isOutOfStock ? 'opacity-50' : ''}`}
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <Package className="w-10 h-10 text-slate-500" />
+          </div>
+        )}
+        {/* İndirim badge */}
+        {discountPercent > 0 && !isOutOfStock && (
+          <span className="absolute top-2 left-2 px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-lg z-10 shadow-sm">
+            %{discountPercent} İndirim
+          </span>
+        )}
+        {/* Düşük stok badge */}
+        {isLowStock && (
+          <span className="absolute bottom-2 right-2 px-2 py-0.5 bg-amber-500/90 text-white text-[10px] font-semibold rounded-lg z-10 shadow-sm">
+            Son {minStock} adet
+          </span>
+        )}
+        {/* Tükendi overlay */}
+        {isOutOfStock && (
+          <div className="absolute inset-0 bg-background/65 flex items-center justify-center z-10">
+            <span className="px-3 py-1 rounded-lg bg-slate-800/80 text-white text-xs font-bold border border-slate-700">
+              Tükendi
+            </span>
           </div>
         )}
       </div>
@@ -80,8 +107,9 @@ export function ProductCard({ product }: ProductCardProps) {
           </span>
           <button
             onClick={handleAddToCart}
-            disabled={adding}
-            className="w-8 h-8 rounded-lg bg-primary/10 hover:bg-primary flex items-center justify-center transition-colors group/btn disabled:opacity-50"
+            disabled={adding || isOutOfStock}
+            title={isOutOfStock ? 'Stokta yok' : 'Sepete ekle'}
+            className="w-8 h-8 rounded-lg bg-primary/10 hover:bg-primary flex items-center justify-center transition-colors group/btn disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <ShoppingCart className={`w-4 h-4 text-primary group-hover/btn:text-white transition-colors ${adding ? 'animate-spin' : ''}`} />
           </button>
