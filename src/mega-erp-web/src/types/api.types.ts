@@ -4,7 +4,8 @@ export interface RegisterRequest { email: string; password: string; firstName: s
 export interface AuthResponse { token: string; email: string; firstName: string; lastName: string }
 
 // Ecommerce
-export interface Category { id: string; name: string; description?: string }
+export interface Category { id: string; name: string; description?: string; parentCategoryId?: string | null }
+export interface CreateCategoryRequest { name: string; description?: string; parentCategoryId?: string | null }
 export interface ProductVariant { id: string; sku: string; name: string; priceDifference: number; stockQuantity: number }
 export interface Product {
   id: string; name: string; description?: string; basePrice: number; sku: string
