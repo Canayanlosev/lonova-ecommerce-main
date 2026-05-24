@@ -7,7 +7,7 @@ import { MapPin, CreditCard, Banknote, Truck, ChevronRight, Check, Lock, AlertCi
 import {
   marketplaceService,
   type CheckoutAddress, type CheckoutCard,
-  type InstallmentOption, type BuyerOrderDto
+  type InstallmentOption, type BuyerOrderDto, type BuyerAddressDto
 } from '@/lib/services/marketplace.service'
 import { useBuyerCartStore } from '@/store/buyerCart.store'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
@@ -56,6 +56,31 @@ export default function OdemePage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [order, setOrder] = useState<BuyerOrderDto | null>(null)
+
+  // Saved addresses
+  const [savedAddresses, setSavedAddresses] = useState<BuyerAddressDto[]>([])
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null)
+
+  // Load saved addresses on mount
+  useEffect(() => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('buyer-token') : null
+    if (!token) return
+    marketplaceService.getAddresses().then((addrs) => {
+      setSavedAddresses(addrs)
+      const def = addrs.find(a => a.isDefault)
+      if (def) {
+        setSelectedAddressId(def.id)
+        setAddress({
+          recipientName: def.recipientName,
+          phone: def.phone,
+          city: def.city,
+          district: def.district,
+          addressLine: def.addressLine,
+          postalCode: def.postalCode,
+        })
+      }
+    }).catch(() => {})
+  }, [])
 
   // Coupon state
   const [couponCode, setCouponCode] = useState('')
@@ -258,6 +283,57 @@ export default function OdemePage() {
           {step === 'address' && (
             <div className="premium-card p-6 space-y-4">
               <h2 className="text-lg font-semibold flex items-center gap-2"><MapPin className="w-5 h-5 text-primary" />Teslimat Adresi</h2>
+
+              {/* Saved address picker */}
+              {savedAddresses.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-xs text-slate-400 font-medium">Kayıtlı Adreslerim</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {savedAddresses.map((addr) => (
+                      <button
+                        key={addr.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedAddressId(addr.id)
+                          setAddress({
+                            recipientName: addr.recipientName,
+                            phone: addr.phone,
+                            city: addr.city,
+                            district: addr.district,
+                            addressLine: addr.addressLine,
+                            postalCode: addr.postalCode,
+                          })
+                        }}
+                        className={`text-left p-3 rounded-xl border text-xs transition-all ${
+                          selectedAddressId === addr.id
+                            ? 'border-primary bg-primary/10 text-foreground'
+                            : 'border-border text-slate-400 hover:border-slate-500'
+                        }`}
+                      >
+                        <div className="font-semibold text-foreground mb-0.5 flex items-center gap-1">
+                          {addr.title}
+                          {addr.isDefault && <span className="text-[9px] bg-primary/20 text-primary rounded px-1 py-0.5">Varsayılan</span>}
+                        </div>
+                        <div className="text-slate-400">{addr.recipientName} · {addr.phone}</div>
+                        <div className="text-slate-500 truncate">{addr.addressLine}, {addr.district}, {addr.city}</div>
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => { setSelectedAddressId(null); setAddress({ recipientName: '', phone: '', city: '', district: '', addressLine: '', postalCode: '' }) }}
+                      className={`text-left p-3 rounded-xl border text-xs transition-all ${
+                        selectedAddressId === null
+                          ? 'border-primary bg-primary/10 text-foreground'
+                          : 'border-border border-dashed text-slate-500 hover:border-slate-400'
+                      }`}
+                    >
+                      <div className="font-semibold">+ Yeni Adres</div>
+                      <div className="text-slate-500">Farklı bir adres girin</div>
+                    </button>
+                  </div>
+                </div>
+              )}
+
               <div className="grid grid-cols-2 gap-3">
                 <div className="col-span-2">
                   <label className="text-xs text-slate-400 mb-1 block">Ad Soyad *</label>

@@ -12,6 +12,18 @@ const buyerApi = () => {
   })
 }
 
+export interface BuyerAddressDto {
+  id: string
+  title: string
+  recipientName: string
+  phone: string
+  city: string
+  district: string
+  addressLine: string
+  postalCode: string
+  isDefault: boolean
+}
+
 export interface MarketplaceVariant {
   id: string
   name: string
@@ -274,5 +286,22 @@ export const marketplaceService = {
   validateCoupon: async (code: string, cartTotal: number): Promise<{ valid: boolean; message?: string; discountAmount: number }> => {
     const { data } = await publicApi.post('/api/marketplace/coupons/validate', { code, cartTotal })
     return data
+  },
+
+  // Addresses
+  getAddresses: async (): Promise<BuyerAddressDto[]> => {
+    const { data } = await buyerApi().get('/api/marketplace/addresses')
+    return data
+  },
+  createAddress: async (req: Omit<BuyerAddressDto, 'id' | 'isDefault'>): Promise<BuyerAddressDto> => {
+    const { data } = await buyerApi().post('/api/marketplace/addresses', req)
+    return data
+  },
+  setDefaultAddress: async (id: string): Promise<BuyerAddressDto> => {
+    const { data } = await buyerApi().put(`/api/marketplace/addresses/${id}/set-default`, {})
+    return data
+  },
+  deleteAddress: async (id: string): Promise<void> => {
+    await buyerApi().delete(`/api/marketplace/addresses/${id}`)
   },
 }

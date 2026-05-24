@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Lock, Eye, EyeOff, CheckCircle, Package, Heart } from 'lucide-react'
+import { Lock, Eye, EyeOff, CheckCircle, Package, Heart, MapPin } from 'lucide-react'
 import { marketplaceService } from '@/lib/services/marketplace.service'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
 
@@ -78,6 +78,12 @@ export default function SifreDegistirPage() {
           className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors"
         >
           <Heart className="w-4 h-4" /> Favorilerim
+        </Link>
+        <Link
+          href="/hesabim/adresler"
+          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors"
+        >
+          <MapPin className="w-4 h-4" /> Adreslerim
         </Link>
         <Link
           href="/hesabim/sifre"

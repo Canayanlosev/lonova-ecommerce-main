@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Heart, Package, Trash2, ShoppingCart, Lock } from 'lucide-react'
+import { Heart, Package, Trash2, ShoppingCart, Lock, MapPin } from 'lucide-react'
 import Link from 'next/link'
 import { useWishlistStore } from '@/store/wishlist.store'
 import { marketplaceService, MarketplaceProduct } from '@/lib/services/marketplace.service'
@@ -73,6 +73,12 @@ export default function FavorilerPage() {
           className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-primary text-primary -mb-px transition-colors"
         >
           <Heart className="w-4 h-4" /> Favorilerim
+        </Link>
+        <Link
+          href="/hesabim/adresler"
+          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors"
+        >
+          <MapPin className="w-4 h-4" /> Adreslerim
         </Link>
         <Link
           href="/hesabim/sifre"
