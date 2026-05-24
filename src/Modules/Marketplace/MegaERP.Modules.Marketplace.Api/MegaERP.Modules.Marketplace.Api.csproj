@@ -14,6 +14,8 @@
   <ItemGroup>
     <ProjectReference Include="..\MegaERP.Modules.Marketplace.Core\MegaERP.Modules.Marketplace.Core.csproj" />
     <ProjectReference Include="..\MegaERP.Modules.Marketplace.Infrastructure\MegaERP.Modules.Marketplace.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\WMS\MegaERP.Modules.WMS.Core\MegaERP.Modules.WMS.Core.csproj" />
+    <ProjectReference Include="..\..\WMS\MegaERP.Modules.WMS.Infrastructure\MegaERP.Modules.WMS.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

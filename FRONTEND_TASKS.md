@@ -797,3 +797,12 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
   Adımlar:
     1. Textarea: "Sipariş Notu (isteğe bağlı)"
     2. buyerNote: checkout POST body'sine eklenir
+
+- [x] FTASK-39: Dashboard Marketplace Sipariş Entegrasyonu
+  Hedef: Komuta Merkezi'ne mağaza siparişleri bölümü eklendi.
+  Dosya: src/app/dashboard/page.tsx
+  Adımlar:
+    1. mktOrders state — /api/marketplace/admin/orders fetch
+    2. "Mağaza Siparişleri" section: bugün/bekleyen/toplam gelir kartları
+    3. Son 5 mağaza siparişi mini-tablosu (sipariş no, alıcı, durum, tutar)
+    4. /dashboard/marketplace-orders'a "Tümünü gör" link

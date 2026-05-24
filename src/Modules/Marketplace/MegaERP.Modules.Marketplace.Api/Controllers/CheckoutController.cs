@@ -2,6 +2,8 @@ using System.Security.Claims;
 using MegaERP.Modules.Marketplace.Core.DTOs;
 using MegaERP.Modules.Marketplace.Core.Entities;
 using MegaERP.Modules.Marketplace.Infrastructure.Persistence;
+using MegaERP.Modules.WMS.Core.Entities;
+using MegaERP.Modules.WMS.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,8 +17,13 @@ namespace MegaERP.Modules.Marketplace.Api.Controllers;
 public class CheckoutController : ControllerBase
 {
     private readonly MarketplaceDbContext _mkt;
+    private readonly WMSDbContext _wms;
 
-    public CheckoutController(MarketplaceDbContext mkt) => _mkt = mkt;
+    public CheckoutController(MarketplaceDbContext mkt, WMSDbContext wms)
+    {
+        _mkt = mkt;
+        _wms = wms;
+    }
 
     private Guid BuyerId => Guid.Parse(
         User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub")
@@ -140,6 +147,9 @@ public class CheckoutController : ControllerBase
 
         await _mkt.SaveChangesAsync();
 
+        // WMS: auto-deduct stock for each ordered item (TASK-34)
+        await DeductWmsStockAsync(order);
+
         return Ok(new CheckoutResponse(true, null, ToOrderDto(order)));
     }
 
@@ -218,6 +228,57 @@ public class CheckoutController : ControllerBase
             options.Add(new(count, monthly, total, label));
         }
         return options;
+    }
+
+    /// <summary>
+    /// Deducts ordered quantities from WMS stock locations.
+    /// Silently skips products that have no WMS stock entry — order is never blocked.
+    /// </summary>
+    private async Task DeductWmsStockAsync(BuyerOrder order)
+    {
+        try
+        {
+            var productIds = order.Items.Select(i => i.ProductId).Distinct().ToList();
+            var stockMap = await _wms.StockLocations
+                .Where(s => productIds.Contains(s.ProductId) && s.Quantity > 0)
+                .ToListAsync();
+
+            var movements = new List<StockMovement>();
+
+            foreach (var item in order.Items)
+            {
+                // Find the bin with the most stock for this product
+                var bin = stockMap
+                    .Where(s => s.ProductId == item.ProductId)
+                    .OrderByDescending(s => s.Quantity)
+                    .FirstOrDefault();
+
+                if (bin is null) continue; // No WMS entry — skip gracefully
+
+                var deduct = Math.Min(item.Quantity, bin.Quantity);
+                bin.Quantity = Math.Max(0, bin.Quantity - deduct);
+
+                movements.Add(new StockMovement
+                {
+                    MovementType = StockMovementType.Out,
+                    ProductId = item.ProductId,
+                    FromBinId = bin.BinId,
+                    Quantity = deduct,
+                    Note = $"Sipariş #{order.Id.ToString()[..8].ToUpper()} — {item.ProductName}"
+                });
+            }
+
+            if (movements.Count > 0)
+            {
+                _wms.StockMovements.AddRange(movements);
+                await _wms.SaveChangesAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            // WMS deduction is best-effort — log but never fail the checkout
+            Console.WriteLine($"[WMS] Stok düşme hatası (order {order.Id}): {ex.Message}");
+        }
     }
 
     internal static BuyerOrderDto ToOrderDto(BuyerOrder o) => new(

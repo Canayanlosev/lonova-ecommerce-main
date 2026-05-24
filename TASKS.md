@@ -659,3 +659,12 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     2. ALTER TABLE: ADD COLUMN IF NOT EXISTS "BuyerNote" text
     3. CheckoutRequest'e BuyerNote? alanı ekle
     4. AdminOrdersController'da order detayında göster
+
+- [x] TASK-34: WMS ↔ Marketplace Stok Senkronizasyonu
+  Hedef: Marketplace siparişi verildiğinde WMS stoğu otomatik düşsün.
+  Dosyalar: CheckoutController.cs, Marketplace.Api.csproj
+  Adımlar:
+    1. Marketplace.Api → WMS.Core + WMS.Infrastructure proje referansları eklendi
+    2. CheckoutController'a WMSDbContext inject edildi
+    3. DeductWmsStockAsync(): her order item için en yüksek stoklu binden Out hareketi
+    4. WMS deduction best-effort — başarısız olsa checkout bloklanmaz

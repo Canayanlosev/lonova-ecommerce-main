@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import {
   TrendingUp, ShoppingBag, DollarSign, Package,
   AlertTriangle, BookOpen, Plus, ArrowRight, CheckCircle2,
-  Clock, Warehouse
+  Clock, Warehouse, Store
 } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
@@ -19,6 +19,7 @@ import { useAuthStore } from '@/store/auth.store';
 
 interface DayStats { date: string; orders: number; revenue: number }
 interface StockDto { productId: string; binId: string; quantity: number; minStockLevel: number; isLowStock: boolean }
+interface MktOrder { id: string; totalAmount: number; status: string; paymentStatus: string; createdAt: string; itemCount: number; recipientName: string }
 
 function buildLast7Days(orders: Order[]): DayStats[] {
   const days: DayStats[] = [];
@@ -57,6 +58,10 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [alertTab, setAlertTab] = useState<'stock' | 'accounting'>('stock');
 
+  // Marketplace orders
+  const [mktOrders, setMktOrders] = useState<MktOrder[]>([]);
+  const [mktLoading, setMktLoading] = useState(true);
+
   useEffect(() => {
     Promise.all([
       ordersService.getAll().catch(() => [] as Order[]),
@@ -68,12 +73,31 @@ export default function DashboardPage() {
       setChartData(buildLast7Days(ord));
       setLowStock(stock.filter(s => s.isLowStock));
     }).finally(() => setLoading(false));
+
+    // Marketplace orders (separate, non-blocking)
+    api.get('/api/marketplace/admin/orders?pageSize=200&page=1')
+      .then(r => {
+        const items = r.data.Items ?? r.data.items ?? []
+        setMktOrders(items)
+      })
+      .catch(() => {})
+      .finally(() => setMktLoading(false))
   }, []);
 
   const today = useMemo(() => buildToday(orders), [orders]);
   const totalRevenue = orders.reduce((s, o) => s + (o.totalAmount ?? 0), 0);
   const recentOrders = [...orders]
     .sort((a, b) => (b.orderDate ?? '').localeCompare(a.orderDate ?? ''))
+    .slice(0, 5);
+
+  // Marketplace stats
+  const mktTodayISO = new Date().toISOString().slice(0, 10);
+  const mktTodayOrders = mktOrders.filter(o => o.createdAt?.slice(0, 10) === mktTodayISO);
+  const mktTodayRevenue = mktTodayOrders.reduce((s, o) => s + (o.totalAmount ?? 0), 0);
+  const mktPending = mktOrders.filter(o => o.status === 'Processing' || o.status === 'Confirmed').length;
+  const mktTotalRevenue = mktOrders.reduce((s, o) => s + (o.totalAmount ?? 0), 0);
+  const recentMktOrders = [...mktOrders]
+    .sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? ''))
     .slice(0, 5);
 
   const bookedCount = orders.filter(o =>
@@ -224,6 +248,86 @@ export default function DashboardPage() {
           color="text-purple-500"
           loading={loading}
         />
+      </div>
+
+      {/* Marketplace B2C Section */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-base font-bold text-foreground flex items-center gap-2">
+            <Store className="w-4 h-4 text-violet-400" /> Mağaza Siparişleri
+          </h2>
+          <Link href="/dashboard/marketplace-orders" className="text-xs text-violet-400 hover:text-violet-300 transition-colors flex items-center gap-1">
+            Tümünü gör <ArrowRight className="w-3 h-3" />
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+          <div className="premium-card p-4 border-l-4 border-violet-500">
+            <p className="text-xs text-slate-500">Bugün (Mağaza)</p>
+            {mktLoading
+              ? <div className="h-6 w-24 bg-slate-700/60 rounded animate-pulse mt-1" />
+              : <p className="text-xl font-black text-foreground mt-0.5">
+                  {mktTodayOrders.length}
+                  <span className="text-sm font-normal text-slate-400 ml-1.5">
+                    ₺{mktTodayRevenue.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}
+                  </span>
+                </p>
+            }
+          </div>
+          <div className="premium-card p-4 border-l-4 border-amber-500">
+            <p className="text-xs text-slate-500">Bekleyen Mağaza</p>
+            {mktLoading
+              ? <div className="h-6 w-12 bg-slate-700/60 rounded animate-pulse mt-1" />
+              : <p className="text-xl font-black text-amber-400 mt-0.5">{mktPending}</p>
+            }
+          </div>
+          <div className="premium-card p-4 border-l-4 border-emerald-500">
+            <p className="text-xs text-slate-500">Toplam Mağaza Geliri</p>
+            {mktLoading
+              ? <div className="h-6 w-24 bg-slate-700/60 rounded animate-pulse mt-1" />
+              : <p className="text-xl font-black text-emerald-400 mt-0.5">
+                  ₺{mktTotalRevenue.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}
+                </p>
+            }
+          </div>
+        </div>
+        {/* Recent marketplace orders mini-table */}
+        {!mktLoading && recentMktOrders.length > 0 && (
+          <div className="premium-card overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left px-4 py-2.5 text-slate-400 font-medium">Sipariş</th>
+                    <th className="text-left px-4 py-2.5 text-slate-400 font-medium hidden sm:table-cell">Alıcı</th>
+                    <th className="text-left px-4 py-2.5 text-slate-400 font-medium">Durum</th>
+                    <th className="text-right px-4 py-2.5 text-slate-400 font-medium">Tutar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentMktOrders.map((o) => (
+                    <tr key={o.id} className="border-b border-border/50 hover:bg-surface transition-colors">
+                      <td className="px-4 py-2.5 font-mono text-slate-300">#{o.id.slice(0, 8).toUpperCase()}</td>
+                      <td className="px-4 py-2.5 text-slate-400 hidden sm:table-cell">{o.recipientName ?? '—'}</td>
+                      <td className="px-4 py-2.5">
+                        <span className={`px-2 py-0.5 rounded-full font-semibold text-[10px] ${
+                          o.status === 'Delivered' ? 'bg-emerald-500/15 text-emerald-400' :
+                          o.status === 'Shipped' ? 'bg-blue-500/15 text-blue-400' :
+                          o.status === 'Processing' ? 'bg-violet-500/15 text-violet-400' :
+                          o.status === 'Confirmed' ? 'bg-cyan-500/15 text-cyan-400' :
+                          o.status === 'Cancelled' ? 'bg-red-500/15 text-red-400' :
+                          'bg-amber-500/15 text-amber-400'
+                        }`}>{o.status}</span>
+                      </td>
+                      <td className="px-4 py-2.5 text-right font-bold text-foreground">
+                        ₺{o.totalAmount.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Charts + Alert Widget */}
