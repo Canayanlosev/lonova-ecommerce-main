@@ -257,6 +257,11 @@ export const marketplaceService = {
     return data
   },
 
+  getOrder: async (orderId: string): Promise<BuyerOrderDto> => {
+    const { data } = await buyerApi().get(`/api/marketplace/orders/${orderId}`)
+    return data
+  },
+
   cancelOrder: async (orderId: string, reason?: string): Promise<BuyerOrderDto> => {
     const { data } = await buyerApi().put(`/api/marketplace/orders/${orderId}/cancel`, { reason: reason ?? null })
     return data

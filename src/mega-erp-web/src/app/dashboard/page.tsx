@@ -20,6 +20,24 @@ interface DayStats { date: string; orders: number; revenue: number }
 interface StockDto { productId: string; binId: string; quantity: number; minStockLevel: number; isLowStock: boolean }
 interface MktOrder { id: string; totalAmount: number; status: string; paymentStatus: string; createdAt: string; itemCount: number; recipientName: string }
 
+const MKT_STATUS: Record<string, { label: string; cls: string }> = {
+  Pending:    { label: 'Beklemede',     cls: 'bg-amber-500/15 text-amber-400' },
+  Processing: { label: 'İşleniyor',     cls: 'bg-violet-500/15 text-violet-400' },
+  Confirmed:  { label: 'Onaylandı',     cls: 'bg-cyan-500/15 text-cyan-400' },
+  Shipped:    { label: 'Kargoda',       cls: 'bg-primary/15 text-primary' },
+  Delivered:  { label: 'Teslim Edildi', cls: 'bg-emerald-500/15 text-emerald-400' },
+  Cancelled:  { label: 'İptal',         cls: 'bg-red-500/15 text-red-400' },
+}
+
+const ORDER_STATUS: Record<string, { label: string; cls: string }> = {
+  Delivered:  { label: 'Teslim Edildi', cls: 'bg-emerald-500/15 text-emerald-400' },
+  Shipped:    { label: 'Kargoda',       cls: 'bg-primary/15 text-primary' },
+  Paid:       { label: 'Ödendi',        cls: 'bg-purple-500/15 text-purple-400' },
+  Cancelled:  { label: 'İptal',         cls: 'bg-red-500/15 text-red-400' },
+  Pending:    { label: 'Beklemede',     cls: 'bg-amber-500/15 text-amber-400' },
+  Processing: { label: 'İşleniyor',     cls: 'bg-violet-500/15 text-violet-400' },
+}
+
 function buildLast7Days(orders: Order[]): DayStats[] {
   const days: DayStats[] = [];
   for (let i = 6; i >= 0; i--) {
@@ -308,14 +326,9 @@ export default function DashboardPage() {
                       <td className="px-4 py-2.5 font-mono text-slate-300">#{o.id.slice(0, 8).toUpperCase()}</td>
                       <td className="px-4 py-2.5 text-slate-400 hidden sm:table-cell">{o.recipientName ?? '—'}</td>
                       <td className="px-4 py-2.5">
-                        <span className={`px-2 py-0.5 rounded-full font-semibold text-[10px] ${
-                          o.status === 'Delivered' ? 'bg-emerald-500/15 text-emerald-400' :
-                          o.status === 'Shipped' ? 'bg-primary/15 text-primary' :
-                          o.status === 'Processing' ? 'bg-violet-500/15 text-violet-400' :
-                          o.status === 'Confirmed' ? 'bg-cyan-500/15 text-cyan-400' :
-                          o.status === 'Cancelled' ? 'bg-red-500/15 text-red-400' :
-                          'bg-amber-500/15 text-amber-400'
-                        }`}>{o.status}</span>
+                        <span className={`px-2 py-0.5 rounded-full font-semibold text-[10px] ${MKT_STATUS[o.status]?.cls ?? 'bg-slate-700 text-slate-300'}`}>
+                          {MKT_STATUS[o.status]?.label ?? o.status}
+                        </span>
                       </td>
                       <td className="px-4 py-2.5 text-right font-bold text-foreground">
                         ₺{o.totalAmount.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}
@@ -493,13 +506,9 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                      order.status === 'Delivered' ? 'bg-emerald-500/15 text-emerald-400' :
-                      order.status === 'Shipped'   ? 'bg-primary/15 text-primary' :
-                      order.status === 'Cancelled' ? 'bg-red-500/15 text-red-400' :
-                      order.status === 'Paid'      ? 'bg-purple-500/15 text-purple-400' :
-                      'bg-amber-500/15 text-amber-400'
-                    }`}>{order.status}</span>
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${ORDER_STATUS[order.status]?.cls ?? 'bg-amber-500/15 text-amber-400'}`}>
+                      {ORDER_STATUS[order.status]?.label ?? order.status}
+                    </span>
                     <p className="font-bold text-sm text-emerald-400">
                       ₺{(order.totalAmount ?? 0).toLocaleString('tr-TR')}
                     </p>
