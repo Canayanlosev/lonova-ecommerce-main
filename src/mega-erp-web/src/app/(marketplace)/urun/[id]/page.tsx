@@ -14,6 +14,7 @@ import {
 } from '@/lib/services/marketplace.service'
 import { useBuyerCartStore } from '@/store/buyerCart.store'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
+import { ProductCard } from '@/components/marketplace/ProductCard'
 
 function groupVariants(variants: MarketplaceVariant[]) {
   return variants.reduce<Record<string, MarketplaceVariant[]>>((acc, v) => {
@@ -165,6 +166,9 @@ export default function ProductDetailPage() {
   const [submitting, setSubmitting] = useState(false)
   const [reviewError, setReviewError] = useState('')
 
+  // Similar products
+  const [similarProducts, setSimilarProducts] = useState<MarketplaceProduct[]>([])
+
   useEffect(() => {
     if (!id) return
     marketplaceService.getProduct(id)
@@ -177,6 +181,12 @@ export default function ProductDetailPage() {
           if (first) autoSelect[type] = first.name
         }
         setSelected(autoSelect)
+        // Load similar products from same category
+        if (p.categoryId) {
+          marketplaceService.getProducts({ categoryId: p.categoryId, pageSize: 5 })
+            .then((res) => setSimilarProducts(res.items.filter((s) => s.id !== id).slice(0, 4)))
+            .catch(() => {})
+        }
       })
       .catch(() => router.push('/'))
       .finally(() => setLoading(false))
@@ -496,6 +506,18 @@ export default function ProductDetailPage() {
           )}
         </div>
       </div>
+
+      {/* Similar Products */}
+      {similarProducts.length > 0 && (
+        <div className="mt-12 pt-8 border-t border-border">
+          <h2 className="text-xl font-bold mb-6">Bu Kategoriden Diğer Ürünler</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {similarProducts.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

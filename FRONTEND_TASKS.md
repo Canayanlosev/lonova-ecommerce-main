@@ -889,3 +889,19 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     2. BOM (﻿) ile UTF-8 CSV — Türkçe karakter desteği
     3. Sütunlar: ID, alıcı, şehir, tutar, durum, ödeme, yöntem, ürün adedi, takip no, tarih
     4. Download ikonu + "CSV" butonu header'a eklendi
+
+- [x] FTASK-49: B2B Siparişler — Arama + CSV + Stats
+  Dosya: src/app/dashboard/orders/page.tsx
+  Adımlar:
+    1. Arama: sipariş ID/no ile metin araması
+    2. CSV export: durum etiketi dahil tüm kolonlar, UTF-8 BOM
+    3. Özet stat kartları: toplam/bekleyen/ödendi/toplam gelir
+    4. Tarih sütunu daha güzel formatlandı (numeric → long)
+
+- [x] FTASK-50: Ürün Detay — Benzer Ürünler Bölümü
+  Dosya: src/app/(marketplace)/urun/[id]/page.tsx
+  Adımlar:
+    1. product yüklenince aynı categoryId ile marketplaceService.getProducts çağrısı
+    2. Mevcut ürünü filtrele, max 4 ürün al
+    3. "Bu Kategoriden Diğer Ürünler" başlığı + 4-col ProductCard grid
+    4. Sadece similarProducts.length > 0 ise render et
