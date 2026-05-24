@@ -24,7 +24,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
             <AlertTriangle className="w-8 h-8 text-red-500" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Bir Hata Oluştu</h3>
+            <h3 className="text-lg font-bold text-foreground mb-1">Bir Hata Oluştu</h3>
             <p className="text-sm text-slate-500">{this.state.message || "Beklenmeyen bir hata oluştu."}</p>
           </div>
           <button

@@ -28,9 +28,9 @@ export const CardHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDiv
 );
 
 export const CardTitle = ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-  <h3 className={cn("text-xl font-bold tracking-tight text-slate-900 dark:text-white", className)} {...props} />
+  <h3 className={cn("text-xl font-bold tracking-tight text-foreground", className)} {...props} />
 );
 
 export const CardContent = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("text-slate-600 dark:text-slate-400", className)} {...props} />
+  <div className={cn("text-slate-400", className)} {...props} />
 );

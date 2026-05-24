@@ -21,7 +21,7 @@ export const Button = ({
     primary: "bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-500/20",
     secondary: "bg-purple-600 text-white hover:bg-purple-700 shadow-purple-500/20",
     outline: "border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50",
-    ghost: "text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800",
+    ghost: "text-slate-400 hover:bg-slate-800/20",
   };
 
   const sizes = {

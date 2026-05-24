@@ -134,7 +134,7 @@ export function ProductForm({ product, isEdit }: Props) {
     }
   };
 
-  const inputClass = "w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm";
+  const inputClass = "w-full px-4 py-2.5 rounded-xl border border-border bg-background outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm";
 
   return (
     <form onSubmit={handleSubmit}>
@@ -192,14 +192,14 @@ export function ProductForm({ product, isEdit }: Props) {
 
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="space-y-2">
             <label className="text-sm font-medium">Ürün Görseli</label>
-            <div className="flex gap-1 p-1 bg-slate-100 dark:bg-slate-900 rounded-xl w-fit">
+            <div className="flex gap-1 p-1 bg-slate-800/30 rounded-xl w-fit">
               <button
                 type="button"
                 onClick={() => setImageType('file')}
                 className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   imageType === 'file'
-                    ? 'bg-white dark:bg-slate-800 text-foreground shadow-sm'
-                    : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                    ? 'bg-slate-800 text-foreground shadow-sm'
+                    : 'text-slate-500 hover:text-slate-300'
                 }`}
               >
                 Dosya Yükle
@@ -209,8 +209,8 @@ export function ProductForm({ product, isEdit }: Props) {
                 onClick={() => setImageType('url')}
                 className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   imageType === 'url'
-                    ? 'bg-white dark:bg-slate-800 text-foreground shadow-sm'
-                    : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                    ? 'bg-slate-800 text-foreground shadow-sm'
+                    : 'text-slate-500 hover:text-slate-300'
                 }`}
               >
                 URL Gir
@@ -226,11 +226,11 @@ export function ProductForm({ product, isEdit }: Props) {
                 className={`relative flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-6 transition-all ${
                   dragActive
                     ? 'border-indigo-500 bg-indigo-500/5'
-                    : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                    : 'border-border hover:border-slate-600'
                 }`}
               >
                 {previewUrl ? (
-                  <div className="relative group w-40 h-40 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800">
+                  <div className="relative group w-40 h-40 rounded-xl overflow-hidden border border-border">
                     <img
                       src={previewUrl}
                       alt="Görsel önizleme"
@@ -247,7 +247,7 @@ export function ProductForm({ product, isEdit }: Props) {
                   </div>
                 ) : (
                   <div className="text-center">
-                    <div className="mx-auto w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-3">
+                    <div className="mx-auto w-10 h-10 rounded-xl bg-slate-800/20 flex items-center justify-center mb-3">
                       <Upload className="w-5 h-5 text-slate-500" />
                     </div>
                     <p className="text-sm font-medium mb-1">
@@ -270,7 +270,7 @@ export function ProductForm({ product, isEdit }: Props) {
                   className={inputClass}
                 />
                 {previewUrl && (
-                  <div className="w-40 h-40 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800">
+                  <div className="w-40 h-40 rounded-xl overflow-hidden border border-border">
                     <img
                       src={previewUrl}
                       alt="Görsel önizleme"
