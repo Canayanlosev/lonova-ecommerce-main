@@ -2,10 +2,11 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Search, ShoppingCart, User, Menu, X, LogOut, ChevronDown } from 'lucide-react'
+import { Search, ShoppingCart, User, Menu, X, LogOut, ChevronDown, Heart } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useBuyerCartStore } from '@/store/buyerCart.store'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
+import { useWishlistStore } from '@/store/wishlist.store'
 
 const CATEGORIES = [
   { label: 'Elektronik', slug: 'elektronik' },
@@ -21,6 +22,7 @@ export function MarketplaceNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const router = useRouter()
   const itemCount = useBuyerCartStore((s) => s.itemCount)
+  const wishlistCount = useWishlistStore((s) => s.count())
   const { isAuthenticated, buyer, logout } = useBuyerAuthStore()
 
   const handleSearch = (e: React.FormEvent) => {
@@ -97,6 +99,14 @@ export function MarketplaceNavbar() {
               className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-500 hover:to-indigo-500 shadow-sm shadow-blue-500/20 transition-all"
             >
               Firma Paneli
+            </Link>
+            <Link href="/hesabim/favoriler" className="relative p-2 rounded-lg hover:bg-background transition-all" title="Favorilerim">
+              <Heart className="w-5 h-5 text-foreground" />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">
+                  {wishlistCount > 99 ? '99+' : wishlistCount}
+                </span>
+              )}
             </Link>
             <Link href="/sepet" className="relative p-2 rounded-lg hover:bg-background transition-all">
               <ShoppingCart className="w-5 h-5 text-foreground" />

@@ -263,4 +263,9 @@ export const marketplaceService = {
   deleteReview: async (productId: string, reviewId: string): Promise<void> => {
     await buyerApi().delete(`/api/marketplace/products/${productId}/reviews/${reviewId}`)
   },
+
+  // Auth
+  changePassword: async (currentPassword: string, newPassword: string): Promise<void> => {
+    await buyerApi().put('/api/marketplace/auth/change-password', { currentPassword, newPassword })
+  },
 }

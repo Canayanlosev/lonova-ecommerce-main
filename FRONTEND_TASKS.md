@@ -734,3 +734,42 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     2. En çok satan 5 ürün bar grafiği
     3. Özet kartlar: toplam gelir, sipariş sayısı, ortalama sepet, aktif alıcı
     4. /api/marketplace/admin/analytics endpoint'ini çağır (TASK-26 ile birlikte)
+
+- [x] FTASK-29: Dashboard Marketplace Siparişleri Yönetim Sayfası
+  Hedef: Firma panelinden gelen marketplace siparişlerini görebilsin, kargoya verebilsin.
+  Dosyalar: src/app/dashboard/marketplace-orders/page.tsx (yeni), dashboard/layout.tsx
+  Adımlar:
+    1. /dashboard/marketplace-orders sayfası, GET /api/marketplace/admin/orders (sayfalı, durum filtreli)
+    2. Tablo: sipariş no, tarih, tutar, durum, ürün sayısı, alıcı şehri
+    3. Durum filtresi: Tümü / Beklemede / İşleniyor / Kargoda / Teslim / İptal
+    4. "Kargoya Ver" butonu → modal: TrackingNumber + CarrierName giriş
+    5. "Teslim Edildi" butonu (Shipped ise)
+    6. "İadeyi Onayla" butonu (RefundStatus=Requested ise)
+    7. Dashboard layout'a "Mağaza Siparişleri" nav item ekle (ShoppingBag ikonu)
+
+- [x] FTASK-30: Alıcı Favoriler (Wishlist)
+  Hedef: Alıcı ürünleri favorilere ekleyip /hesabim/favoriler sayfasında görebilsin.
+  Dosyalar: components/marketplace/ProductCard.tsx, app/(marketplace)/hesabim/favoriler/page.tsx, store/wishlist.store.ts
+  Adımlar:
+    1. wishlist.store.ts (Zustand persist) — productId[]
+    2. ProductCard'a kalp butonu (sağ üst): toggle favorilere ekle/çıkar
+    3. /hesabim/favoriler sayfası: favori ürünleri getir ve ProductCard grid göster
+    4. MarketplaceNavbar'da kalp ikonu badge ile bağla
+
+- [x] FTASK-31: Ürün Görseli Yükleme UI
+  Hedef: Ecommerce ürün form'una dosya yükleme alanı ekle (URL yerine veya ek seçenek).
+  Dosyalar: src/app/dashboard/ecommerce/new/page.tsx, src/app/dashboard/ecommerce/[id]/edit/page.tsx
+  Adımlar:
+    1. Görsel alanına toggle: "URL Gir" / "Dosya Yükle"
+    2. Dosya yükleme: drag-drop destekli, preview göster, max 5MB uyarısı
+    3. Kaydet butonu sonrası POST /api/ecommerce/products/{id}/image ile upload et
+    4. Mevcut görsel varsa preview göster, "Değiştir" butonu
+
+- [x] FTASK-32: Alıcı Şifre Değiştirme UI
+  Hedef: /hesabim/siparisler sayfasına "Şifre Değiştir" bölümü ekle.
+  Dosyalar: src/app/(marketplace)/hesabim/siparisler/page.tsx
+  Adımlar:
+    1. Sayfaya "Hesap Güvenliği" kartı ekle
+    2. Form: mevcut şifre, yeni şifre, yeni şifre tekrar
+    3. PUT /api/marketplace/auth/change-password çağrısı
+    4. marketplaceService.changePassword() metodu ekle

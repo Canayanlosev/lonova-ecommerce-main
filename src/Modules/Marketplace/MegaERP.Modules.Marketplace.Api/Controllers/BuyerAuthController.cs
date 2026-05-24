@@ -16,7 +16,6 @@ namespace MegaERP.Modules.Marketplace.Api.Controllers;
 /// <summary>Buyer authentication — register and login for marketplace buyers (separate from firm users).</summary>
 [ApiController]
 [Route("api/marketplace/auth")]
-[AllowAnonymous]
 public class BuyerAuthController : ControllerBase
 {
     private readonly MarketplaceDbContext _context;
@@ -35,6 +34,7 @@ public class BuyerAuthController : ControllerBase
 
     /// <summary>Registers a new buyer account.</summary>
     [HttpPost("register")]
+    [AllowAnonymous]
     public async Task<ActionResult<BuyerAuthResponse>> Register(BuyerRegisterRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.FirstName) ||
@@ -65,6 +65,7 @@ public class BuyerAuthController : ControllerBase
 
     /// <summary>Authenticates a buyer and returns a JWT token.</summary>
     [HttpPost("login")]
+    [AllowAnonymous]
     public async Task<ActionResult<BuyerAuthResponse>> Login(BuyerLoginRequest request)
     {
         var buyer = await _context.BuyerUsers
@@ -79,6 +80,36 @@ public class BuyerAuthController : ControllerBase
 
         var token = GenerateToken(buyer);
         return Ok(new BuyerAuthResponse(token, buyer.Id.ToString(), buyer.Email, buyer.FirstName, buyer.LastName));
+    }
+
+    /// <summary>Changes the authenticated buyer's password.</summary>
+    [HttpPut("change-password")]
+    [Authorize]
+    public async Task<IActionResult> ChangePassword(BuyerChangePasswordRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.CurrentPassword) || string.IsNullOrWhiteSpace(request.NewPassword))
+            return BadRequest("Mevcut ve yeni şifre zorunludur.");
+
+        if (request.NewPassword.Length < 6)
+            return BadRequest("Yeni şifre en az 6 karakter olmalıdır.");
+
+        var buyerIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                      ?? User.FindFirst("sub")?.Value;
+        if (buyerIdStr is null || !Guid.TryParse(buyerIdStr, out var buyerId))
+            return Unauthorized();
+
+        var buyer = await _context.BuyerUsers.FindAsync(buyerId);
+        if (buyer is null || !buyer.IsActive)
+            return Unauthorized();
+
+        var result = _hasher.VerifyHashedPassword(buyer, buyer.PasswordHash, request.CurrentPassword);
+        if (result == PasswordVerificationResult.Failed)
+            return BadRequest("Mevcut şifre hatalı.");
+
+        buyer.PasswordHash = _hasher.HashPassword(buyer, request.NewPassword);
+        await _context.SaveChangesAsync();
+
+        return Ok(new { message = "Şifre başarıyla değiştirildi." });
     }
 
     private string GenerateToken(BuyerUser buyer)

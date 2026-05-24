@@ -2,10 +2,11 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ShoppingCart, Star, Package } from 'lucide-react'
+import { ShoppingCart, Star, Package, Heart } from 'lucide-react'
 import type { MarketplaceProduct } from '@/lib/services/marketplace.service'
 import { marketplaceService } from '@/lib/services/marketplace.service'
 import { useBuyerCartStore } from '@/store/buyerCart.store'
+import { useWishlistStore } from '@/store/wishlist.store'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -16,7 +17,9 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const router = useRouter()
   const setCart = useBuyerCartStore((s) => s.setCart)
+  const { toggle, has } = useWishlistStore()
   const [adding, setAdding] = useState(false)
+  const isWishlisted = has(product.id)
 
   const variantPrices = product.variants.map(v => v.price)
   const price = variantPrices.length > 0 ? Math.min(...variantPrices) : product.basePrice
@@ -64,6 +67,19 @@ export function ProductCard({ product }: ProductCardProps) {
             <Package className="w-10 h-10 text-slate-500" />
           </div>
         )}
+        {/* Favori butonu */}
+        <button
+          onClick={(e) => { e.preventDefault(); toggle(product.id) }}
+          className={`absolute top-2 right-2 z-10 w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+            isWishlisted
+              ? 'bg-red-500 shadow-lg shadow-red-500/40'
+              : 'bg-black/40 hover:bg-black/60 backdrop-blur-sm opacity-0 group-hover:opacity-100'
+          }`}
+          title={isWishlisted ? 'Favorilerden çıkar' : 'Favorilere ekle'}
+        >
+          <Heart className={`w-3.5 h-3.5 transition-colors ${isWishlisted ? 'text-white fill-white' : 'text-white'}`} />
+        </button>
+
         {/* İndirim badge */}
         {discountPercent > 0 && !isOutOfStock && (
           <span className="absolute top-2 left-2 px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-lg z-10 shadow-sm">

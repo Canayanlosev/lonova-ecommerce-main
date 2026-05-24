@@ -3,6 +3,7 @@ namespace MegaERP.Modules.Marketplace.Core.DTOs;
 public record BuyerRegisterRequest(string FirstName, string LastName, string Email, string Password);
 public record BuyerLoginRequest(string Email, string Password);
 public record BuyerAuthResponse(string Token, string UserId, string Email, string FirstName, string LastName);
+public record BuyerChangePasswordRequest(string CurrentPassword, string NewPassword);
 
 public record AddToCartRequest(Guid ProductId, Guid? VariantId, int Quantity = 1);
 public record CartItemDto(Guid Id, Guid ProductId, Guid? VariantId, string ProductName, string? VariantName, string? ImageUrl, decimal UnitPrice, int Quantity, decimal LineTotal);

@@ -611,3 +611,30 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     2. CRUD /api/marketplace/addresses
     3. PUT /api/marketplace/addresses/{id}/set-default
     4. Checkout isteğinde AddressId ile mevcut adres kullanılabilsin
+
+- [x] TASK-28: Ürün Görseli Yükleme — Backend
+  Hedef: Firma ürün formundan gerçek görsel yükleyebilsin (URL yerine dosya upload).
+  Dosyalar: ProductsController.cs, wwwroot/images/
+  Adımlar:
+    1. POST /api/ecommerce/products/{id}/image — IFormFile kabul et, wwwroot/images/{guid}.ext kaydet
+    2. Eski dosyayı sil, product.ImageUrl güncelle
+    3. Statik dosya servisini appsettings/Program.cs'de aktif et
+    4. Dosya tipi ve boyut validasyonu (max 5MB, jpg/png/webp)
+
+- [x] TASK-29: Alıcı Şifre Değiştirme
+  Hedef: Giriş yapmış alıcı mevcut şifresini doğrulayarak yeni şifre belirleyebilsin.
+  Dosyalar: BuyerAuthController.cs, BuyerAuthDtos.cs
+  Adımlar:
+    1. PUT /api/marketplace/auth/change-password — {currentPassword, newPassword}
+    2. Mevcut şifreyi verify, minimum 8 karakter kontrolü
+    3. Yeni hash'i BuyerUser'a kaydet
+
+- [ ] TASK-30: Kupon / İndirim Kodu Sistemi
+  Hedef: Firma sabit veya yüzdesel indirim kuponu tanımlasın; alıcı checkout'ta kodu girebilsin.
+  Dosyalar: Marketplace modülü — yeni CouponCode entity + controller + checkout entegrasyonu
+  Adımlar:
+    1. CouponCode entity (Code, DiscountType: Percent|Fixed, DiscountValue, MaxUses, UsedCount, ExpiresAt, IsActive)
+    2. POST /api/marketplace/admin/coupons — kupon oluştur
+    3. GET /api/marketplace/admin/coupons — kuponları listele
+    4. POST /api/marketplace/coupons/validate — kod gönder, indirim tutarı dön
+    5. Checkout'ta CouponCode alanı ekle, indirim hesapla

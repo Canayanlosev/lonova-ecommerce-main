@@ -7,7 +7,7 @@ import Image from 'next/image'
 import {
   Package, ArrowRight, CreditCard, Banknote, Truck, MapPin,
   ChevronDown, ChevronUp, CheckCircle, Clock, XCircle, LogOut,
-  AlertTriangle, ExternalLink, RefreshCw, X
+  AlertTriangle, ExternalLink, RefreshCw, X, Heart, Lock
 } from 'lucide-react'
 import { marketplaceService, BuyerOrderDto } from '@/lib/services/marketplace.service'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
@@ -408,9 +408,27 @@ export default function BuyerOrdersPage() {
         </button>
       </div>
 
-      <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-        <Package className="w-5 h-5 text-primary" /> Siparişlerim
-      </h2>
+      {/* Hesap Sekmeler */}
+      <div className="flex gap-2 mb-6 border-b border-border">
+        <Link
+          href="/hesabim/siparisler"
+          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-primary text-primary -mb-px transition-colors"
+        >
+          <Package className="w-4 h-4" /> Siparişlerim
+        </Link>
+        <Link
+          href="/hesabim/favoriler"
+          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors"
+        >
+          <Heart className="w-4 h-4" /> Favorilerim
+        </Link>
+        <Link
+          href="/hesabim/sifre"
+          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors"
+        >
+          <Lock className="w-4 h-4" /> Şifre Değiştir
+        </Link>
+      </div>
 
       {loading ? (
         <div className="space-y-4">
