@@ -832,3 +832,13 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     3. Sayfalama (önceki/sonraki)
     4. Dashboard nav: Star ikonu + 'Yorumlar' linki eklendi
     5. Doğrulanmış alıcı: CheckCircle yeşil badge
+
+- [x] FTASK-43: Dashboard Ürün Toplu İşlemleri (Bulk Operations)
+  Dosya: src/app/dashboard/ecommerce/page.tsx
+  Adımlar:
+    1. selectedIds: Set<string> state + bulkLoading: boolean state
+    2. toggleSelect(id) + toggleSelectAll() — checkbox logic
+    3. handleBulkDelete() — seçili ürünleri sırayla siler
+    4. handleBulkVisibility(publish) — toplu yayınla/gizle
+    5. Bulk action bar: seçili sayı + Yayınla/Gizle/Sil butonları + X kapat
+    6. Tablo: checkbox sütunu (CheckSquare/Square ikonlar), seçili satır vurgusu
