@@ -2,8 +2,10 @@ using MegaERP.Modules.Ecommerce.Core.DTOs;
 using MegaERP.Modules.Ecommerce.Core.Entities;
 using MegaERP.Modules.Ecommerce.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
 
 namespace MegaERP.Modules.Ecommerce.Api.Controllers;
 
@@ -102,6 +104,71 @@ public class ProductsController : ControllerBase
         _context.Products.Remove(product);
         await _context.SaveChangesAsync();
         return NoContent();
+    }
+
+    [HttpPost("{id:guid}/image")]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadImage(Guid id, IFormFile file)
+    {
+        var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+        if (product is null)
+            return NotFound($"Ürün bulunamadı: {id}");
+
+        if (file == null || file.Length == 0)
+            return BadRequest("Dosya gönderilmedi.");
+
+        if (file.Length > 5 * 1024 * 1024)
+            return BadRequest("Dosya boyutu en fazla 5MB olabilir.");
+
+        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+        var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+        if (!allowedExtensions.Contains(extension))
+            return BadRequest("Geçersiz dosya tipi. Yalnızca JPG, PNG ve WEBP formatları desteklenir.");
+
+        // Ensure wwwroot/images exists
+        var wwwrootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+        var imagesPath = Path.Combine(wwwrootPath, "images");
+        if (!Directory.Exists(imagesPath))
+        {
+            Directory.CreateDirectory(imagesPath);
+        }
+
+        // Delete old file if it exists and is local
+        if (!string.IsNullOrEmpty(product.ImageUrl) && product.ImageUrl.StartsWith("/images/"))
+        {
+            var oldFileName = Path.GetFileName(product.ImageUrl);
+            var oldFilePath = Path.Combine(imagesPath, oldFileName);
+            if (System.IO.File.Exists(oldFilePath))
+            {
+                try { System.IO.File.Delete(oldFilePath); } catch {}
+            }
+        }
+
+        // Save new file
+        var newFileName = $"{Guid.NewGuid()}{extension}";
+        var newFilePath = Path.Combine(imagesPath, newFileName);
+
+        using (var stream = new FileStream(newFilePath, FileMode.Create))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        product.ImageUrl = $"/images/{newFileName}";
+        await _context.SaveChangesAsync();
+
+        return Ok(new { imageUrl = product.ImageUrl });
+    }
+
+    /// <summary>Toggles marketplace visibility for a product.</summary>
+    [HttpPut("{id:guid}/visibility")]
+    public async Task<IActionResult> ToggleVisibility(Guid id)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product is null) return NotFound("Ürün bulunamadı.");
+        product.IsPublishedToMarketplace = !product.IsPublishedToMarketplace;
+        product.UpdatedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+        return Ok(new { product.Id, product.IsPublishedToMarketplace });
     }
 
     // ── Variant endpoints ──────────────────────────────────────────────────────

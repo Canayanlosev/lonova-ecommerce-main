@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Skeleton, SkeletonRow } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
-import { Package, Search, PencilLine, Trash2, Plus, AlertCircle } from "lucide-react";
+import { Package, Search, PencilLine, Trash2, Plus, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { productsService } from "@/lib/services/products.service";
 import { useToast } from "@/store/ui.store";
 import type { Product } from "@/types/api.types";
@@ -32,6 +32,15 @@ export default function EcommercePage() {
   };
 
   useEffect(() => { load(); }, []);
+
+  const handleToggleVisibility = async (id: string) => {
+    try {
+      const { data } = await import('@/lib/api').then(m => m.default.put(`/api/ecommerce/products/${id}/visibility`))
+      setProducts(prev => prev.map(p => p.id === id ? { ...p, isPublishedToMarketplace: data.isPublishedToMarketplace } : p))
+    } catch {
+      toast.error("Görünürlük güncellenemedi.")
+    }
+  }
 
   const handleDelete = async (id: string, name: string) => {
     if (!confirm(`"${name}" ürününü silmek istediğinize emin misiniz?`)) return;
@@ -122,6 +131,19 @@ export default function EcommercePage() {
                         <td className="px-4 py-3 text-right font-bold">₺{p.basePrice.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}</td>
                         <td className="px-4 py-3 text-right">
                           <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => handleToggleVisibility(p.id)}
+                              title={p.isPublishedToMarketplace !== false ? 'Marketplace\'ten gizle' : 'Marketplace\'te yayınla'}
+                              className={`p-1.5 rounded-lg transition-colors ${
+                                p.isPublishedToMarketplace !== false
+                                  ? 'hover:bg-slate-100 dark:hover:bg-slate-700 text-green-500'
+                                  : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400'
+                              }`}
+                            >
+                              {p.isPublishedToMarketplace !== false
+                                ? <Eye size={16} />
+                                : <EyeOff size={16} />}
+                            </button>
                             <Link href={`/dashboard/ecommerce/${p.id}/edit`}>
                               <button className="p-1.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-500/10 text-indigo-500 transition-colors">
                                 <PencilLine size={16} />

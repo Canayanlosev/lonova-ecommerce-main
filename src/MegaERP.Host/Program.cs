@@ -276,7 +276,8 @@ using (var scope = app.Services.CreateScope())
                     ADD COLUMN IF NOT EXISTS "CancelReason" text,
                     ADD COLUMN IF NOT EXISTS "RefundStatus" text,
                     ADD COLUMN IF NOT EXISTS "TrackingNumber" text,
-                    ADD COLUMN IF NOT EXISTS "CarrierName" text;
+                    ADD COLUMN IF NOT EXISTS "CarrierName" text,
+                    ADD COLUMN IF NOT EXISTS "BuyerNote" text;
                 """);
         }
         catch (Exception ex) { Console.WriteLine($"Orders column migration: {ex.Message}"); }
@@ -289,6 +290,17 @@ using (var scope = app.Services.CreateScope())
                 """);
         }
         catch (Exception ex) { Console.WriteLine($"BuyerUsers column migration: {ex.Message}"); }
+
+        // Ecommerce product visibility flag
+        var ecomCtx = services.GetRequiredService<EcommerceDbContext>();
+        try
+        {
+            await ecomCtx.Database.ExecuteSqlRawAsync("""
+                ALTER TABLE ecommerce."Products"
+                    ADD COLUMN IF NOT EXISTS "IsPublishedToMarketplace" boolean NOT NULL DEFAULT true;
+                """);
+        }
+        catch (Exception ex) { Console.WriteLine($"Products visibility migration: {ex.Message}"); }
     }
     catch (Exception ex)
     {

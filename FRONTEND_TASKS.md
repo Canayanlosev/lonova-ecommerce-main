@@ -785,14 +785,14 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 - [x] FTASK-35: Checkout Adres Defteri Entegrasyonu — kayıtlı adresleri yükle, seç
 - [x] FTASK-36: Alıcı Profil Güncelleme UI — /hesabim/profil sayfası
 
-- [ ] FTASK-37: Ürün Görünürlük Toggle UI
+- [x] FTASK-37: Ürün Görünürlük Toggle UI
   Hedef: Dashboard'da ürün listesinde "Marketplace'te yayınla/gizle" toggle butonu.
   Dosya: src/app/dashboard/ecommerce/page.tsx
   Adımlar:
     1. ProductCard/row'a göz ikonu toggle eklendi
     2. PUT /api/ecommerce/products/{id}/visibility çağrısı
 
-- [ ] FTASK-38: Sipariş Notu — Checkout'ta alıcı notu input alanı
+- [x] FTASK-38: Sipariş Notu — Checkout'ta alıcı notu input alanı
   Dosya: src/app/(marketplace)/odeme/page.tsx
   Adımlar:
     1. Textarea: "Sipariş Notu (isteğe bağlı)"

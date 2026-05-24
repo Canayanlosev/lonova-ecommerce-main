@@ -37,7 +37,9 @@ public record BuyerOrderDto(
     string? RefundStatus = null,
     // Shipping (TASK-26)
     string? TrackingNumber = null,
-    string? CarrierName = null
+    string? CarrierName = null,
+    // Buyer note (TASK-33)
+    string? BuyerNote = null
 );
 
 public record CheckoutAddressDto(
@@ -63,7 +65,8 @@ public record CheckoutRequest(
     CheckoutAddressDto Address,
     string PaymentMethod,          // Card | BankTransfer | CashOnDelivery
     CheckoutCardDto? Card,         // required when PaymentMethod == "Card"
-    string? CouponCode             // optional discount coupon
+    string? CouponCode,            // optional discount coupon
+    string? BuyerNote              // optional order note from buyer
 );
 
 public record CheckoutResponse(

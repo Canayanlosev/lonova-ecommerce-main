@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { MapPin, CreditCard, Banknote, Truck, ChevronRight, Check, Lock, AlertCircle, Tag, X } from 'lucide-react'
+import { MapPin, CreditCard, Banknote, Truck, ChevronRight, Check, Lock, AlertCircle, Tag, X, MessageSquare } from 'lucide-react'
 import {
   marketplaceService,
   type CheckoutAddress, type CheckoutCard,
@@ -81,6 +81,9 @@ export default function OdemePage() {
       }
     }).catch(() => {})
   }, [])
+
+  // Buyer note
+  const [buyerNote, setBuyerNote] = useState('')
 
   // Coupon state
   const [couponCode, setCouponCode] = useState('')
@@ -178,6 +181,7 @@ export default function OdemePage() {
           installmentCount: card.installmentCount,
         } : undefined,
         couponCode: appliedCoupon ?? undefined,
+        buyerNote: buyerNote.trim() || undefined,
       })
 
       if (!result.success) {
@@ -375,6 +379,24 @@ export default function OdemePage() {
                     placeholder="Mahalle, sokak, kapı no, daire..." />
                 </div>
               </div>
+              {/* Buyer note */}
+              <div>
+                <label className="text-xs text-slate-400 mb-1 block flex items-center gap-1">
+                  <MessageSquare className="w-3 h-3" /> Sipariş Notu <span className="text-slate-600">(opsiyonel)</span>
+                </label>
+                <textarea
+                  value={buyerNote}
+                  onChange={(e) => setBuyerNote(e.target.value)}
+                  rows={2}
+                  maxLength={500}
+                  className="w-full px-3 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
+                  placeholder="Kargoya özel not, teslimat talebi vb."
+                />
+                {buyerNote.length > 0 && (
+                  <p className="text-xs text-slate-500 text-right mt-0.5">{buyerNote.length}/500</p>
+                )}
+              </div>
+
               <button onClick={handleNextStep} className="w-full premium-button flex items-center justify-center gap-2">
                 Ödemeye Geç <ChevronRight className="w-4 h-4" />
               </button>
@@ -557,6 +579,13 @@ export default function OdemePage() {
                 <p className="text-sm text-foreground">{address.recipientName} · {address.phone}</p>
                 <p className="text-sm text-slate-300">{address.addressLine}, {address.district} {address.city} {address.postalCode}</p>
               </div>
+
+              {buyerNote.trim() && (
+                <div>
+                  <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">Sipariş Notu</p>
+                  <p className="text-sm text-slate-300 italic">"{buyerNote.trim()}"</p>
+                </div>
+              )}
 
               <div>
                 <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">Ödeme</p>

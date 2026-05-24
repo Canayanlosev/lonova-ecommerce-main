@@ -118,6 +118,7 @@ public class CheckoutController : ControllerBase
             District = request.Address.District ?? string.Empty,
             AddressLine = request.Address.AddressLine,
             PostalCode = request.Address.PostalCode ?? string.Empty,
+            BuyerNote = request.BuyerNote,
             Items = cartItems.Select(c => new BuyerOrderItem
             {
                 ProductId = c.ProductId,
@@ -229,6 +230,7 @@ public class CheckoutController : ControllerBase
             i.ProductId, i.VariantId, i.ProductName, i.VariantName, i.ImageUrl, i.UnitPrice, i.Quantity
         )).ToList(),
         o.CancelledAt, o.CancelReason, o.RefundStatus,
-        o.TrackingNumber, o.CarrierName
+        o.TrackingNumber, o.CarrierName,
+        o.BuyerNote
     );
 }

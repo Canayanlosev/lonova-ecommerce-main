@@ -41,6 +41,7 @@ public class MarketplaceProductsController : ControllerBase
         var query = _ecommerceContext.Products
             .Include(p => p.Variants)
             .Include(p => p.Category)
+            .Where(p => p.IsPublishedToMarketplace)
             .AsQueryable();
 
         if (categoryId.HasValue)
@@ -99,7 +100,7 @@ public class MarketplaceProductsController : ControllerBase
         var p = await _ecommerceContext.Products
             .Include(p => p.Variants)
             .Include(p => p.Category)
-            .FirstOrDefaultAsync(p => p.Id == id);
+            .FirstOrDefaultAsync(p => p.Id == id && p.IsPublishedToMarketplace);
 
         if (p is null)
             throw new KeyNotFoundException($"Ürün bulunamadı: {id}");

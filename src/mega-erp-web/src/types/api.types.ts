@@ -8,10 +8,12 @@ export interface Category { id: string; name: string; description?: string }
 export interface ProductVariant { id: string; sku: string; name: string; priceDifference: number; stockQuantity: number }
 export interface Product {
   id: string; name: string; description?: string; basePrice: number; sku: string
-  categoryId: string; category?: Category; variants: ProductVariant[]
+  categoryId: string; category?: Category; variants: ProductVariant[]; imageUrl?: string
+  isPublishedToMarketplace?: boolean
+  slug?: string
 }
-export interface CreateProductRequest { name: string; description?: string; basePrice: number; sku: string; categoryId: string }
-export interface UpdateProductRequest { name: string; description?: string; basePrice: number; categoryId: string }
+export interface CreateProductRequest { name: string; description?: string; basePrice: number; sku: string; categoryId: string; imageUrl?: string }
+export interface UpdateProductRequest { name: string; description?: string; basePrice: number; categoryId: string; imageUrl?: string }
 
 // Basket
 export interface BasketItem { id: string; productId: string; productName: string; unitPrice: number; quantity: number }

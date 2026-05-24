@@ -13,4 +13,6 @@ public class Product : BaseTenantEntity
     public Guid CategoryId { get; set; }
     public virtual Category? Category { get; set; }
     public virtual ICollection<ProductVariant> Variants { get; set; } = new List<ProductVariant>();
+    /// <summary>Whether this product is visible in the marketplace storefront (default: true).</summary>
+    public bool IsPublishedToMarketplace { get; set; } = true;
 }

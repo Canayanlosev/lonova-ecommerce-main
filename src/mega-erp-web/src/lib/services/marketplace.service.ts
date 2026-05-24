@@ -145,6 +145,8 @@ export interface BuyerOrderDto {
   // TASK-26
   trackingNumber?: string
   carrierName?: string
+  // TASK-33
+  buyerNote?: string
 }
 
 export interface CheckoutAddress {
@@ -170,6 +172,7 @@ export interface CheckoutRequest {
   paymentMethod: 'Card' | 'BankTransfer' | 'CashOnDelivery'
   card?: CheckoutCard
   couponCode?: string
+  buyerNote?: string
 }
 
 export interface CheckoutResponse {

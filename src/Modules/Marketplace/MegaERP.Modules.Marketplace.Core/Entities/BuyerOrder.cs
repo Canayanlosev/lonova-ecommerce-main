@@ -33,6 +33,9 @@ public class BuyerOrder : BaseEntity
     public string? TrackingNumber { get; set; }
     public string? CarrierName { get; set; }
 
+    // Buyer note (TASK-33)
+    public string? BuyerNote { get; set; }
+
     public virtual ICollection<BuyerOrderItem> Items { get; set; } = new List<BuyerOrderItem>();
 }
 
