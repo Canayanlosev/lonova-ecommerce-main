@@ -281,6 +281,14 @@ export const marketplaceService = {
   changePassword: async (currentPassword: string, newPassword: string): Promise<void> => {
     await buyerApi().put('/api/marketplace/auth/change-password', { currentPassword, newPassword })
   },
+  getProfile: async (): Promise<{ userId: string; email: string; firstName: string; lastName: string; phone: string }> => {
+    const { data } = await buyerApi().get('/api/marketplace/auth/profile')
+    return data
+  },
+  updateProfile: async (req: { firstName?: string; lastName?: string; email?: string; phone?: string }): Promise<{ userId: string; email: string; firstName: string; lastName: string; phone: string }> => {
+    const { data } = await buyerApi().put('/api/marketplace/auth/profile', req)
+    return data
+  },
 
   // Coupons
   validateCoupon: async (code: string, cartTotal: number): Promise<{ valid: boolean; message?: string; discountAmount: number }> => {

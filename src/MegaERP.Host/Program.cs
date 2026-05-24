@@ -188,6 +188,7 @@ app.Use(async (context, next) =>
 });
 
 app.UseCors();
+app.UseStaticFiles();
 app.UseRateLimiter();
 
 app.UseAuthentication();
@@ -279,6 +280,15 @@ using (var scope = app.Services.CreateScope())
                 """);
         }
         catch (Exception ex) { Console.WriteLine($"Orders column migration: {ex.Message}"); }
+
+        try
+        {
+            await mktCtx.Database.ExecuteSqlRawAsync("""
+                ALTER TABLE marketplace."BuyerUsers"
+                    ADD COLUMN IF NOT EXISTS "Phone" text;
+                """);
+        }
+        catch (Exception ex) { Console.WriteLine($"BuyerUsers column migration: {ex.Message}"); }
     }
     catch (Exception ex)
     {

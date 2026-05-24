@@ -638,3 +638,24 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     3. GET /api/marketplace/admin/coupons — kuponları listele
     4. POST /api/marketplace/coupons/validate — kod gönder, indirim tutarı dön
     5. Checkout'ta CouponCode alanı ekle, indirim hesapla
+
+- [x] TASK-31: Alıcı Profil Güncelleme — GET/PUT /api/marketplace/auth/profile
+  BuyerUser'a Phone alanı eklendi (ALTER TABLE + BuyerProfileDto + UpdateBuyerProfileRequest)
+
+- [ ] TASK-32: Marketplace Ürün Görünürlük Bayrağı
+  Hedef: Firma ürününü marketplace'te gizleyebilsin.
+  Dosyalar: Product entity, EcommerceDbContext, ProductsController
+  Adımlar:
+    1. Product entity'sine bool IsPublishedToMarketplace (default: true) ekle
+    2. ALTER TABLE: ADD COLUMN IF NOT EXISTS "IsPublishedToMarketplace" boolean DEFAULT true
+    3. Marketplace ProductsController'da .Where(p => p.IsPublishedToMarketplace) filtresi
+    4. ProductsController'a PUT {id}/visibility endpoint — toggle
+
+- [ ] TASK-33: Sipariş Alıcı Notu
+  Hedef: Checkout'ta alıcı sipariş notu girebilsin (örn. "3. katta bırakın").
+  Dosyalar: BuyerOrder entity, CheckoutRequest, CheckoutController, BuyerOrderDto
+  Adımlar:
+    1. BuyerOrder'a string? BuyerNote ekle
+    2. ALTER TABLE: ADD COLUMN IF NOT EXISTS "BuyerNote" text
+    3. CheckoutRequest'e BuyerNote? alanı ekle
+    4. AdminOrdersController'da order detayında göster

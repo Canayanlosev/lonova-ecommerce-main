@@ -82,6 +82,57 @@ public class BuyerAuthController : ControllerBase
         return Ok(new BuyerAuthResponse(token, buyer.Id.ToString(), buyer.Email, buyer.FirstName, buyer.LastName));
     }
 
+    /// <summary>Returns the authenticated buyer's profile.</summary>
+    [HttpGet("profile")]
+    [Authorize]
+    public async Task<ActionResult<BuyerProfileDto>> GetProfile()
+    {
+        var buyerIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                      ?? User.FindFirst("sub")?.Value;
+        if (buyerIdStr is null || !Guid.TryParse(buyerIdStr, out var buyerId))
+            return Unauthorized();
+
+        var buyer = await _context.BuyerUsers.FindAsync(buyerId);
+        if (buyer is null || !buyer.IsActive) return Unauthorized();
+
+        return Ok(new BuyerProfileDto(buyer.Id.ToString(), buyer.Email, buyer.FirstName, buyer.LastName, buyer.Phone ?? string.Empty));
+    }
+
+    /// <summary>Updates the authenticated buyer's profile.</summary>
+    [HttpPut("profile")]
+    [Authorize]
+    public async Task<ActionResult<BuyerProfileDto>> UpdateProfile(UpdateBuyerProfileRequest request)
+    {
+        var buyerIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                      ?? User.FindFirst("sub")?.Value;
+        if (buyerIdStr is null || !Guid.TryParse(buyerIdStr, out var buyerId))
+            return Unauthorized();
+
+        var buyer = await _context.BuyerUsers.FindAsync(buyerId);
+        if (buyer is null || !buyer.IsActive) return Unauthorized();
+
+        if (!string.IsNullOrWhiteSpace(request.FirstName))
+            buyer.FirstName = request.FirstName.Trim();
+        if (!string.IsNullOrWhiteSpace(request.LastName))
+            buyer.LastName = request.LastName.Trim();
+        if (request.Phone is not null)
+            buyer.Phone = request.Phone.Trim();
+
+        // Email change requires uniqueness check
+        if (!string.IsNullOrWhiteSpace(request.Email) &&
+            !request.Email.Equals(buyer.Email, StringComparison.OrdinalIgnoreCase))
+        {
+            if (await _context.BuyerUsers.AnyAsync(b => b.Email == request.Email.ToLowerInvariant() && b.Id != buyerId))
+                return Conflict("Bu email adresi başka bir hesapta kullanılıyor.");
+            buyer.Email = request.Email.ToLowerInvariant();
+        }
+
+        buyer.UpdatedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+
+        return Ok(new BuyerProfileDto(buyer.Id.ToString(), buyer.Email, buyer.FirstName, buyer.LastName, buyer.Phone ?? string.Empty));
+    }
+
     /// <summary>Changes the authenticated buyer's password.</summary>
     [HttpPut("change-password")]
     [Authorize]
