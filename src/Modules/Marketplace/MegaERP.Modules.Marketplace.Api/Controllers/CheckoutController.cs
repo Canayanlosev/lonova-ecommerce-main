@@ -201,6 +201,8 @@ public class CheckoutController : ControllerBase
         o.CreatedAt,
         o.Items.Select(i => new BuyerOrderItemDto(
             i.ProductId, i.VariantId, i.ProductName, i.VariantName, i.ImageUrl, i.UnitPrice, i.Quantity
-        )).ToList()
+        )).ToList(),
+        o.CancelledAt, o.CancelReason, o.RefundStatus,
+        o.TrackingNumber, o.CarrierName
     );
 }

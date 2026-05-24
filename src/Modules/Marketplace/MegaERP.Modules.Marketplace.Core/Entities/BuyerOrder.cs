@@ -24,6 +24,15 @@ public class BuyerOrder : BaseEntity
     public string? CardLastFour { get; set; }
     public string? CardBrand { get; set; } // Visa | Mastercard | Troy | Amex
 
+    // Cancellation (TASK-24)
+    public DateTime? CancelledAt { get; set; }
+    public string? CancelReason { get; set; }
+    public string? RefundStatus { get; set; } // null | Requested | Processing | Refunded
+
+    // Shipping (TASK-26)
+    public string? TrackingNumber { get; set; }
+    public string? CarrierName { get; set; }
+
     public virtual ICollection<BuyerOrderItem> Items { get; set; } = new List<BuyerOrderItem>();
 }
 

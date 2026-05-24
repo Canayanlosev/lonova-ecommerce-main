@@ -46,4 +46,58 @@ public class BuyerOrdersController : ControllerBase
 
         return Ok(CheckoutController.ToOrderDto(o));
     }
+
+    /// <summary>Cancels a Pending or Processing order. Only the order owner can cancel.</summary>
+    [HttpPut("{id:guid}/cancel")]
+    public async Task<ActionResult<BuyerOrderDto>> CancelOrder(Guid id, [FromBody] CancelOrderRequest request)
+    {
+        var o = await _context.Orders
+            .Include(o => o.Items)
+            .FirstOrDefaultAsync(o => o.Id == id && o.BuyerUserId == BuyerId);
+
+        if (o is null) return NotFound();
+
+        if (o.Status != "Pending" && o.Status != "Processing")
+            return BadRequest("Yalnızca beklemedeki veya işlemdeki siparişler iptal edilebilir.");
+
+        if (o.CancelledAt.HasValue)
+            return BadRequest("Bu sipariş zaten iptal edilmiş.");
+
+        o.Status = "Cancelled";
+        o.CancelledAt = DateTime.UtcNow;
+        o.CancelReason = request.Reason?.Trim();
+
+        // If already paid, mark refund as Requested
+        if (o.PaymentStatus == "Paid")
+            o.RefundStatus = "Requested";
+
+        await _context.SaveChangesAsync();
+        return Ok(CheckoutController.ToOrderDto(o));
+    }
+
+    /// <summary>Creates a refund request for a Delivered or Shipped order.</summary>
+    [HttpPost("{id:guid}/refund-request")]
+    public async Task<ActionResult<BuyerOrderDto>> RequestRefund(Guid id, [FromBody] RefundRequestDto request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Reason))
+            return BadRequest("İade sebebi belirtilmelidir.");
+
+        var o = await _context.Orders
+            .Include(o => o.Items)
+            .FirstOrDefaultAsync(o => o.Id == id && o.BuyerUserId == BuyerId);
+
+        if (o is null) return NotFound();
+
+        if (o.Status != "Delivered" && o.Status != "Shipped")
+            return BadRequest("İade talebi yalnızca teslim edilmiş veya kargodaki siparişler için oluşturulabilir.");
+
+        if (o.RefundStatus is "Requested" or "Processing")
+            return BadRequest("Bu sipariş için zaten bir iade talebi mevcut.");
+
+        o.RefundStatus = "Requested";
+        o.CancelReason = request.Reason.Trim();
+
+        await _context.SaveChangesAsync();
+        return Ok(CheckoutController.ToOrderDto(o));
+    }
 }

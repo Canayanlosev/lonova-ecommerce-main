@@ -12,6 +12,7 @@ public class MarketplaceDbContext : DbContext
     public DbSet<BuyerOrder> Orders => Set<BuyerOrder>();
     public DbSet<BuyerOrderItem> OrderItems => Set<BuyerOrderItem>();
     public DbSet<ProductReview> ProductReviews => Set<ProductReview>();
+    public DbSet<BuyerAddress> Addresses => Set<BuyerAddress>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -59,6 +60,20 @@ public class MarketplaceDbContext : DbContext
             e.HasIndex(x => new { x.ProductId, x.BuyerUserId }).IsUnique();
             e.Property(x => x.Comment).HasMaxLength(1000);
             e.Property(x => x.BuyerName).HasMaxLength(200);
+        });
+
+        modelBuilder.Entity<BuyerAddress>(e =>
+        {
+            e.ToTable("BuyerAddresses");
+            e.HasKey(x => x.Id);
+            e.HasIndex(x => x.BuyerUserId);
+            e.Property(x => x.Title).IsRequired().HasMaxLength(100);
+            e.Property(x => x.RecipientName).IsRequired().HasMaxLength(200);
+            e.Property(x => x.Phone).IsRequired().HasMaxLength(20);
+            e.Property(x => x.City).IsRequired().HasMaxLength(100);
+            e.Property(x => x.District).HasMaxLength(100);
+            e.Property(x => x.AddressLine).IsRequired().HasMaxLength(500);
+            e.Property(x => x.PostalCode).HasMaxLength(20);
         });
     }
 }

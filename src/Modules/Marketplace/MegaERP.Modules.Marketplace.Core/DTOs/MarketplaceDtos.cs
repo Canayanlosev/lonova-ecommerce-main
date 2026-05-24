@@ -27,7 +27,14 @@ public record BuyerOrderDto(
     string AddressLine,
     string PostalCode,
     DateTime CreatedAt,
-    List<BuyerOrderItemDto> Items
+    List<BuyerOrderItemDto> Items,
+    // Cancellation (TASK-24)
+    DateTime? CancelledAt = null,
+    string? CancelReason = null,
+    string? RefundStatus = null,
+    // Shipping (TASK-26)
+    string? TrackingNumber = null,
+    string? CarrierName = null
 );
 
 public record CheckoutAddressDto(
@@ -62,6 +69,55 @@ public record CheckoutResponse(
 );
 
 public record InstallmentOption(int Count, decimal MonthlyAmount, decimal TotalAmount, string Label);
+
+// TASK-24
+public record CancelOrderRequest(string? Reason);
+public record RefundRequestDto(string Reason);
+
+// TASK-26
+public record ShipOrderRequest(string TrackingNumber, string CarrierName);
+public record AdminOrderDto(
+    Guid Id,
+    Guid BuyerUserId,
+    decimal TotalAmount,
+    string Status,
+    string PaymentStatus,
+    string PaymentMethod,
+    string RecipientName,
+    string Phone,
+    string City,
+    string District,
+    string AddressLine,
+    DateTime CreatedAt,
+    int ItemCount,
+    string? TrackingNumber,
+    string? CarrierName,
+    string? CancelReason,
+    string? RefundStatus
+);
+
+// TASK-27
+public record BuyerAddressDto(
+    Guid Id,
+    string Title,
+    string RecipientName,
+    string Phone,
+    string City,
+    string District,
+    string AddressLine,
+    string PostalCode,
+    bool IsDefault
+);
+public record CreateAddressRequest(
+    string Title,
+    string RecipientName,
+    string Phone,
+    string City,
+    string District,
+    string AddressLine,
+    string PostalCode,
+    bool IsDefault = false
+);
 
 public record CreateReviewRequest(int Rating, string? Comment);
 public record ProductReviewDto(Guid Id, Guid BuyerUserId, string BuyerName, int Rating, string? Comment, DateTime CreatedAt);

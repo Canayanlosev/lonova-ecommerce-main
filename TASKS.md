@@ -575,7 +575,7 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 - [x] TASK-22: Buyer Cart API — Alıcı Sepeti
 - [x] TASK-23: Buyer Checkout + Sipariş Takibi
 
-- [ ] TASK-24: Sipariş İptal ve İade Talebi
+- [x] TASK-24: Sipariş İptal ve İade Talebi
   Hedef: Alıcı Pending/Processing siparişini iptal edebilsin; iade talebi oluşturabilsin.
   Dosyalar: BuyerOrdersController.cs, BuyerOrder.cs, MarketplaceDtos.cs
   Adımlar:
@@ -584,7 +584,7 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     3. POST /api/marketplace/orders/{id}/refund-request — RefundStatus=Requested
     4. SQL migration (ALTER TABLE)
 
-- [ ] TASK-25: Ürün Yorumları ve Puan Sistemi
+- [x] TASK-25: Ürün Yorumları ve Puan Sistemi
   Hedef: Alıcılar satın aldıkları ürüne yorum + 1-5 yıldız bırakabilsin.
   Dosyalar: Marketplace modülü — yeni ProductReview entity + controller
   Adımlar:
@@ -594,7 +594,7 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     4. GET /api/marketplace/products/{id}/reviews (public, sayfalı)
     5. Ürün listesinde averageRating + reviewCount dön
 
-- [ ] TASK-26: Sipariş Kargolama — Takip Numarası ve Durum Güncellemesi
+- [x] TASK-26: Sipariş Kargolama — Takip Numarası ve Durum Güncellemesi
   Hedef: Firma panelinden sipariş kargoya verildiğinde takip no girilebilsin.
   Dosyalar: BuyerOrdersController.cs veya yeni AdminOrdersController.cs
   Adımlar:
@@ -603,7 +603,7 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     3. Status → Shipped, TrackingNumber set et
     4. GET /api/marketplace/admin/orders — firm'ın tüm siparişleri (sayfalı)
 
-- [ ] TASK-27: Alıcı Adres Defteri
+- [x] TASK-27: Alıcı Adres Defteri
   Hedef: Alıcı birden fazla teslimat adresi kaydedip ödeme sırasında seçebilsin.
   Dosyalar: Marketplace modülü — yeni BuyerAddress entity + controller
   Adımlar:

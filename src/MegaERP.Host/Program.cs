@@ -35,6 +35,7 @@ using MegaERP.Modules.WMS.Infrastructure.Persistence;
 using MegaERP.Modules.SiteBuilder.Infrastructure.Persistence;
 using MegaERP.Modules.Marketplace.Infrastructure.Persistence;
 using MegaERP.Modules.Marketplace.Core.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -263,6 +264,21 @@ using (var scope = app.Services.CreateScope())
         EnsureSchema(services.GetRequiredService<WMSDbContext>());
         EnsureSchema(services.GetRequiredService<SiteBuilderDbContext>());
         EnsureSchema(services.GetRequiredService<MarketplaceDbContext>());
+
+        // Column migrations for existing tables (idempotent — IF NOT EXISTS)
+        var mktCtx = services.GetRequiredService<MarketplaceDbContext>();
+        try
+        {
+            await mktCtx.Database.ExecuteSqlRawAsync("""
+                ALTER TABLE marketplace."Orders"
+                    ADD COLUMN IF NOT EXISTS "CancelledAt" timestamp with time zone,
+                    ADD COLUMN IF NOT EXISTS "CancelReason" text,
+                    ADD COLUMN IF NOT EXISTS "RefundStatus" text,
+                    ADD COLUMN IF NOT EXISTS "TrackingNumber" text,
+                    ADD COLUMN IF NOT EXISTS "CarrierName" text;
+                """);
+        }
+        catch (Exception ex) { Console.WriteLine($"Orders column migration: {ex.Message}"); }
     }
     catch (Exception ex)
     {
