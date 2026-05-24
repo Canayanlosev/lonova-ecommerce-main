@@ -40,6 +40,8 @@ export default function OdemePage() {
   const { isAuthenticated, buyer } = useBuyerAuthStore()
 
   const [step, setStep] = useState<Step>('address')
+  // Stable reference number for bank transfer description (computed once on mount)
+  const bankRefCode = useState(() => Date.now().toString().slice(-8))[0]
   const [address, setAddress] = useState<CheckoutAddress>({
     recipientName: buyer ? `${buyer.firstName} ${buyer.lastName}` : '',
     phone: '',
@@ -535,7 +537,7 @@ export default function OdemePage() {
                       ['Banka', 'CanayanWeb Bank A.Ş.'],
                       ['IBAN', 'TR00 0000 0000 0000 0000 0000 00'],
                       ['Hesap Adı', 'CanayanWeb Ticaret A.Ş.'],
-                      ['Açıklama', `Sipariş #${Date.now().toString().slice(-8)}`],
+                      ['Açıklama', `Sipariş #${bankRefCode}`],
                     ].map(([k, v]) => (
                       <div key={k} className="flex gap-3">
                         <span className="text-slate-400 w-28 shrink-0">{k}</span>

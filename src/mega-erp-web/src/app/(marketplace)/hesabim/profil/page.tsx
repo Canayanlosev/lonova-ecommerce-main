@@ -16,10 +16,9 @@ export default function ProfilPage() {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
 
-  if (!isAuthenticated) {
-    router.push('/alici-auth/giris')
-    return null
-  }
+  useEffect(() => {
+    if (!isAuthenticated) { router.push('/alici-auth/giris'); return }
+  }, [isAuthenticated, router])
 
   useEffect(() => {
     marketplaceService.getProfile().then((p) => {

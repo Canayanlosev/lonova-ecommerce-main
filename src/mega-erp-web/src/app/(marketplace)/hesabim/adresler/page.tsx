@@ -26,10 +26,9 @@ export default function AdreslerPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
-  if (!isAuthenticated) {
-    router.push('/alici-auth/giris')
-    return null
-  }
+  useEffect(() => {
+    if (!isAuthenticated) { router.push('/alici-auth/giris'); return }
+  }, [isAuthenticated, router])
 
   const load = async () => {
     try {

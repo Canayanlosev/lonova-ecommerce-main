@@ -121,12 +121,6 @@ export default function WMSPage() {
   }, [tab, suppliersLoaded])
 
   // ─ Lazy-load POs when tab opened ────────────────────────────────────────
-  useEffect(() => {
-    if (tab === 'purchase-orders' && !poLoaded) {
-      loadPOs()
-    }
-  }, [tab, poLoaded])
-
   const loadPOs = async () => {
     try {
       const r = await api.get('/api/wms/purchase-orders')
@@ -134,6 +128,12 @@ export default function WMSPage() {
       setPoLoaded(true)
     } catch { setPoLoaded(true) }
   }
+
+  useEffect(() => {
+    if (tab === 'purchase-orders' && !poLoaded) {
+      loadPOs()
+    }
+  }, [tab, poLoaded]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ─ Computed ──────────────────────────────────────────────────────────────
   const lowStockItems = useMemo(() => stock.filter(s => s.isLowStock), [stock])

@@ -5,7 +5,10 @@
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
-      "Bash(git commit -m 'feat: [FTASK-43] bulk product operations — select/yayınla/gizle/sil *)"
+      "Bash(git commit -m 'feat: [FTASK-43] bulk product operations — select/yayınla/gizle/sil *)",
+      "Bash(npm run *)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\('scripts', {}\\), indent=2\\)\\)\")",
+      "Bash(grep -E \"^/home.*\\\\.\\(tsx|ts\\)$\")"
     ]
   }
 }
