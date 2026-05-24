@@ -684,3 +684,13 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     1. GET /api/marketplace/admin/reviews — sayfalı, productId/minRating filtreli
     2. DELETE /api/marketplace/admin/reviews/{reviewId}
     3. Ürün adları EcommerceDbContext.Products ile çözümleniyor
+
+- [x] TASK-37: Ürün Klonlama ve Toplu Fiyat Güncelleme Backend
+  Endpoint: POST /api/ecommerce/products/{id}/clone
+  Endpoint: POST /api/ecommerce/products/bulk-price
+  Adımlar:
+    1. CloneProduct: kaynak ürünü varyantlarıyla kopyalar, SKU'ya -COPY ekler
+    2. Klonun IsPublishedToMarketplace = false (taslak başlar)
+    3. BulkPriceUpdate: Percent veya Fixed modda toplu fiyat değişimi
+    4. BulkPriceRequest DTO eklendi
+    5. productsService.clone() + productsService.bulkPrice() eklendi

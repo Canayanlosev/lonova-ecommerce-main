@@ -32,3 +32,5 @@ public record CreateProductRequest(
     string? Slug,
     string? ImageUrl,
     Guid CategoryId);
+
+public record BulkPriceRequest(List<Guid> ProductIds, string AdjustmentType, decimal Value); // AdjustmentType: "Percent" | "Fixed"

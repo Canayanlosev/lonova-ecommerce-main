@@ -905,3 +905,12 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     2. Mevcut ürünü filtrele, max 4 ürün al
     3. "Bu Kategoriden Diğer Ürünler" başlığı + 4-col ProductCard grid
     4. Sadece similarProducts.length > 0 ise render et
+
+- [x] FTASK-51: Ürün Klonlama + Toplu Fiyat Güncelleme UI
+  Dosya: src/app/dashboard/ecommerce/page.tsx
+  Adımlar:
+    1. Clone (Copy) butonu: her ürün satırında amber ikon
+    2. handleClone(): POST /clone, toast.success ile yeni ürün adı
+    3. Bulk action bar'a "Fiyat Güncelle" butonu (amber)
+    4. Bulk Price modal: Yüzde/Sabit radio toggle, değer input, Uygula
+    5. handleBulkPrice(): selectedIds + priceType + value → API çağrısı

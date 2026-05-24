@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Skeleton, SkeletonRow } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
-import { Package, Search, PencilLine, Trash2, Plus, AlertCircle, Eye, EyeOff, CheckSquare, Square, X } from "lucide-react";
+import { Package, Search, PencilLine, Trash2, Plus, AlertCircle, Eye, EyeOff, CheckSquare, Square, X, Copy, Percent, DollarSign } from "lucide-react";
 import { productsService } from "@/lib/services/products.service";
 import { useToast } from "@/store/ui.store";
 import type { Product } from "@/types/api.types";
@@ -19,6 +19,12 @@ export default function EcommercePage() {
   const [search, setSearch] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkLoading, setBulkLoading] = useState(false);
+
+  // Bulk price modal
+  const [priceModal, setPriceModal] = useState(false);
+  const [priceType, setPriceType] = useState<'Percent' | 'Fixed'>('Percent');
+  const [priceValue, setPriceValue] = useState('');
+  const [priceApplying, setPriceApplying] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -105,6 +111,35 @@ export default function EcommercePage() {
     setBulkLoading(false);
   };
 
+  const handleClone = async (id: string, name: string) => {
+    try {
+      const cloned = await productsService.clone(id);
+      toast.success(`"${name}" kopyalandı → "${cloned.name}"`);
+      load();
+    } catch {
+      toast.error('Ürün kopyalanamadı.');
+    }
+  };
+
+  const handleBulkPrice = async () => {
+    const val = parseFloat(priceValue);
+    if (isNaN(val)) { toast.error('Geçerli bir değer giriniz.'); return; }
+    if (selectedIds.size === 0) { toast.error('Ürün seçiniz.'); return; }
+    setPriceApplying(true);
+    try {
+      const result = await productsService.bulkPrice([...selectedIds], priceType, val);
+      toast.success(`${result.updated} ürünün fiyatı güncellendi.`);
+      setPriceModal(false);
+      setPriceValue('');
+      setSelectedIds(new Set());
+      load();
+    } catch {
+      toast.error('Fiyat güncellenemedi.');
+    } finally {
+      setPriceApplying(false);
+    }
+  };
+
   const filtered = products.filter(
     (p) =>
       p.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -176,6 +211,13 @@ export default function EcommercePage() {
                     >
                       <Trash2 size={13} /> {bulkLoading ? 'Siliniyor...' : 'Sil'}
                     </button>
+                    <button
+                      onClick={() => setPriceModal(true)}
+                      disabled={bulkLoading}
+                      className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 transition-colors disabled:opacity-50"
+                    >
+                      <Percent size={13} /> Fiyat Güncelle
+                    </button>
                     <button onClick={() => setSelectedIds(new Set())} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors">
                       <X size={14} />
                     </button>
@@ -246,6 +288,13 @@ export default function EcommercePage() {
                                   ? <Eye size={16} />
                                   : <EyeOff size={16} />}
                               </button>
+                              <button
+                                onClick={() => handleClone(p.id, p.name)}
+                                title="Kopyala"
+                                className="p-1.5 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-500/10 text-amber-500 transition-colors"
+                              >
+                                <Copy size={15} />
+                              </button>
                               <Link href={`/dashboard/ecommerce/${p.id}/edit`}>
                                 <button className="p-1.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-500/10 text-indigo-500 transition-colors">
                                   <PencilLine size={16} />
@@ -269,6 +318,62 @@ export default function EcommercePage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Bulk Price Modal */}
+      {priceModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-sm bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800">
+              <h2 className="text-lg font-bold">Toplu Fiyat Güncelle</h2>
+              <button onClick={() => setPriceModal(false)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"><X size={18} /></button>
+            </div>
+            <div className="px-6 py-5 space-y-4">
+              <p className="text-sm text-slate-400">{selectedIds.size} ürünün fiyatı güncellenecek.</p>
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 mb-2">Güncelleme Tipi</label>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setPriceType('Percent')}
+                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-medium transition-colors ${priceType === 'Percent' ? 'border-indigo-500 bg-indigo-500/10 text-indigo-400' : 'border-slate-200 dark:border-slate-700 text-slate-500'}`}
+                  >
+                    <Percent size={14} /> Yüzde (%)
+                  </button>
+                  <button
+                    onClick={() => setPriceType('Fixed')}
+                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-medium transition-colors ${priceType === 'Fixed' ? 'border-indigo-500 bg-indigo-500/10 text-indigo-400' : 'border-slate-200 dark:border-slate-700 text-slate-500'}`}
+                  >
+                    <DollarSign size={14} /> Sabit (₺)
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 mb-1.5">
+                  {priceType === 'Percent' ? 'Yüzde Değişim (+ artır, - azalt)' : 'Sabit Değişim (₺)'}
+                </label>
+                <input
+                  type="number"
+                  value={priceValue}
+                  onChange={e => setPriceValue(e.target.value)}
+                  placeholder={priceType === 'Percent' ? 'Örn: -10 (%10 indirim), 5 (%5 artış)' : 'Örn: -50 (50₺ indirim), 100 (100₺ artış)'}
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                  onKeyDown={e => e.key === 'Enter' && handleBulkPrice()}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 px-6 py-4 border-t border-slate-200 dark:border-slate-800">
+              <button onClick={() => setPriceModal(false)} className="px-4 py-2 text-sm font-medium text-slate-500 hover:text-foreground">İptal</button>
+              <button
+                onClick={handleBulkPrice}
+                disabled={priceApplying || !priceValue}
+                className="flex items-center gap-2 px-5 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-colors"
+              >
+                {priceApplying ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Percent size={14} />}
+                Uygula
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

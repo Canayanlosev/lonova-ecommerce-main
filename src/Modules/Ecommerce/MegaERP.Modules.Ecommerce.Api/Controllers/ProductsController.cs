@@ -171,6 +171,79 @@ public class ProductsController : ControllerBase
         return Ok(new { product.Id, product.IsPublishedToMarketplace });
     }
 
+    /// <summary>Clones (duplicates) a product including its variants. Returns the new product.</summary>
+    [HttpPost("{id:guid}/clone")]
+    public async Task<ActionResult<ProductDto>> CloneProduct(Guid id)
+    {
+        var source = await _context.Products
+            .Include(p => p.Variants)
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+        if (source is null) return NotFound("Ürün bulunamadı.");
+
+        // Generate unique SKU by appending -COPY suffix
+        var baseSku = source.Sku.Length > 20 ? source.Sku[..20] : source.Sku;
+        var newSku = $"{baseSku}-COPY";
+        // Ensure uniqueness
+        var skuExists = await _context.Products.AnyAsync(p => p.Sku == newSku);
+        if (skuExists) newSku = $"{baseSku}-{Guid.NewGuid().ToString()[..4].ToUpper()}";
+
+        var clone = new Product
+        {
+            Name = $"{source.Name} (Kopya)",
+            Description = source.Description,
+            BasePrice = source.BasePrice,
+            Sku = newSku,
+            Slug = null, // slug must be unique; don't copy
+            ImageUrl = source.ImageUrl,
+            CategoryId = source.CategoryId,
+            IsPublishedToMarketplace = false, // start as draft
+        };
+
+        var variantClones = source.Variants.Select(v => new ProductVariant
+        {
+            ProductId = clone.Id,
+            Name = v.Name,
+            VariantType = v.VariantType,
+            ColorHex = v.ColorHex,
+            Sku = $"{v.Sku}-COPY",
+            PriceOverride = v.PriceOverride,
+            StockQuantity = 0, // new product starts with 0 stock
+        }).ToList();
+
+        clone.Variants = variantClones;
+
+        _context.Products.Add(clone);
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(GetProductById), new { id = clone.Id }, MapProduct(clone));
+    }
+
+    /// <summary>Bulk price update: applies a percentage or fixed adjustment to selected products.</summary>
+    [HttpPost("bulk-price")]
+    public async Task<IActionResult> BulkPriceUpdate([FromBody] BulkPriceRequest request)
+    {
+        if (request.ProductIds == null || request.ProductIds.Count == 0)
+            return BadRequest("Ürün listesi boş.");
+
+        var products = await _context.Products
+            .Where(p => request.ProductIds.Contains(p.Id))
+            .ToListAsync();
+
+        foreach (var p in products)
+        {
+            p.BasePrice = request.AdjustmentType == "Percent"
+                ? Math.Round(p.BasePrice * (1 + request.Value / 100m), 2)
+                : Math.Round(p.BasePrice + request.Value, 2);
+
+            if (p.BasePrice < 0) p.BasePrice = 0;
+            p.UpdatedAt = DateTime.UtcNow;
+        }
+
+        await _context.SaveChangesAsync();
+        return Ok(new { updated = products.Count });
+    }
+
     // ── Variant endpoints ──────────────────────────────────────────────────────
 
     /// <summary>Lists all variants for a product.</summary>
