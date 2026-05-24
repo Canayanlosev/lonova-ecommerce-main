@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useBuyerCartStore } from '@/store/buyerCart.store'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
 import { useWishlistStore } from '@/store/wishlist.store'
+import { ThemeSwitcher } from '@/components/ThemeSwitcher'
 
 const CATEGORIES = [
   { label: 'Elektronik', slug: 'elektronik' },
@@ -71,7 +72,7 @@ export function MarketplaceNavbar() {
             {isAuthenticated && buyer ? (
               <>
                 <Link
-                  href="/hesabim/siparisler"
+                  href="/hesabim"
                   className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-background border border-transparent hover:border-border transition-all"
                 >
                   <User className="w-4 h-4" />
@@ -100,6 +101,7 @@ export function MarketplaceNavbar() {
             >
               Firma Paneli
             </Link>
+            <ThemeSwitcher />
             <Link href="/hesabim/favoriler" className="relative p-2 rounded-lg hover:bg-background transition-all" title="Favorilerim">
               <Heart className="w-5 h-5 text-foreground" />
               {wishlistCount > 0 && (
@@ -145,7 +147,7 @@ export function MarketplaceNavbar() {
           {isAuthenticated && buyer ? (
             <>
               <Link
-                href="/hesabim/siparisler"
+                href="/hesabim"
                 className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-foreground hover:bg-background transition-all"
                 onClick={() => setMobileOpen(false)}
               >

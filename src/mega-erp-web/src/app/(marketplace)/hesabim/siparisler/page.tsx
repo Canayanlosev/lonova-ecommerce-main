@@ -7,9 +7,9 @@ import Image from 'next/image'
 import {
   Package, ArrowRight, CreditCard, Banknote, Truck, MapPin,
   ChevronDown, ChevronUp, CheckCircle, Clock, XCircle, LogOut,
-  AlertTriangle, ExternalLink, RefreshCw, X, Heart, Lock
+  AlertTriangle, ExternalLink, RefreshCw, X, Heart, Lock, Star, User
 } from 'lucide-react'
-import { marketplaceService, BuyerOrderDto } from '@/lib/services/marketplace.service'
+import { marketplaceService, BuyerOrderDto, type BuyerOrderItemDto } from '@/lib/services/marketplace.service'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
 
 const STATUS_LABELS: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
@@ -58,6 +58,32 @@ const REFUND_REASONS = [
   'Diğer',
 ]
 
+function StarRating({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  const [hover, setHover] = useState(0)
+  return (
+    <div className="flex items-center gap-1">
+      {[1, 2, 3, 4, 5].map(i => (
+        <button
+          key={i}
+          type="button"
+          onClick={() => onChange(i)}
+          onMouseEnter={() => setHover(i)}
+          onMouseLeave={() => setHover(0)}
+          className="transition-transform hover:scale-110"
+        >
+          <Star
+            className={`w-7 h-7 transition-colors ${
+              i <= (hover || value)
+                ? 'text-amber-400 fill-amber-400'
+                : 'text-slate-600'
+            }`}
+          />
+        </button>
+      ))}
+    </div>
+  )
+}
+
 function OrderCard({ order, onUpdate }: { order: BuyerOrderDto; onUpdate: (updated: BuyerOrderDto) => void }) {
   const [expanded, setExpanded] = useState(false)
   const [cancelOpen, setCancelOpen] = useState(false)
@@ -65,6 +91,31 @@ function OrderCard({ order, onUpdate }: { order: BuyerOrderDto; onUpdate: (updat
   const [selectedReason, setSelectedReason] = useState('')
   const [actionLoading, setActionLoading] = useState(false)
   const [actionError, setActionError] = useState('')
+
+  // Review state
+  const [reviewItem, setReviewItem] = useState<BuyerOrderItemDto | null>(null)
+  const [reviewRating, setReviewRating] = useState(5)
+  const [reviewComment, setReviewComment] = useState('')
+  const [reviewLoading, setReviewLoading] = useState(false)
+  const [reviewError, setReviewError] = useState('')
+  const [reviewedProducts, setReviewedProducts] = useState<Set<string>>(new Set())
+
+  const handleSubmitReview = async () => {
+    if (!reviewItem || reviewRating === 0) return
+    setReviewLoading(true)
+    setReviewError('')
+    try {
+      await marketplaceService.createReview(reviewItem.productId.toString(), reviewRating, reviewComment.trim() || undefined)
+      setReviewedProducts(prev => new Set([...prev, reviewItem.productId.toString()]))
+      setReviewItem(null)
+      setReviewComment('')
+      setReviewRating(5)
+    } catch {
+      setReviewError('Yorum gönderilirken hata oluştu. Daha önce yorum yazmış olabilirsiniz.')
+    } finally {
+      setReviewLoading(false)
+    }
+  }
 
   const status = STATUS_LABELS[order.status] ?? { label: order.status, color: 'text-slate-400', icon: null }
   const payStatus = PAYMENT_STATUS_LABELS[order.paymentStatus] ?? { label: order.paymentStatus, color: 'text-slate-400' }
@@ -291,6 +342,53 @@ function OrderCard({ order, onUpdate }: { order: BuyerOrderDto; onUpdate: (updat
         </div>
       )}
 
+      {/* Review modal */}
+      {reviewItem && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setReviewItem(null)}>
+          <div className="premium-card p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-semibold text-foreground">Ürün Değerlendirmesi</h3>
+              <button onClick={() => setReviewItem(null)}><X className="w-4 h-4 text-slate-400 hover:text-white" /></button>
+            </div>
+            <p className="text-sm text-slate-400 mb-4 truncate">{reviewItem.productName}</p>
+            <div className="mb-4">
+              <label className="text-xs text-slate-400 mb-2 block">Puanınız</label>
+              <StarRating value={reviewRating} onChange={setReviewRating} />
+            </div>
+            <div className="mb-4">
+              <label className="text-xs text-slate-400 mb-1 block">Yorumunuz <span className="text-slate-600">(opsiyonel)</span></label>
+              <textarea
+                value={reviewComment}
+                onChange={e => setReviewComment(e.target.value)}
+                rows={3}
+                maxLength={500}
+                placeholder="Bu ürün hakkında ne düşünüyorsunuz?"
+                className="w-full bg-slate-800 border border-border rounded-lg px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary resize-none"
+              />
+              {reviewComment.length > 0 && (
+                <p className="text-xs text-slate-500 text-right mt-0.5">{reviewComment.length}/500</p>
+              )}
+            </div>
+            {reviewError && <p className="text-xs text-red-400 mb-3">{reviewError}</p>}
+            <div className="flex gap-3">
+              <button onClick={() => setReviewItem(null)} className="flex-1 px-4 py-2.5 text-sm border border-border rounded-xl hover:bg-slate-800 transition-colors">
+                Vazgeç
+              </button>
+              <button
+                onClick={handleSubmitReview}
+                disabled={reviewLoading || reviewRating === 0}
+                className="flex-1 px-4 py-2.5 text-sm bg-amber-500 hover:bg-amber-400 text-black font-semibold rounded-xl transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+              >
+                {reviewLoading
+                  ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Gönderiliyor...</>
+                  : <><Star className="w-3.5 h-3.5 fill-black" /> Yorumu Gönder</>
+                }
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Expanded details */}
       {expanded && (
         <div className="p-4 space-y-5">
@@ -313,11 +411,24 @@ function OrderCard({ order, onUpdate }: { order: BuyerOrderDto; onUpdate: (updat
                     <p className="text-sm text-foreground truncate">{item.productName}</p>
                     {item.variantName && <p className="text-xs text-slate-500">{item.variantName}</p>}
                   </div>
-                  <div className="text-right shrink-0">
+                  <div className="text-right shrink-0 space-y-1">
                     <p className="text-xs text-slate-400">{item.quantity}×</p>
                     <p className="text-sm font-medium text-foreground">
                       {item.unitPrice.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
                     </p>
+                    {order.status === 'Delivered' && !reviewedProducts.has(item.productId.toString()) && (
+                      <button
+                        onClick={() => { setReviewItem(item); setReviewRating(5); setReviewComment(''); setReviewError('') }}
+                        className="text-[10px] flex items-center gap-0.5 text-amber-400 hover:text-amber-300 transition-colors"
+                      >
+                        <Star className="w-3 h-3 fill-amber-400" /> Yorum Yaz
+                      </button>
+                    )}
+                    {reviewedProducts.has(item.productId.toString()) && (
+                      <span className="text-[10px] text-emerald-400 flex items-center gap-0.5">
+                        <CheckCircle className="w-3 h-3" /> Yorumlandı
+                      </span>
+                    )}
                   </div>
                 </div>
               ))}
@@ -409,29 +520,23 @@ export default function BuyerOrdersPage() {
       </div>
 
       {/* Hesap Sekmeler */}
-      <div className="flex gap-2 mb-6 border-b border-border">
-        <Link
-          href="/hesabim/siparisler"
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-primary text-primary -mb-px transition-colors"
-        >
+      <div className="flex gap-2 mb-6 border-b border-border flex-wrap">
+        <Link href="/hesabim" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors">
+          <User className="w-4 h-4" /> Genel Bakış
+        </Link>
+        <Link href="/hesabim/profil" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors">
+          <User className="w-4 h-4" /> Profilim
+        </Link>
+        <Link href="/hesabim/siparisler" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-primary text-primary -mb-px transition-colors">
           <Package className="w-4 h-4" /> Siparişlerim
         </Link>
-        <Link
-          href="/hesabim/favoriler"
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors"
-        >
+        <Link href="/hesabim/favoriler" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors">
           <Heart className="w-4 h-4" /> Favorilerim
         </Link>
-        <Link
-          href="/hesabim/adresler"
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors"
-        >
+        <Link href="/hesabim/adresler" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors">
           <MapPin className="w-4 h-4" /> Adreslerim
         </Link>
-        <Link
-          href="/hesabim/sifre"
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors"
-        >
+        <Link href="/hesabim/sifre" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors">
           <Lock className="w-4 h-4" /> Şifre Değiştir
         </Link>
       </div>

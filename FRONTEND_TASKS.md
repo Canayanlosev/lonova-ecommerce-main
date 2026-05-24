@@ -806,3 +806,20 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     2. "Mağaza Siparişleri" section: bugün/bekleyen/toplam gelir kartları
     3. Son 5 mağaza siparişi mini-tablosu (sipariş no, alıcı, durum, tutar)
     4. /dashboard/marketplace-orders'a "Tümünü gör" link
+
+- [x] FTASK-40: Hesabım Hub Sayfası — /hesabim genel bakış sayfası
+  Dosya: src/app/(marketplace)/hesabim/page.tsx (YENİ)
+  Adımlar:
+    1. Avatar + ad/email kartı, çıkış butonu
+    2. Hızlı istatistikler: sipariş adedi, favori sayısı, teslim edilen
+    3. Hızlı nav kartları: Profil, Adresler, Favoriler, Şifre
+    4. Son 3 sipariş özeti listesi
+
+- [x] FTASK-41: Sipariş Sonrası Yorum Daveti
+  Dosya: src/app/(marketplace)/hesabim/siparisler/page.tsx
+  Adımlar:
+    1. StarRating komponenti — hover animasyonlu 5 yıldız
+    2. Teslim edilen siparişlerin ürün detayında 'Yorum Yaz' butonu
+    3. Yorum modalı: StarRating + textarea (500 karakter) + gönder
+    4. Gönderilince 'Yorumlandı' badge göster (reviewedProducts Set state)
+    5. MarketplaceNavbar: hesabim/siparisler → hesabim (hub) link güncellemesi
