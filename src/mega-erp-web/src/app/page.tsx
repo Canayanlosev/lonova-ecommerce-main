@@ -97,17 +97,17 @@ export default function HomePage() {
       <main className="flex-1">
         {/* ── HERO ── */}
         <section className="relative overflow-hidden bg-[hsl(226_45%_5%)] py-24 px-4">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,_hsl(214_100%_57%_/_0.15),_transparent)]" />
-          <div className="absolute top-0 right-0 w-1/2 h-full bg-[radial-gradient(ellipse_at_top_right,_hsl(250_85%_62%_/_0.08),_transparent)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,_hsl(var(--primary)_/_0.15),_transparent)]" />
+          <div className="absolute top-0 right-0 w-1/2 h-full bg-[radial-gradient(ellipse_at_top_right,_hsl(var(--secondary)_/_0.08),_transparent)]" />
 
           <div className="max-w-7xl mx-auto relative z-10">
             <div className="max-w-3xl mx-auto text-center">
               <motion.div
                 {...fadeUp}
                 transition={{ duration: 0.5 }}
-                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-500/25 bg-blue-500/10 text-blue-300 text-xs font-semibold mb-6 tracking-wide"
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/25 bg-primary/10 text-primary text-xs font-semibold mb-6 tracking-wide"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                 Türkiye'nin KOBİ için Tek Platformu
               </motion.div>
 
@@ -117,7 +117,7 @@ export default function HomePage() {
                 className="text-5xl sm:text-7xl font-black text-white mb-4 leading-[1.05] tracking-tight"
               >
                 Esnafın tüm işi{' '}
-                <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   tek ekranda
                 </span>
               </motion.h1>
@@ -128,7 +128,7 @@ export default function HomePage() {
                 className="text-lg text-slate-400 mb-8 max-w-xl mx-auto leading-relaxed"
               >
                 Sabah siparişleri gör. Stok bitmeden uyar. Maaş günü bordro hazırla.
-                Hepsi <span className="text-white font-semibold">Canayan</span><span className="text-blue-400 font-semibold">Web</span>'de.
+                Hepsi <span className="text-white font-semibold">Canayan</span><span className="text-primary font-semibold">Web</span>'de.
               </motion.p>
 
               <motion.div
@@ -157,8 +157,8 @@ export default function HomePage() {
                 className="flex items-center justify-center gap-5 flex-wrap"
               >
                 {['Komisyon yok', 'Kurulum ücretsiz', '7/24 destek'].map(item => (
-                  <div key={item} className="flex items-center gap-1.5 text-blue-200/70 text-xs font-medium">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-blue-400/70" />
+                  <div key={item} className="flex items-center gap-1.5 text-slate-300 text-xs font-medium">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
                     {item}
                   </div>
                 ))}
@@ -188,8 +188,8 @@ export default function HomePage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 divide-y sm:divide-y-0 sm:divide-x divide-border">
               {TRUST_BADGES.map(({ icon: Icon, label, desc }) => (
                 <div key={label} className="flex items-center gap-3 py-3 sm:py-0 sm:px-6 first:pl-0 last:pr-0">
-                  <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
-                    <Icon className="w-4 h-4 text-blue-400" />
+                  <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                    <Icon className="w-4 h-4 text-primary" />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-foreground">{label}</p>
@@ -205,7 +205,7 @@ export default function HomePage() {
         <section className="py-16 px-4 border-b border-border">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
-              <p className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-3">Gerçek Senaryo</p>
+              <p className="text-xs font-bold text-primary uppercase tracking-widest mb-3">Gerçek Senaryo</p>
               <h2 className="text-2xl sm:text-3xl font-black text-foreground">Esnafın bir günü</h2>
               <p className="text-slate-400 mt-3 text-sm max-w-lg mx-auto">
                 Sabahtan akşama, mağazadan muhasebeye — tüm işin CanayanWeb'de.
@@ -227,11 +227,11 @@ export default function HomePage() {
                     className={`flex items-start gap-4 sm:w-[calc(50%-2rem)] ${i % 2 === 0 ? 'sm:mr-auto sm:pr-8' : 'sm:ml-auto sm:pl-8'}`}
                   >
                     <div className="w-14 h-14 rounded-2xl bg-surface border border-border flex items-center justify-center shrink-0 shadow-sm">
-                      <Icon className="w-6 h-6 text-blue-400" />
+                      <Icon className="w-6 h-6 text-primary" />
                     </div>
                     <div className="premium-card p-4 flex-1">
                       <div className="flex items-center gap-2 mb-1.5">
-                        <span className="px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400 text-xs font-bold">{time}</span>
+                        <span className="px-2 py-0.5 rounded-full bg-primary/15 text-primary text-xs font-bold">{time}</span>
                         <h3 className="font-bold text-sm text-foreground">{title}</h3>
                       </div>
                       <p className="text-xs text-slate-400 leading-relaxed">{desc}</p>
@@ -247,7 +247,7 @@ export default function HomePage() {
         <section className="py-14 px-4 border-b border-border">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-10">
-              <p className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-3">Platform Özellikleri</p>
+              <p className="text-xs font-bold text-primary uppercase tracking-widest mb-3">Platform Özellikleri</p>
               <h2 className="text-2xl sm:text-3xl font-black text-foreground">Tek platformda her şey</h2>
               <p className="text-slate-400 mt-3 text-sm max-w-md mx-auto">
                 Satıştan muhasebeye, depodan İK'ya — tüm iş süreçlerin CanayanWeb'de.
@@ -256,12 +256,12 @@ export default function HomePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {PLATFORM_FEATURES.map(({ icon: Icon, label, desc, href }) => (
                 <Link key={label} href={href} className="premium-card p-6 group block">
-                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-4 group-hover:bg-blue-500/20 transition-colors">
-                    <Icon className="w-5 h-5 text-blue-400" />
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                    <Icon className="w-5 h-5 text-primary" />
                   </div>
                   <h3 className="font-bold text-foreground text-sm mb-1.5">{label}</h3>
                   <p className="text-xs text-slate-400 leading-relaxed mb-3">{desc}</p>
-                  <span className="inline-flex items-center gap-1 text-xs text-blue-400 font-semibold group-hover:gap-2 transition-all">
+                  <span className="inline-flex items-center gap-1 text-xs text-primary font-semibold group-hover:gap-2 transition-all">
                     Demo Gör <ArrowRight className="w-3 h-3" />
                   </span>
                 </Link>
@@ -275,7 +275,7 @@ export default function HomePage() {
           <section>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-foreground">Kategoriler</h2>
-              <Link href="/kategori" className="text-sm text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1 font-medium">
+              <Link href="/kategori" className="text-sm text-primary hover:text-primary/80 transition-colors flex items-center gap-1 font-medium">
                 Tümü <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -311,10 +311,10 @@ export default function HomePage() {
                 <p className="text-xs text-slate-500 mt-0.5">Satıcılarımızın listelediği ürünler</p>
               </div>
               <div className="flex items-center gap-3">
-                <Link href="/auth/register" className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-blue-400 hover:text-blue-300 transition-colors border border-blue-500/30 px-3 py-1.5 rounded-lg hover:bg-blue-500/10">
+                <Link href="/auth/register" className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 transition-colors border border-primary/30 px-3 py-1.5 rounded-lg hover:bg-primary/10">
                   Siz de satın <ArrowRight className="w-3 h-3" />
                 </Link>
-                <Link href="/kategori" className="text-sm text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1 font-medium">
+                <Link href="/kategori" className="text-sm text-primary hover:text-primary/80 transition-colors flex items-center gap-1 font-medium">
                   Tümünü gör <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
@@ -347,20 +347,20 @@ export default function HomePage() {
           </section>
 
           {/* ── CTA BANNER ── */}
-          <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 p-8 sm:p-12">
+          <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-primary/90 to-secondary p-8 sm:p-12">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(255,255,255,0.1),_transparent)]" />
             <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
               <div>
                 <h3 className="text-2xl sm:text-3xl font-black text-white mb-2">
                   Hemen mağazanızı açın
                 </h3>
-                <p className="text-blue-100 text-sm max-w-sm">
+                <p className="text-white/80 text-sm max-w-sm">
                   Dakikalar içinde kurulum yapın, ilk ürününüzü listeleyin ve satmaya başlayın.
                 </p>
                 <div className="flex flex-wrap items-center gap-4 mt-4">
                   {['Kurulum ücretsiz', 'Komisyon yok', '7/24 destek'].map((item) => (
-                    <div key={item} className="flex items-center gap-1.5 text-blue-100 text-xs font-medium">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-200" />
+                    <div key={item} className="flex items-center gap-1.5 text-white/80 text-xs font-medium">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-white/90" />
                       {item}
                     </div>
                   ))}
@@ -368,7 +368,7 @@ export default function HomePage() {
               </div>
               <Link
                 href="/auth/register"
-                className="shrink-0 inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-white text-blue-700 font-bold text-sm hover:bg-blue-50 shadow-lg shadow-blue-900/30 transition-all hover:-translate-y-0.5"
+                className="shrink-0 inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-white text-primary font-bold text-sm hover:bg-white/95 shadow-lg shadow-primary/30 transition-all hover:-translate-y-0.5"
               >
                 Ücretsiz Başla <ArrowRight className="w-4 h-4" />
               </Link>

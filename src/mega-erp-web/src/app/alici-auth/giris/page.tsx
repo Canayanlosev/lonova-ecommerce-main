@@ -44,11 +44,11 @@ export default function BuyerLoginPage() {
         <div className="premium-card p-8">
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-2.5 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-500/25">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-md shadow-primary/25">
                 <span className="text-white font-black text-base">C</span>
               </div>
               <span className="font-black text-xl tracking-tight">
-                <span className="text-foreground">Canayan</span><span className="text-blue-500">Web</span>
+                <span className="text-foreground">Canayan</span><span className="text-primary">Web</span>
               </span>
             </Link>
             <h1 className="text-2xl font-bold text-foreground">Alıcı Girişi</h1>

@@ -50,16 +50,16 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-[#06080f] px-6">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-indigo-500/10 blur-[100px] rounded-full -z-10" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-primary/10 blur-[100px] rounded-full -z-10" />
 
-      <Card className="w-full max-w-md shadow-2xl border-indigo-500/10">
+      <Card className="w-full max-w-md shadow-2xl border-primary/10">
         <CardHeader className="text-center">
           <div className="inline-flex items-center gap-2.5 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-500/25">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-md shadow-primary/25">
               <span className="text-white font-black text-base">C</span>
             </div>
             <span className="font-black text-xl tracking-tight">
-              <span className="text-foreground">Canayan</span><span className="text-blue-500">Web</span>
+              <span className="text-foreground">Canayan</span><span className="text-primary">Web</span>
             </span>
           </div>
           <CardTitle className="text-3xl tracking-tight">Firma Kaydı</CardTitle>
@@ -81,7 +81,7 @@ export default function RegisterPage() {
                     <input
                       type="text"
                       placeholder="Can"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
                       value={form.firstName}
                       onChange={set("firstName")}
                       required
@@ -95,7 +95,7 @@ export default function RegisterPage() {
                     <input
                       type="text"
                       placeholder="Ayan"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
                       value={form.lastName}
                       onChange={set("lastName")}
                       required
@@ -111,7 +111,7 @@ export default function RegisterPage() {
                   <input
                     type="email"
                     placeholder="ornek@megaerp.com"
-                    className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                    className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 outline-none focus:ring-2 focus:ring-primary/50 transition-all"
                     value={form.email}
                     onChange={set("email")}
                     required
@@ -126,7 +126,7 @@ export default function RegisterPage() {
                   <input
                     type="password"
                     placeholder="Min. 8 karakter, büyük harf, rakam"
-                    className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                    className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 outline-none focus:ring-2 focus:ring-primary/50 transition-all"
                     value={form.password}
                     onChange={set("password")}
                     required
@@ -150,7 +150,7 @@ export default function RegisterPage() {
           {!success && (
             <div className="mt-6 text-center text-sm text-slate-500">
               Zaten hesabınız var mı?{" "}
-              <Link href="/auth/login" className="text-indigo-500 font-semibold hover:underline">
+              <Link href="/auth/login" className="text-primary font-semibold hover:underline">
                 Giriş Yapın
               </Link>
             </div>

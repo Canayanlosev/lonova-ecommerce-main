@@ -1,28 +1,59 @@
 @import "tailwindcss";
 
-@theme {
-  --color-primary: hsl(214 100% 57%);
-  --color-primary-foreground: hsl(0 0% 100%);
-
-  --color-secondary: hsl(250 85% 62%);
-  --color-secondary-foreground: hsl(0 0% 100%);
-
-  --color-background: hsl(220 30% 97%);
-  --color-foreground: hsl(220 40% 10%);
-
-  --color-surface: hsl(0 0% 100%);
-  --color-surface-foreground: hsl(220 40% 10%);
-
-  --color-border: hsl(220 20% 88%);
-  --radius-xl: 0.875rem;
+:root {
+  --background: 220 30% 97%;
+  --foreground: 220 40% 10%;
+  --surface: 0 0% 100%;
+  --surface-foreground: 220 40% 10%;
+  --border: 220 20% 88%;
+  
+  --primary: 214 100% 57%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 250 85% 62%;
+  --secondary-foreground: 0 0% 100%;
 }
 
-@theme inline {
-  --color-background: hsl(226 45% 5%);
-  --color-foreground: hsl(210 40% 96%);
-  --color-surface: hsl(226 38% 9%);
-  --color-surface-foreground: hsl(210 40% 96%);
-  --color-border: hsl(226 28% 16%);
+.dark {
+  --background: 226 45% 5%;
+  --foreground: 210 40% 96%;
+  --surface: 226 38% 9%;
+  --surface-foreground: 210 40% 96%;
+  --border: 226 28% 16%;
+}
+
+/* Custom Accents */
+html[data-accent="indigo"] {
+  --primary: 243 75% 59%;
+  --secondary: 262 83% 58%;
+}
+html[data-accent="violet"] {
+  --primary: 262 83% 58%;
+  --secondary: 291 70% 50%;
+}
+html[data-accent="emerald"] {
+  --primary: 142 71% 45%;
+  --secondary: 160 84% 39%;
+}
+html[data-accent="rose"] {
+  --primary: 346 87% 60%;
+  --secondary: 326 85% 56%;
+}
+html[data-accent="amber"] {
+  --primary: 38 92% 50%;
+  --secondary: 25 95% 53%;
+}
+
+@theme {
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-surface: hsl(var(--surface));
+  --color-surface-foreground: hsl(var(--surface-foreground));
+  --color-border: hsl(var(--border));
+  --radius-xl: 0.875rem;
 }
 
 @layer base {

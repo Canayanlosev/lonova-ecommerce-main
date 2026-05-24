@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback, useRef, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Search, SlidersHorizontal, X, ChevronDown } from 'lucide-react'
 import { marketplaceService, type MarketplaceProduct, type CatalogCategory } from '@/lib/services/marketplace.service'
@@ -13,7 +13,7 @@ const SORT_OPTIONS = [
   { value: 'name', label: 'İsme Göre (A-Z)' },
 ]
 
-export default function SearchPage() {
+function SearchPageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const q = searchParams.get('q') ?? ''
@@ -276,6 +276,14 @@ export default function SearchPage() {
         </>
       )}
     </div>
+  )
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-20 text-slate-400">Yükleniyor...</div>}>
+      <SearchPageContent />
+    </Suspense>
   )
 }
 

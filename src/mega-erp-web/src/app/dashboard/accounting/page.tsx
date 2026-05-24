@@ -108,7 +108,7 @@ export default function AccountingPage() {
               key={id}
               onClick={() => setTab(id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
-                ${tab === id ? "bg-white dark:bg-slate-900 text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
+                ${tab === id ? "bg-white dark:bg-slate-900 text-primary shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
             >
               <Icon size={16} />{label}
             </button>
@@ -119,7 +119,7 @@ export default function AccountingPage() {
           <button
             onClick={handleImportSalesOrders}
             disabled={importing || loading}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white transition-all shadow-sm shadow-blue-500/20"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white transition-all shadow-sm shadow-primary/20"
           >
             <RefreshCw className={`w-4 h-4 ${importing ? 'animate-spin' : ''}`} />
             {importing ? 'Aktarılıyor…' : 'Satış Siparişlerini Aktar'}
@@ -168,7 +168,7 @@ export default function AccountingPage() {
                     ? <tr><td colSpan={4}><EmptyState icon={<CreditCard />} title="Hesap bulunamadı" /></td></tr>
                     : accounts.map((a) => (
                       <tr key={a.id} className="border-b border-slate-100 dark:border-slate-800/50 hover:bg-surface/50 transition-colors">
-                        <td className="px-4 py-3 font-mono text-xs text-blue-400">{a.code}</td>
+                        <td className="px-4 py-3 font-mono text-xs text-primary">{a.code}</td>
                         <td className="px-4 py-3 font-medium">{a.name}</td>
                         <td className="px-4 py-3 text-slate-500 hidden sm:table-cell">{a.type}</td>
                         <td className={`px-4 py-3 text-right font-bold ${a.balance >= 0 ? "text-emerald-500" : "text-red-500"}`}>
@@ -215,7 +215,7 @@ export default function AccountingPage() {
                             {e.description.replace(/\[ORDER:[^\]]+\]\s*/, '')}
                           </p>
                           {e.description.includes('[ORDER:') && (
-                            <span className="text-xs text-blue-400/70">otomatik aktarım</span>
+                            <span className="text-xs text-primary/70">otomatik aktarım</span>
                           )}
                         </td>
                         <td className="px-4 py-3 text-right text-emerald-500 font-medium whitespace-nowrap">

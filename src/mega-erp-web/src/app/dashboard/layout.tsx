@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   LayoutDashboard, ShoppingCart, Users, CreditCard,
   Package, Truck, Settings, LogOut, Bell, Menu, X, Receipt,
-  Store, Warehouse, Layout, CheckSquare, BarChart2, ShoppingBag, Tag, Star, Layers,
+  Store, Warehouse, Layout, CheckSquare, BarChart2, ShoppingBag, Tag, Star, Layers, Globe,
   AlertTriangle, ShoppingBag as OrderIcon
 } from "lucide-react";
 import Link from "next/link";
@@ -103,6 +103,7 @@ const navItems = [
   { icon: ShoppingBag, label: "Mağaza Siparişleri", href: "/dashboard/marketplace-orders" },
   { icon: BarChart2, label: "Analitik", href: "/dashboard/analytics" },
   { icon: Layers, label: "Kategoriler", href: "/dashboard/categories" },
+  { icon: Globe, label: "Katalog", href: "/dashboard/catalog" },
   { icon: Tag, label: "Kuponlar", href: "/dashboard/coupons" },
   { icon: Star, label: "Yorumlar", href: "/dashboard/reviews" },
   { icon: CheckSquare, label: "Kurulum Rehberi", href: "/dashboard/setup", badge: true },
@@ -143,11 +144,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <aside className="w-64 border-r border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl hidden lg:flex flex-col">
         <div className="p-6">
           <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg shadow-primary/30">
                 <span className="text-white font-black text-sm">C</span>
               </div>
               <span className="text-xl font-black tracking-tight">
-                <span className="text-white">Canayan</span><span className="text-blue-400">Web</span>
+                <span className="text-white">Canayan</span><span className="text-primary">Web</span>
               </span>
             </div>
         </div>
@@ -197,11 +198,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             >
               <div className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg shadow-primary/30">
                     <span className="text-white font-black text-sm">C</span>
                   </div>
                   <span className="text-xl font-black tracking-tight">
-                    <span className="text-white">Canayan</span><span className="text-blue-400">Web</span>
+                    <span className="text-white">Canayan</span><span className="text-primary">Web</span>
                   </span>
                 </div>
                 <button onClick={() => setSidebarOpen(false)} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
@@ -253,7 +254,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               href="/dashboard/basket"
               className="relative p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             >
-              <ShoppingCart className="w-5 h-5 text-blue-500" />
+              <ShoppingCart className="w-5 h-5 text-primary" />
               {itemCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                   {itemCount > 99 ? "99+" : itemCount}
@@ -303,10 +304,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                           className="flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors border-b border-slate-100 dark:border-slate-800/50 last:border-0"
                         >
                           <div className={`mt-0.5 w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
-                            n.type === 'order' ? 'bg-indigo-500/15' : 'bg-amber-500/15'
+                            n.type === 'order' ? 'bg-primary/15' : 'bg-amber-500/15'
                           }`}>
                             {n.type === 'order'
-                              ? <OrderIcon className="w-3.5 h-3.5 text-indigo-400" />
+                              ? <OrderIcon className="w-3.5 h-3.5 text-primary" />
                               : <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
                             }
                           </div>
@@ -321,7 +322,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     {notifications.length > 0 && (
                       <div className="px-4 py-2.5 border-t border-slate-200 dark:border-slate-800">
                         <Link href="/dashboard/marketplace-orders" onClick={() => setBellOpen(false)}
-                          className="text-xs text-indigo-400 hover:underline">
+                          className="text-xs text-primary hover:underline">
                           Tüm siparişleri gör →
                         </Link>
                       </div>
@@ -335,7 +336,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <p className="text-sm font-bold">{fullName}</p>
                 <p className="text-xs text-slate-500">Yönetici</p>
               </div>
-              <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-indigo-500 flex items-center justify-center font-bold text-white text-sm">
+              <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-primary flex items-center justify-center font-bold text-white text-sm">
                 {initials}
               </div>
             </div>
@@ -362,16 +363,16 @@ function NavItem({
       onClick={onClick}
       className={`relative flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 group
         ${active
-          ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30"
+          ? "bg-primary text-white shadow-lg shadow-primary/30"
           : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
         }`}
     >
-      <span className={`${active ? "text-white" : "text-slate-400 group-hover:text-blue-400"} transition-colors`}>
+      <span className={`${active ? "text-white" : "text-slate-400 group-hover:text-primary"} transition-colors`}>
         {React.cloneElement(icon as React.ReactElement<{ size?: number }>, { size: 20 })}
       </span>
       {label}
       {showDot && (
-        <span className="ml-auto w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+        <span className="ml-auto w-2 h-2 rounded-full bg-primary animate-pulse" />
       )}
     </Link>
   );

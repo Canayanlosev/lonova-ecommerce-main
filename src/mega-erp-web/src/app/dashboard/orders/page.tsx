@@ -11,9 +11,9 @@ import Link from "next/link";
 
 const statusConfig: Record<string, { label: string; className: string }> = {
   Pending: { label: "Beklemede", className: "bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400" },
-  Placed: { label: "Alındı", className: "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400" },
+  Placed: { label: "Alındı", className: "bg-primary/15 text-primary" },
   Paid: { label: "Ödendi", className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400" },
-  Shipped: { label: "Kargoda", className: "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400" },
+  Shipped: { label: "Kargoda", className: "bg-primary/15 text-primary" },
   Delivered: { label: "Teslim Edildi", className: "bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400" },
   Cancelled: { label: "İptal", className: "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400" },
 };
@@ -97,7 +97,7 @@ export default function OrdersPage() {
         </div>
         <div className="premium-card p-4">
           <p className="text-xs text-slate-500 mb-1">Toplam Gelir</p>
-          <p className="text-lg font-black text-indigo-400">₺{totalRevenue.toLocaleString('tr-TR', { minimumFractionDigits: 0 })}</p>
+          <p className="text-lg font-black text-primary">₺{totalRevenue.toLocaleString('tr-TR', { minimumFractionDigits: 0 })}</p>
         </div>
       </div>
 
@@ -113,13 +113,13 @@ export default function OrdersPage() {
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                   placeholder="Sipariş no ara..."
-                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm outline-none focus:ring-2 focus:ring-indigo-500/50"
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm outline-none focus:ring-2 focus:ring-primary/50"
                 />
               </div>
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm outline-none focus:ring-2 focus:ring-indigo-500/50"
+                className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm outline-none focus:ring-2 focus:ring-primary/50"
               >
                 <option value="all">Tümü</option>
                 {Object.entries(statusConfig).map(([k, v]) => (
@@ -175,7 +175,7 @@ export default function OrdersPage() {
                           </td>
                           <td className="px-4 py-3 text-right font-bold">₺{o.totalAmount.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}</td>
                           <td className="px-4 py-3 text-right">
-                            <Link href={`/dashboard/orders/${o.id}`} className="text-indigo-500 hover:underline text-xs">Görüntüle</Link>
+                            <Link href={`/dashboard/orders/${o.id}`} className="text-primary hover:underline text-xs">Görüntüle</Link>
                           </td>
                         </tr>
                       );

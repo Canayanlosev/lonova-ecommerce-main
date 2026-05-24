@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { motion } from "framer-motion";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, Upload, X } from "lucide-react";
 import { productsService } from "@/lib/services/products.service";
 import type { Category, Product } from "@/types/api.types";
 import { useRouter } from "next/navigation";
@@ -28,13 +28,70 @@ export function ProductForm({ product, isEdit }: Props) {
     sku: product?.sku || "",
     categoryId: product?.categoryId || "",
   });
+  const [imageType, setImageType] = useState<'file' | 'url'>('file');
+  const [imageUrl, setImageUrl] = useState(product?.imageUrl || "");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string>(product?.imageUrl || "");
+  const [dragActive, setDragActive] = useState(false);
 
   useEffect(() => {
     productsService.getCategories().then(setCategories).catch(() => {});
-  }, []);
+    if (product?.imageUrl && !product.imageUrl.startsWith('http')) {
+      setImageType('file');
+    } else if (product?.imageUrl) {
+      setImageType('url');
+    }
+  }, [product]);
 
   const set = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const validateAndSetFile = (file: File) => {
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Dosya boyutu 5MB'dan küçük olmalıdır.");
+      return;
+    }
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Yalnızca JPG, PNG ve WEBP formatları desteklenir.");
+      return;
+    }
+    setSelectedFile(file);
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      validateAndSetFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      validateAndSetFile(e.target.files[0]);
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
+    setPreviewUrl("");
+    setImageUrl("");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,22 +104,26 @@ export function ProductForm({ product, isEdit }: Props) {
 
     setLoading(true);
     try {
+      const payload = {
+        name: form.name,
+        description: form.description,
+        basePrice: parseFloat(form.basePrice),
+        sku: form.sku,
+        categoryId: form.categoryId,
+        imageUrl: imageType === 'url' ? imageUrl : (selectedFile ? undefined : imageUrl),
+      };
+
       if (isEdit && product) {
-        await productsService.update(product.id, {
-          name: form.name,
-          description: form.description,
-          basePrice: parseFloat(form.basePrice),
-          categoryId: form.categoryId,
-        });
+        await productsService.update(product.id, payload);
+        if (imageType === 'file' && selectedFile) {
+          await productsService.uploadImage(product.id, selectedFile);
+        }
         toast.success("Ürün güncellendi.");
       } else {
-        await productsService.create({
-          name: form.name,
-          description: form.description,
-          basePrice: parseFloat(form.basePrice),
-          sku: form.sku,
-          categoryId: form.categoryId,
-        });
+        const created = await productsService.create(payload);
+        if (imageType === 'file' && selectedFile && created.id) {
+          await productsService.uploadImage(created.id, selectedFile);
+        }
         toast.success("Ürün oluşturuldu.");
       }
       router.push("/dashboard/ecommerce");
@@ -127,6 +188,99 @@ export function ProductForm({ product, isEdit }: Props) {
               onChange={set("description")}
               className={`${inputClass} resize-none`}
             />
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="space-y-2">
+            <label className="text-sm font-medium">Ürün Görseli</label>
+            <div className="flex gap-1 p-1 bg-slate-100 dark:bg-slate-900 rounded-xl w-fit">
+              <button
+                type="button"
+                onClick={() => setImageType('file')}
+                className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  imageType === 'file'
+                    ? 'bg-white dark:bg-slate-800 text-foreground shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                }`}
+              >
+                Dosya Yükle
+              </button>
+              <button
+                type="button"
+                onClick={() => setImageType('url')}
+                className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  imageType === 'url'
+                    ? 'bg-white dark:bg-slate-800 text-foreground shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                }`}
+              >
+                URL Gir
+              </button>
+            </div>
+
+            {imageType === 'file' ? (
+              <div
+                onDragEnter={handleDrag}
+                onDragOver={handleDrag}
+                onDragLeave={handleDrag}
+                onDrop={handleDrop}
+                className={`relative flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-6 transition-all ${
+                  dragActive
+                    ? 'border-indigo-500 bg-indigo-500/5'
+                    : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                }`}
+              >
+                {previewUrl ? (
+                  <div className="relative group w-40 h-40 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800">
+                    <img
+                      src={previewUrl}
+                      alt="Görsel önizleme"
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleRemoveFile}
+                      className="absolute top-1.5 right-1.5 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg"
+                      title="Görseli kaldır"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="text-center">
+                    <div className="mx-auto w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-3">
+                      <Upload className="w-5 h-5 text-slate-500" />
+                    </div>
+                    <p className="text-sm font-medium mb-1">
+                      Dosyayı sürükleyin veya <label className="text-indigo-500 cursor-pointer hover:underline">seçin<input type="file" onChange={handleFileChange} accept="image/jpeg,image/png,image/webp" className="hidden" /></label>
+                    </p>
+                    <p className="text-xs text-slate-400">JPG, PNG veya WEBP (maks. 5MB)</p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <input
+                  type="url"
+                  placeholder="https://example.com/image.jpg"
+                  value={imageUrl}
+                  onChange={(e) => {
+                    setImageUrl(e.target.value);
+                    setPreviewUrl(e.target.value);
+                  }}
+                  className={inputClass}
+                />
+                {previewUrl && (
+                  <div className="w-40 h-40 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800">
+                    <img
+                      src={previewUrl}
+                      alt="Görsel önizleme"
+                      className="w-full h-full object-cover"
+                      onError={() => setPreviewUrl("")}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
           </motion.div>
 
           {error && (

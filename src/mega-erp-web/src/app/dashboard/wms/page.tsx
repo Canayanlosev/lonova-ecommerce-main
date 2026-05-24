@@ -111,8 +111,8 @@ export default function WMSPage() {
       {/* Summary cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
-          { label: 'Toplam Depo', value: warehouses.length, icon: Warehouse, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-          { label: 'Toplam SKU', value: stock.length, icon: Package, color: 'text-indigo-400', bg: 'bg-indigo-500/10' },
+          { label: 'Toplam Depo', value: warehouses.length, icon: Warehouse, color: 'text-primary', bg: 'bg-primary/10' },
+          { label: 'Toplam SKU', value: stock.length, icon: Package, color: 'text-secondary', bg: 'bg-secondary/10' },
           { label: 'Düşük Stok', value: lowStockItems.length, icon: TrendingDown, color: 'text-amber-400', bg: 'bg-amber-500/10' },
         ].map(({ label, value, icon: Icon, color, bg }) => (
           <div key={label} className="premium-card p-5 flex items-center gap-4">
@@ -132,7 +132,7 @@ export default function WMSPage() {
         {TABS.map(({ key, label, icon: Icon }) => (
           <button key={key} onClick={() => setTab(key)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              tab === key ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/30' : 'text-slate-400 hover:text-foreground'
+              tab === key ? 'bg-primary text-white shadow-sm shadow-primary/30' : 'text-slate-400 hover:text-foreground'
             }`}>
             <Icon className="w-4 h-4" /> {label}
             {key === 'stock' && lowStockItems.length > 0 && tab !== 'stock' && (
@@ -146,7 +146,7 @@ export default function WMSPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-6 h-6 animate-spin text-blue-400" />
+           <Loader2 className="w-6 h-6 animate-spin text-primary" />
         </div>
       ) : tab === 'warehouses' ? (
         <div className="space-y-4">
@@ -156,7 +156,7 @@ export default function WMSPage() {
               onChange={(e) => setNewWarehouseName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAddWarehouse()}
               placeholder="Yeni depo adı..."
-              className="flex-1 px-4 py-2 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500/50 transition-all"
+              className="flex-1 px-4 py-2 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 transition-all"
             />
             <button onClick={handleAddWarehouse} className="premium-button flex items-center gap-2">
               <Plus className="w-4 h-4" /> Ekle
@@ -169,8 +169,8 @@ export default function WMSPage() {
               {warehouses.map((w) => (
                 <div key={w.id} className="premium-card p-5">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-9 h-9 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                      <Warehouse className="w-4 h-4 text-blue-400" />
+                    <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <Warehouse className="w-4 h-4 text-primary" />
                     </div>
                     <span className="font-semibold text-foreground">{w.name}</span>
                   </div>
@@ -218,7 +218,7 @@ export default function WMSPage() {
                             onChange={e => setEditMinValue(e.target.value)}
                             onBlur={() => handleSaveMinStock(s.productId)}
                             onKeyDown={e => e.key === 'Enter' && handleSaveMinStock(s.productId)}
-                            className="w-20 px-2 py-1 rounded-lg bg-background border border-blue-500/50 text-foreground text-sm focus:outline-none"
+                            className="w-20 px-2 py-1 rounded-lg bg-background border border-primary/50 text-foreground text-sm focus:outline-none"
                             autoFocus
                           />
                         ) : (
@@ -240,7 +240,7 @@ export default function WMSPage() {
                         {s.isLowStock && (
                           <Link
                             href="/dashboard/ecommerce"
-                            className="inline-flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 transition-colors font-medium"
+                            className="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors font-medium"
                           >
                             Ürünü Gör <ExternalLink className="w-3 h-3" />
                           </Link>
@@ -268,7 +268,7 @@ export default function WMSPage() {
                   <select
                     value={moveForm.movementType}
                     onChange={(e) => setMoveForm((f) => ({ ...f, movementType: e.target.value }))}
-                    className="w-full px-3 py-2 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500/50"
+                    className="w-full px-3 py-2 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50"
                   >
                     <option value="In">Giriş</option>
                     <option value="Out">Çıkış</option>
@@ -282,7 +282,7 @@ export default function WMSPage() {
                     <select
                       value={moveForm.productId}
                       onChange={(e) => setMoveForm((f) => ({ ...f, productId: e.target.value }))}
-                      className="w-full px-3 py-2 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500/50"
+                      className="w-full px-3 py-2 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50"
                     >
                       <option value="">Ürün seçin...</option>
                       {Object.entries(productNames).map(([id, name]) => (
@@ -294,7 +294,7 @@ export default function WMSPage() {
                       value={moveForm.productId}
                       onChange={(e) => setMoveForm((f) => ({ ...f, productId: e.target.value }))}
                       placeholder="Ürün UUID"
-                      className="w-full px-3 py-2 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500/50"
+                      className="w-full px-3 py-2 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50"
                     />
                   )}
                 </div>
@@ -305,7 +305,7 @@ export default function WMSPage() {
                     value={moveForm.quantity}
                     onChange={(e) => setMoveForm((f) => ({ ...f, quantity: Number(e.target.value) }))}
                     min={1}
-                    className="w-full px-3 py-2 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500/50"
+                    className="w-full px-3 py-2 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50"
                   />
                 </div>
                 <div>
@@ -314,7 +314,7 @@ export default function WMSPage() {
                     value={moveForm.note}
                     onChange={(e) => setMoveForm((f) => ({ ...f, note: e.target.value }))}
                     placeholder="Açıklama (isteğe bağlı)"
-                    className="w-full px-3 py-2 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500/50"
+                    className="w-full px-3 py-2 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50"
                   />
                 </div>
               </div>

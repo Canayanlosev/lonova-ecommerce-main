@@ -32,6 +32,11 @@ public class AuthController : ControllerBase
         }
 
         var roles = await _userManager.GetRolesAsync(user);
+        if (roles.Count == 0)
+        {
+            await _userManager.AddToRoleAsync(user, "Admin");
+            roles = await _userManager.GetRolesAsync(user);
+        }
         var token = _jwtProvider.Generate(user, roles);
 
         return Ok(new AuthResponse(token, user.Email!, user.FirstName, user.LastName));
@@ -56,6 +61,8 @@ public class AuthController : ControllerBase
         {
             return BadRequest(result.Errors);
         }
+
+        await _userManager.AddToRoleAsync(user, "Admin");
 
         return Ok("User registered successfully");
     }

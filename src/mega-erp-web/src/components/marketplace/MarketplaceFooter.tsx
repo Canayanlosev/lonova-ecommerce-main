@@ -10,11 +10,11 @@ export function MarketplaceFooter() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="inline-flex items-center gap-2.5 mb-4 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:shadow-blue-500/35 transition-shadow">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-md shadow-primary/20 group-hover:shadow-primary/35 transition-shadow">
                 <span className="text-white font-black text-base">C</span>
               </div>
               <span className="font-black text-xl tracking-tight">
-                <span className="text-foreground">Canayan</span><span className="text-blue-500">Web</span>
+                <span className="text-foreground">Canayan</span><span className="text-primary">Web</span>
               </span>
             </Link>
             <p className="text-sm text-slate-400 leading-relaxed max-w-xs">
@@ -26,10 +26,10 @@ export function MarketplaceFooter() {
           <div>
             <h4 className="font-bold text-foreground mb-4 text-sm tracking-wide uppercase text-xs text-slate-500">Alışveriş</h4>
             <ul className="space-y-2.5 text-sm text-slate-400">
-              <li><Link href="/kategori" className="hover:text-blue-400 transition-colors">Kategoriler</Link></li>
-              <li><Link href="/kampanyalar" className="hover:text-blue-400 transition-colors">Kampanyalar</Link></li>
-              <li><Link href="/yeni-urunler" className="hover:text-blue-400 transition-colors">Yeni Ürünler</Link></li>
-              <li><Link href="/sepet" className="hover:text-blue-400 transition-colors">Sepetim</Link></li>
+              <li><Link href="/kategori" className="hover:text-primary transition-colors">Kategoriler</Link></li>
+              <li><Link href="/kampanyalar" className="hover:text-primary transition-colors">Kampanyalar</Link></li>
+              <li><Link href="/yeni-urunler" className="hover:text-primary transition-colors">Yeni Ürünler</Link></li>
+              <li><Link href="/sepet" className="hover:text-primary transition-colors">Sepetim</Link></li>
             </ul>
           </div>
 
@@ -37,9 +37,9 @@ export function MarketplaceFooter() {
           <div>
             <h4 className="font-bold text-foreground mb-4 text-sm tracking-wide uppercase text-xs text-slate-500">Hesabım</h4>
             <ul className="space-y-2.5 text-sm text-slate-400">
-              <li><Link href="/alici-auth/giris" className="hover:text-blue-400 transition-colors">Giriş Yap</Link></li>
-              <li><Link href="/alici-auth/kayit" className="hover:text-blue-400 transition-colors">Kayıt Ol</Link></li>
-              <li><Link href="/hesabim/siparisler" className="hover:text-blue-400 transition-colors">Siparişlerim</Link></li>
+              <li><Link href="/alici-auth/giris" className="hover:text-primary transition-colors">Giriş Yap</Link></li>
+              <li><Link href="/alici-auth/kayit" className="hover:text-primary transition-colors">Kayıt Ol</Link></li>
+              <li><Link href="/hesabim/siparisler" className="hover:text-primary transition-colors">Siparişlerim</Link></li>
             </ul>
           </div>
 
@@ -47,9 +47,9 @@ export function MarketplaceFooter() {
           <div>
             <h4 className="font-bold text-foreground mb-4 text-sm tracking-wide uppercase text-xs text-slate-500">Firmalar</h4>
             <ul className="space-y-2.5 text-sm text-slate-400">
-              <li><Link href="/dashboard" className="hover:text-blue-400 transition-colors">Firma Paneli</Link></li>
-              <li><Link href="/auth/register" className="hover:text-blue-400 transition-colors">Mağaza Aç</Link></li>
-              <li><Link href="/dashboard/accounting" className="hover:text-blue-400 transition-colors">Muhasebe</Link></li>
+              <li><Link href="/dashboard" className="hover:text-primary transition-colors">Firma Paneli</Link></li>
+              <li><Link href="/auth/register" className="hover:text-primary transition-colors">Mağaza Aç</Link></li>
+              <li><Link href="/dashboard/accounting" className="hover:text-primary transition-colors">Muhasebe</Link></li>
             </ul>
           </div>
         </div>

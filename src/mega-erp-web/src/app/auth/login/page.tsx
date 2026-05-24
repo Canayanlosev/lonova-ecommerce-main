@@ -53,16 +53,16 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-[#06080f] px-6">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-indigo-500/10 blur-[100px] rounded-full -z-10" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-primary/10 blur-[100px] rounded-full -z-10" />
 
-      <Card className="w-full max-w-md shadow-2xl border-indigo-500/10">
+      <Card className="w-full max-w-md shadow-2xl border-primary/10">
         <CardHeader className="text-center">
           <div className="inline-flex items-center gap-2.5 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-500/25">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-md shadow-primary/25">
               <span className="text-white font-black text-base">C</span>
             </div>
             <span className="font-black text-xl tracking-tight">
-              <span className="text-foreground">Canayan</span><span className="text-blue-500">Web</span>
+              <span className="text-foreground">Canayan</span><span className="text-primary">Web</span>
             </span>
           </div>
           <CardTitle className="text-3xl tracking-tight">Firma Girişi</CardTitle>
@@ -77,7 +77,7 @@ export default function LoginPage() {
                 <input
                   type="email"
                   placeholder="canayan@megaerp.com"
-                  className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                  className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 outline-none focus:ring-2 focus:ring-primary/50 transition-all"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -88,14 +88,14 @@ export default function LoginPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between ml-1">
                 <label className="text-sm font-medium">Şifre</label>
-                <Link href="#" className="text-xs text-indigo-500 hover:underline">Şifremi Unuttum</Link>
+                <Link href="#" className="text-xs text-primary hover:underline">Şifremi Unuttum</Link>
               </div>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
                 <input
                   type="password"
                   placeholder="••••••••"
-                  className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                  className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 outline-none focus:ring-2 focus:ring-primary/50 transition-all"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -117,7 +117,7 @@ export default function LoginPage() {
 
           <div className="mt-8 text-center text-sm text-slate-500">
             Hesabınız yok mu?{" "}
-            <Link href="/auth/register" className="text-indigo-500 font-semibold hover:underline">
+            <Link href="/auth/register" className="text-primary font-semibold hover:underline">
               Kayıt Olun
             </Link>
           </div>

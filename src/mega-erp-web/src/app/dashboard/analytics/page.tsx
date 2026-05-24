@@ -167,7 +167,7 @@ export default function AnalyticsPage() {
                 key={p}
                 onClick={() => setPeriod(p)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                  period === p ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
+                  period === p ? 'bg-primary text-white' : 'text-slate-400 hover:text-white'
                 }`}
               >
                 Son {p} Gün
@@ -193,11 +193,11 @@ export default function AnalyticsPage() {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          icon={<CreditCard className="w-5 h-5 text-blue-400" />}
+          icon={<CreditCard className="w-5 h-5 text-primary" />}
           label="Toplam Gelir"
           value={loading ? '...' : fmt(totalRevenue)}
           sub={`Son ${period} gün`}
-          color="bg-blue-500/10"
+          color="bg-primary/10"
         />
         <StatCard
           icon={<ShoppingCart className="w-5 h-5 text-emerald-400" />}
@@ -234,8 +234,8 @@ export default function AnalyticsPage() {
             <AreaChart data={dailyData} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(214 100% 57%)" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="hsl(214 100% 57%)" stopOpacity={0} />
+                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
@@ -260,7 +260,7 @@ export default function AnalyticsPage() {
               <Area
                 type="monotone"
                 dataKey="revenue"
-                stroke="hsl(214 100% 57%)"
+                stroke="hsl(var(--primary))"
                 strokeWidth={2}
                 fill="url(#revenueGrad)"
               />
@@ -308,7 +308,7 @@ export default function AnalyticsPage() {
                   name === 'revenue' ? 'Gelir' : 'Adet'
                 ]}
               />
-              <Bar dataKey="revenue" fill="hsl(214 100% 57%)" radius={[0, 4, 4, 0]} label={{ position: 'right', fill: '#64748b', fontSize: 10, formatter: (v: unknown) => fmt(v as number) }} />
+              <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} label={{ position: 'right', fill: '#64748b', fontSize: 10, formatter: (v: unknown) => fmt(v as number) }} />
             </BarChart>
           </ResponsiveContainer>
         )}
@@ -346,7 +346,7 @@ export default function AnalyticsPage() {
                         o.status === 'Delivered' ? 'bg-green-500/15 text-green-400' :
                         o.status === 'Cancelled' ? 'bg-red-500/15 text-red-400' :
                         o.status === 'Shipped' ? 'bg-cyan-500/15 text-cyan-400' :
-                        'bg-blue-500/15 text-blue-400'
+                        'bg-primary/15 text-primary'
                       }`}>
                         {o.status}
                       </span>
