@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+
 import { motion } from "framer-motion";
 import { Loader2, AlertCircle, Upload, X } from "lucide-react";
 import { productsService } from "@/lib/services/products.service";
@@ -138,11 +138,11 @@ export function ProductForm({ product, isEdit }: Props) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Card>
-        <CardHeader>
-          <CardTitle>{isEdit ? "Ürünü Düzenle" : "Yeni Ürün"}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <div className="premium-card p-6">
+        <div className="mb-4">
+          <h3 className="text-base font-bold text-foreground">{isEdit ? "Ürünü Düzenle" : "Yeni Ürün"}</h3>
+        </div>
+        <div className="space-y-4">
           {[
             { label: "Ürün Adı *", field: "name", type: "text", placeholder: "Örn: Laptop Pro X" },
             { label: "SKU *", field: "sku", type: "text", placeholder: "Örn: LPT-001", disabled: isEdit },
@@ -296,8 +296,8 @@ export function ProductForm({ product, isEdit }: Props) {
             </Button>
             <Button type="button" variant="outline" onClick={() => router.back()}>İptal</Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </form>
   );
 }

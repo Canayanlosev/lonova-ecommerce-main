@@ -102,13 +102,13 @@ export default function AccountingPage() {
 
       {/* Tab bar + import button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl w-fit">
+        <div className="flex gap-1 p-1 bg-slate-800/30 rounded-xl w-fit">
           {([["accounts", "Hesaplar", CreditCard], ["journal", "Yevmiye", BookOpen]] as const).map(([id, label, Icon]) => (
             <button
               key={id}
               onClick={() => setTab(id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
-                ${tab === id ? "bg-white dark:bg-slate-900 text-primary shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
+                ${tab === id ? "bg-slate-900 text-primary shadow-sm" : "text-slate-500 hover:text-slate-300"}`}
             >
               <Icon size={16} />{label}
             </button>

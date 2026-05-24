@@ -14,8 +14,8 @@ import Link from "next/link";
 const statusConfig: Record<string, { label: string; className: string }> = {
   Draft: { label: "Taslak", className: "bg-slate-100 text-slate-600" },
   Issued: { label: "Kesildi", className: "bg-primary/15 text-primary" },
-  Paid: { label: "Ödendi", className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400" },
-  Cancelled: { label: "İptal", className: "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400" },
+  Paid: { label: "Ödendi", className: "bg-emerald-500/15 text-emerald-400" },
+  Cancelled: { label: "İptal", className: "bg-red-500/15 text-red-400" },
 };
 
 function handlePrint(invoice: Invoice) {
@@ -153,7 +153,7 @@ export default function InvoiceDetailPage() {
         </div>
         <button
           onClick={() => handlePrint(invoice)}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary border border-border hover:border-primary/80 rounded-xl transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-300 hover:text-primary border border-border hover:border-primary/80 rounded-xl transition-colors"
           title="Faturayı Yazdır / PDF olarak kaydet"
         >
           <Printer size={16} /> Yazdır
@@ -188,7 +188,7 @@ export default function InvoiceDetailPage() {
             </table>
           </div>
 
-          <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 space-y-2">
+          <div className="mt-4 pt-4 border-t border-border space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-slate-500">Ara Toplam</span>
               <span>₺{subtotal.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}</span>
@@ -197,7 +197,7 @@ export default function InvoiceDetailPage() {
               <span className="text-slate-500">KDV</span>
               <span>₺{invoice.totalTax.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}</span>
             </div>
-            <div className="flex justify-between font-bold text-base pt-2 border-t border-slate-200 dark:border-slate-800">
+            <div className="flex justify-between font-bold text-base pt-2 border-t border-border">
               <span>Genel Toplam</span>
               <span>₺{invoice.totalAmount.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}</span>
             </div>

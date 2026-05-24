@@ -12,10 +12,10 @@ import { ArrowLeft, XCircle } from "lucide-react";
 import Link from "next/link";
 
 const statusConfig: Record<string, { label: string; className: string }> = {
-  Pending: { label: "Beklemede", className: "bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400" },
+  Pending: { label: "Beklemede", className: "bg-amber-500/15 text-amber-400" },
   Placed: { label: "Alındı", className: "bg-primary/15 text-primary" },
-  Paid: { label: "Ödendi", className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400" },
-  Cancelled: { label: "İptal", className: "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400" },
+  Paid: { label: "Ödendi", className: "bg-emerald-500/15 text-emerald-400" },
+  Cancelled: { label: "İptal", className: "bg-red-500/15 text-red-400" },
 };
 
 export default function OrderDetailPage() {
@@ -113,7 +113,7 @@ export default function OrderDetailPage() {
 
       {canCancel && (
         <div className="flex justify-end">
-          <Button variant="outline" onClick={handleCancel} disabled={cancelling} className="flex items-center gap-2 border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10">
+          <Button variant="outline" onClick={handleCancel} disabled={cancelling} className="flex items-center gap-2 border-red-500 text-red-500 hover:bg-red-500/10">
             <XCircle size={16} />
             {cancelling ? "İptal ediliyor..." : "Siparişi İptal Et"}
           </Button>

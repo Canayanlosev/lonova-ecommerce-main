@@ -85,7 +85,7 @@ function CategoryRow({
             </button>
             <button
               onClick={() => onDelete(node)}
-              className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 text-red-500 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-red-500/10 text-red-500 transition-colors"
               title="Sil"
             >
               <Trash2 size={15} />
@@ -292,7 +292,7 @@ export default function CategoriesPage() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border overflow-hidden">
+          <div className="w-full max-w-md bg-background rounded-2xl shadow-2xl border border-border overflow-hidden">
             {/* Modal header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-border">
               <h2 className="text-lg font-bold">{editId ? 'Kategori Düzenle' : 'Yeni Kategori'}</h2>
@@ -356,7 +356,7 @@ export default function CategoriesPage() {
             </div>
 
             {/* Modal footer */}
-            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-200 dark:border-slate-800">
+            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border">
               <button
                 onClick={() => setShowModal(false)}
                 className="px-4 py-2 text-sm font-medium text-slate-500 hover:text-foreground transition-colors"

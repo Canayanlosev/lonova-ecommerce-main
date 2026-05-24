@@ -279,7 +279,7 @@ export default function EcommercePage() {
                     >
                       <Percent size={13} /> Fiyat Güncelle
                     </button>
-                    <button onClick={() => setSelectedIds(new Set())} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors">
+                    <button onClick={() => setSelectedIds(new Set())} className="p-1.5 rounded-lg hover:bg-slate-800/20 text-slate-400 transition-colors">
                       <X size={14} />
                     </button>
                   </div>
@@ -362,8 +362,8 @@ export default function EcommercePage() {
                                 title={p.isPublishedToMarketplace !== false ? 'Marketplace\'ten gizle' : 'Marketplace\'te yayınla'}
                                 className={`p-1.5 rounded-lg transition-colors ${
                                   p.isPublishedToMarketplace !== false
-                                    ? 'hover:bg-slate-100 dark:hover:bg-slate-700 text-green-500'
-                                    : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400'
+                                    ? 'hover:bg-slate-800/20 text-green-500'
+                                    : 'hover:bg-slate-800/20 text-slate-400'
                                 }`}
                               >
                                 {p.isPublishedToMarketplace !== false
@@ -373,7 +373,7 @@ export default function EcommercePage() {
                               <button
                                 onClick={() => handleClone(p.id, p.name)}
                                 title="Kopyala"
-                                className="p-1.5 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-500/10 text-amber-500 transition-colors"
+                                className="p-1.5 rounded-lg hover:bg-amber-500/10 text-amber-500 transition-colors"
                               >
                                 <Copy size={15} />
                               </button>
@@ -384,7 +384,7 @@ export default function EcommercePage() {
                               </Link>
                               <button
                                 onClick={() => handleDelete(p.id, p.name)}
-                                className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 text-red-500 transition-colors"
+                                className="p-1.5 rounded-lg hover:bg-red-500/10 text-red-500 transition-colors"
                               >
                                 <Trash2 size={16} />
                               </button>
@@ -404,7 +404,7 @@ export default function EcommercePage() {
       {/* Bulk Price Modal */}
       {priceModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-sm bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border">
+          <div className="w-full max-w-sm bg-background rounded-2xl shadow-2xl border border-border">
             <div className="flex items-center justify-between px-6 py-4 border-b border-border">
               <h2 className="text-lg font-bold">Toplu Fiyat Güncelle</h2>
               <button onClick={() => setPriceModal(false)} className="p-1.5 rounded-lg hover:bg-slate-800"><X size={18} /></button>
@@ -416,13 +416,13 @@ export default function EcommercePage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setPriceType('Percent')}
-                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-medium transition-colors ${priceType === 'Percent' ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 dark:border-slate-700 text-slate-500'}`}
+                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-medium transition-colors ${priceType === 'Percent' ? 'border-primary bg-primary/10 text-primary' : 'border-border text-slate-500'}`}
                   >
                     <Percent size={14} /> Yüzde (%)
                   </button>
                   <button
                     onClick={() => setPriceType('Fixed')}
-                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-medium transition-colors ${priceType === 'Fixed' ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 dark:border-slate-700 text-slate-500'}`}
+                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-medium transition-colors ${priceType === 'Fixed' ? 'border-primary bg-primary/10 text-primary' : 'border-border text-slate-500'}`}
                   >
                     <DollarSign size={14} /> Sabit (₺)
                   </button>
@@ -442,7 +442,7 @@ export default function EcommercePage() {
                 />
               </div>
             </div>
-            <div className="flex justify-end gap-3 px-6 py-4 border-t border-slate-200 dark:border-slate-800">
+            <div className="flex justify-end gap-3 px-6 py-4 border-t border-border">
               <button onClick={() => setPriceModal(false)} className="px-4 py-2 text-sm font-medium text-slate-500 hover:text-foreground">İptal</button>
               <button
                 onClick={handleBulkPrice}

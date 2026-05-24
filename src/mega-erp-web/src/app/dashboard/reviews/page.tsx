@@ -193,7 +193,7 @@ export default function ReviewsDashboardPage() {
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={() => handleDelete(r.id)}
-                        className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 text-red-500 transition-colors"
+                        className="p-1.5 rounded-lg hover:bg-red-500/10 text-red-500 transition-colors"
                         title="Yorumu sil"
                       >
                         <Trash2 size={15} />
@@ -208,7 +208,7 @@ export default function ReviewsDashboardPage() {
 
         {/* Pagination */}
         {!loading && totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-slate-200 dark:border-slate-800">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-border">
             <p className="text-xs text-slate-400">{totalCount} yorum, sayfa {page}/{totalPages}</p>
             <div className="flex gap-2">
               <button

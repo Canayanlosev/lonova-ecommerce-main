@@ -116,7 +116,7 @@ export default function BasketPage() {
                       <button onClick={() => updateQty(item, 1)} className="w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-slate-800 transition-colors">
                         <Plus size={14} />
                       </button>
-                      <button onClick={() => remove(item.productId)} className="ml-2 p-1.5 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors">
+                      <button onClick={() => remove(item.productId)} className="ml-2 p-1.5 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors">
                         <Trash2 size={16} />
                       </button>
                     </div>
@@ -138,7 +138,7 @@ export default function BasketPage() {
                     </div>
                   ))}
                 </div>
-                <div className="border-t border-slate-200 dark:border-slate-800 pt-4 flex justify-between font-bold">
+                <div className="border-t border-border pt-4 flex justify-between font-bold">
                   <span>Toplam</span>
                   <span>₺{total.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}</span>
                 </div>
