@@ -842,3 +842,50 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     4. handleBulkVisibility(publish) — toplu yayınla/gizle
     5. Bulk action bar: seçili sayı + Yayınla/Gizle/Sil butonları + X kapat
     6. Tablo: checkbox sütunu (CheckSquare/Square ikonlar), seçili satır vurgusu
+
+- [x] FTASK-44: Dashboard Kategori Yönetimi
+  Dosya: src/app/dashboard/categories/page.tsx (YENİ)
+  Adımlar:
+    1. Hiyerarşik kategori ağacı tablosu (collapse/expand)
+    2. Oluştur/Düzenle modal: ad, açıklama, üst kategori dropdown
+    3. Silme onay dialog + toast feedback
+    4. Özet stat kartlar (toplam/ana/alt/derinlik)
+    5. categories.service.ts: getAll/create/update/delete
+    6. Dashboard nav: Layers ikonu + "Kategoriler" linki
+
+- [x] FTASK-45: Fatura Yazdır / PDF Export
+  Dosya: src/app/dashboard/billing/[id]/page.tsx
+  Adımlar:
+    1. Printer ikonu butonu eklendi
+    2. handlePrint(): window.open ile temiz HTML fatura şablonu
+    3. Print-safe CSS (Tailwind değil inline), otomatik window.print()
+    4. CanayanWeb marka header, KDV tablosu, toplam/genel toplam
+
+- [x] FTASK-46: Dashboard Bildirim Paneli
+  Dosya: src/app/dashboard/layout.tsx
+  Adımlar:
+    1. useNotifications() hook — marketplace siparişleri + WMS stok API
+    2. Bekleyen siparişler: "Yeni Sipariş" (indigo) bildirimleri
+    3. Düşük stok: "Düşük Stok Uyarısı" (amber) bildirimleri
+    4. Bell ikonu: okunmamış kırmızı sayaç badge
+    5. AnimatePresence dropdown: bildirim listesi + markAllRead
+    6. Dışarı tıkla → kapat (useRef + mousedown listener)
+
+- [x] FTASK-47: İK Yönetimi — Çalışan & Departman CRUD
+  Dosya: src/app/dashboard/hr/page.tsx
+  Adımlar:
+    1. Çalışan Ekle/Düzenle modal: ad, soyad, e-posta, telefon, işe başlama, maaş, departman
+    2. Çalışan sil (onay dialog)
+    3. Departman Ekle/Düzenle modal
+    4. Departman sil (hover'da görünen butonlar)
+    5. Özet stat kartları: toplam çalışan, departman, bekleyen izin, aylık bordro
+    6. Çalışan satırlarında initials avatar
+    7. Tab badge'leri: bekleyen izin sayısı
+
+- [x] FTASK-48: Mağaza Siparişleri CSV Export
+  Dosya: src/app/dashboard/marketplace-orders/page.tsx
+  Adımlar:
+    1. handleExportCsv(): filtreli siparişleri CSV satırlarına dönüştür
+    2. BOM (﻿) ile UTF-8 CSV — Türkçe karakter desteği
+    3. Sütunlar: ID, alıcı, şehir, tutar, durum, ödeme, yöntem, ürün adedi, takip no, tarih
+    4. Download ikonu + "CSV" butonu header'a eklendi

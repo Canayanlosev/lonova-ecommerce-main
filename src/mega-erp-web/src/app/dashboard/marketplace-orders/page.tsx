@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import {
   Truck, CheckCircle, Clock, XCircle, Package,
-  RefreshCw, X, AlertCircle, Search, ChevronDown
+  RefreshCw, X, AlertCircle, Search, ChevronDown, Download
 } from 'lucide-react'
 import api from '@/lib/api'
 
@@ -132,6 +132,32 @@ export default function MarketplaceOrdersPage() {
 
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
+  const handleExportCsv = () => {
+    const rows = [
+      ['Sipariş ID', 'Alıcı', 'Şehir', 'Tutar (₺)', 'Durum', 'Ödeme', 'Ödeme Yöntemi', 'Ürün Adedi', 'Takip No', 'Tarih'],
+      ...filtered.map(o => [
+        o.id.slice(0, 8).toUpperCase(),
+        o.recipientName,
+        o.city,
+        o.totalAmount.toFixed(2),
+        STATUS_CONFIG[o.status]?.label ?? o.status,
+        o.paymentStatus,
+        o.paymentMethod,
+        String(o.itemCount),
+        o.trackingNumber ?? '',
+        new Date(o.createdAt).toLocaleDateString('tr-TR'),
+      ])
+    ]
+    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n')
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `siparisler-${new Date().toISOString().slice(0, 10)}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -140,9 +166,19 @@ export default function MarketplaceOrdersPage() {
           <h1 className="text-2xl font-bold text-foreground">Mağaza Siparişleri</h1>
           <p className="text-slate-400 text-sm mt-0.5">Marketplace'ten gelen alıcı siparişleri</p>
         </div>
-        <button onClick={() => load(page)} disabled={loading} className="p-2 rounded-xl border border-slate-700 hover:bg-slate-800 transition-colors disabled:opacity-40">
-          <RefreshCw className={`w-4 h-4 text-slate-400 ${loading ? 'animate-spin' : ''}`} />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleExportCsv}
+            disabled={filtered.length === 0}
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-400 hover:text-emerald-400 border border-slate-700 hover:border-emerald-600 rounded-xl transition-colors disabled:opacity-40"
+            title="CSV olarak dışa aktar"
+          >
+            <Download className="w-4 h-4" /> CSV
+          </button>
+          <button onClick={() => load(page)} disabled={loading} className="p-2 rounded-xl border border-slate-700 hover:bg-slate-800 transition-colors disabled:opacity-40">
+            <RefreshCw className={`w-4 h-4 text-slate-400 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
