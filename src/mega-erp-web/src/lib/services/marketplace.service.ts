@@ -268,4 +268,10 @@ export const marketplaceService = {
   changePassword: async (currentPassword: string, newPassword: string): Promise<void> => {
     await buyerApi().put('/api/marketplace/auth/change-password', { currentPassword, newPassword })
   },
+
+  // Coupons
+  validateCoupon: async (code: string, cartTotal: number): Promise<{ valid: boolean; message?: string; discountAmount: number }> => {
+    const { data } = await publicApi.post('/api/marketplace/coupons/validate', { code, cartTotal })
+    return data
+  },
 }

@@ -13,6 +13,7 @@ public class MarketplaceDbContext : DbContext
     public DbSet<BuyerOrderItem> OrderItems => Set<BuyerOrderItem>();
     public DbSet<ProductReview> ProductReviews => Set<ProductReview>();
     public DbSet<BuyerAddress> Addresses => Set<BuyerAddress>();
+    public DbSet<CouponCode> CouponCodes => Set<CouponCode>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -74,6 +75,17 @@ public class MarketplaceDbContext : DbContext
             e.Property(x => x.District).HasMaxLength(100);
             e.Property(x => x.AddressLine).IsRequired().HasMaxLength(500);
             e.Property(x => x.PostalCode).HasMaxLength(20);
+        });
+
+        modelBuilder.Entity<CouponCode>(e =>
+        {
+            e.ToTable("CouponCodes");
+            e.HasKey(x => x.Id);
+            e.HasIndex(x => x.Code).IsUnique();
+            e.Property(x => x.Code).IsRequired().HasMaxLength(50);
+            e.Property(x => x.DiscountType).IsRequired().HasMaxLength(20);
+            e.Property(x => x.DiscountValue).HasColumnType("decimal(18,2)");
+            e.Property(x => x.MinimumOrderAmount).HasColumnType("decimal(18,2)");
         });
     }
 }

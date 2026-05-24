@@ -155,3 +155,37 @@ public record MarketplaceProductListResponse(
     int Page,
     int PageSize
 );
+
+// ── Coupon DTOs ──────────────────────────────────────────────────────────────
+public record CreateCouponRequest(
+    string Code,
+    string DiscountType,           // Percent | Fixed
+    decimal DiscountValue,
+    decimal MinimumOrderAmount,
+    int MaxUses,
+    DateTime? ExpiresAt
+);
+
+public record UpdateCouponRequest(
+    string? DiscountType,
+    decimal? DiscountValue,
+    decimal? MinimumOrderAmount,
+    int? MaxUses,
+    DateTime? ExpiresAt,
+    bool? IsActive
+);
+
+public record CouponDto(
+    Guid Id,
+    string Code,
+    string DiscountType,
+    decimal DiscountValue,
+    decimal MinimumOrderAmount,
+    int MaxUses,
+    int UsedCount,
+    DateTime? ExpiresAt,
+    bool IsActive
+);
+
+public record ValidateCouponRequest(string Code, decimal CartTotal);
+public record ValidateCouponResponse(bool Valid, string? Message, decimal DiscountAmount, CouponDto? Coupon);

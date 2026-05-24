@@ -773,3 +773,11 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     2. Form: mevcut şifre, yeni şifre, yeni şifre tekrar
     3. PUT /api/marketplace/auth/change-password çağrısı
     4. marketplaceService.changePassword() metodu ekle
+
+- [x] FTASK-33: Checkout Kupon Kodu UI — kupon giriş alanı + anlık doğrulama + indirim gösterimi
+  Dosyalar: src/app/(marketplace)/odeme/page.tsx, marketplace.service.ts
+  Tamamlandı: validateCoupon() metodu + Tag/X icon + coupon state + summary discount line
+
+- [x] FTASK-34: Dashboard Kupon Yönetimi — /dashboard/coupons CRUD sayfası
+  Dosyalar: src/app/dashboard/coupons/page.tsx, dashboard/layout.tsx
+  Tamamlandı: tablo, oluştur/düzenle/sil/aktif-pasif toggle

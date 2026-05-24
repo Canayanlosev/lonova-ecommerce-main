@@ -4,7 +4,7 @@ import React from "react";
 import {
   LayoutDashboard, ShoppingCart, Users, CreditCard,
   Package, Truck, Settings, LogOut, Bell, Menu, X, Receipt,
-  Store, Warehouse, Layout, CheckSquare, BarChart2, ShoppingBag
+  Store, Warehouse, Layout, CheckSquare, BarChart2, ShoppingBag, Tag
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useUIStore } from "@/store/ui.store";
 import { useAuthStore } from "@/store/auth.store";
 import { useBasketStore } from "@/store/basket.store";
+import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
@@ -26,6 +27,7 @@ const navItems = [
   { icon: Layout, label: "Site Builder", href: "/dashboard/site-builder" },
   { icon: ShoppingBag, label: "Mağaza Siparişleri", href: "/dashboard/marketplace-orders" },
   { icon: BarChart2, label: "Analitik", href: "/dashboard/analytics" },
+  { icon: Tag, label: "Kuponlar", href: "/dashboard/coupons" },
   { icon: CheckSquare, label: "Kurulum Rehberi", href: "/dashboard/setup", badge: true },
 ];
 
@@ -167,6 +169,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </span>
               )}
             </Link>
+            <ThemeSwitcher />
             <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
               <Bell className="w-5 h-5 text-slate-400" />
             </button>

@@ -629,7 +629,7 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     2. Mevcut şifreyi verify, minimum 8 karakter kontrolü
     3. Yeni hash'i BuyerUser'a kaydet
 
-- [ ] TASK-30: Kupon / İndirim Kodu Sistemi
+- [x] TASK-30: Kupon / İndirim Kodu Sistemi
   Hedef: Firma sabit veya yüzdesel indirim kuponu tanımlasın; alıcı checkout'ta kodu girebilsin.
   Dosyalar: Marketplace modülü — yeni CouponCode entity + controller + checkout entegrasyonu
   Adımlar:
