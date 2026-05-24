@@ -3,8 +3,9 @@
 import { useEffect, useState, useCallback } from 'react'
 import {
   Truck, CheckCircle, Clock, XCircle, Package,
-  RefreshCw, X, AlertCircle, Search, ChevronDown, Download
+  RefreshCw, X, AlertCircle, Search, ChevronDown, Download, ExternalLink
 } from 'lucide-react'
+import Link from 'next/link'
 import api from '@/lib/api'
 
 interface AdminOrder {
@@ -286,6 +287,13 @@ export default function MarketplaceOrdersPage() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1.5">
+                          <Link
+                            href={`/dashboard/marketplace-orders/${o.id}`}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/10 transition-all"
+                            title="Detay"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </Link>
                           {canShip && (
                             <button
                               onClick={() => { setShipModal(o); setTrackingNo(''); setCarrier(CARRIERS[0]); setShipError('') }}
