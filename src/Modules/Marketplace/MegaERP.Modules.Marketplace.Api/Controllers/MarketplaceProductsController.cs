@@ -28,6 +28,7 @@ public class MarketplaceProductsController : ControllerBase
     [HttpGet("products")]
     public async Task<ActionResult<MarketplaceProductListResponse>> GetProducts(
         [FromQuery] Guid? categoryId = null,
+        [FromQuery] string? categoryName = null,
         [FromQuery] decimal? minPrice = null,
         [FromQuery] decimal? maxPrice = null,
         [FromQuery] string? search = null,
@@ -46,6 +47,10 @@ public class MarketplaceProductsController : ControllerBase
 
         if (categoryId.HasValue)
             query = query.Where(p => p.CategoryId == categoryId.Value);
+
+        // Filter by category name (case-insensitive) — used when slug resolves to name
+        if (!string.IsNullOrWhiteSpace(categoryName))
+            query = query.Where(p => p.Category != null && EF.Functions.ILike(p.Category.Name, categoryName));
 
         if (minPrice.HasValue)
             query = query.Where(p => p.BasePrice >= minPrice.Value);

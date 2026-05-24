@@ -694,3 +694,10 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     3. BulkPriceUpdate: Percent veya Fixed modda toplu fiyat değişimi
     4. BulkPriceRequest DTO eklendi
     5. productsService.clone() + productsService.bulkPrice() eklendi
+
+- [x] TASK-38: Marketplace Ürün Endpoint — categoryName Filtresi
+  Endpoint: GET /api/marketplace/products?categoryName=...
+  Adımlar:
+    1. [FromQuery] string? categoryName parametresi eklendi
+    2. EF.Functions.ILike ile case-insensitive kategori adı filtresi
+    3. marketplaceService.ts: ProductsQuery.categoryName eklendi + params.set

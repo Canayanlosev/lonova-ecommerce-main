@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ChevronRight, SlidersHorizontal } from 'lucide-react'
-import { marketplaceService, type MarketplaceProduct } from '@/lib/services/marketplace.service'
+import { ChevronRight, SlidersHorizontal, Layers } from 'lucide-react'
+import { marketplaceService, type MarketplaceProduct, type CatalogCategory } from '@/lib/services/marketplace.service'
 import { ProductCard } from '@/components/marketplace/ProductCard'
 
 function ProductSkeleton() {
@@ -27,7 +27,17 @@ const SORT_OPTIONS = [
   { value: 'name', label: 'İsme Göre' },
 ]
 
-export default function CategoryPage() {
+/** Find a CatalogCategory by slug anywhere in the tree */
+function findCategoryBySlug(tree: CatalogCategory[], slug: string): CatalogCategory | null {
+  for (const cat of tree) {
+    if (cat.slug === slug) return cat
+    const found = findCategoryBySlug(cat.children, slug)
+    if (found) return found
+  }
+  return null
+}
+
+function CategoryPageContent() {
   const params = useParams()
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -38,6 +48,8 @@ export default function CategoryPage() {
   const [products, setProducts] = useState<MarketplaceProduct[]>([])
   const [totalCount, setTotalCount] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [categoryName, setCategoryName] = useState<string | null>(null)
+  const [subCategories, setSubCategories] = useState<CatalogCategory[]>([])
 
   const sort = (searchParams.get('sort') as 'newest' | 'price_asc' | 'price_desc' | 'name') ?? 'newest'
   const minPrice = searchParams.get('minPrice') ? Number(searchParams.get('minPrice')) : undefined
@@ -45,45 +57,94 @@ export default function CategoryPage() {
   const page = Number(searchParams.get('page') ?? '1')
   const pageSize = 20
 
+  // Resolve slug → category name, then load products
   useEffect(() => {
-    setLoading(true)
-    marketplaceService.getProducts({ sort, minPrice, maxPrice, page, pageSize })
-      .then((res) => {
+    const resolve = async () => {
+      setLoading(true)
+      try {
+        const tree = await marketplaceService.getCategories()
+        const found = findCategoryBySlug(tree, categorySlug)
+        const name = found?.name ?? null
+        setCategoryName(name)
+        setSubCategories(found?.children ?? [])
+
+        const res = await marketplaceService.getProducts({
+          categoryName: name ?? undefined,
+          sort,
+          minPrice,
+          maxPrice,
+          page,
+          pageSize,
+        })
         setProducts(res.items)
         setTotalCount(res.totalCount)
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false))
-  }, [sort, minPrice, maxPrice, page])
+      } catch {
+        setProducts([])
+      } finally {
+        setLoading(false)
+      }
+    }
+    resolve()
+  }, [categorySlug, sort, minPrice, maxPrice, page])
 
   const updateParam = (key: string, value: string | null) => {
-    const params = new URLSearchParams(searchParams.toString())
-    if (value === null) params.delete(key)
-    else params.set(key, value)
-    params.set('page', '1')
-    router.push(`?${params.toString()}`)
+    const p = new URLSearchParams(searchParams.toString())
+    if (value === null) p.delete(key)
+    else p.set(key, value)
+    p.set('page', '1')
+    router.push(`?${p.toString()}`)
   }
 
   const totalPages = Math.ceil(totalCount / pageSize)
-  const breadcrumbs = ['Kategoriler', ...slugParts.map((s) => s.charAt(0).toUpperCase() + s.slice(1))]
+  const displayName = categoryName ?? slugParts[slugParts.length - 1]
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-1 text-sm text-slate-400 mb-6">
+      <nav className="flex items-center gap-1 text-sm text-slate-400 mb-6 flex-wrap">
         <Link href="/" className="hover:text-primary transition-colors">Ana Sayfa</Link>
-        {breadcrumbs.map((crumb, i) => (
+        <ChevronRight className="w-3 h-3" />
+        <Link href="/ara" className="hover:text-primary transition-colors">Kategoriler</Link>
+        {slugParts.slice(0, -1).map((slug, i) => (
           <span key={i} className="flex items-center gap-1">
             <ChevronRight className="w-3 h-3" />
-            <span className={i === breadcrumbs.length - 1 ? 'text-foreground font-medium' : ''}>{crumb}</span>
+            <Link href={`/kategori/${slugParts.slice(0, i + 1).join('/')}`} className="hover:text-primary transition-colors capitalize">
+              {slug.replace(/-/g, ' ')}
+            </Link>
           </span>
         ))}
+        <ChevronRight className="w-3 h-3" />
+        <span className="text-foreground font-medium">{displayName}</span>
       </nav>
+
+      {/* Category header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-foreground">{displayName}</h1>
+        {!loading && (
+          <p className="text-sm text-slate-400 mt-1">{totalCount} ürün</p>
+        )}
+      </div>
+
+      {/* Sub-categories */}
+      {subCategories.length > 0 && (
+        <div className="flex gap-2 flex-wrap mb-6">
+          {subCategories.map(sub => (
+            <Link
+              key={sub.id}
+              href={`/kategori/${slugParts.join('/')}/${sub.slug}`}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border text-sm text-slate-400 hover:text-primary hover:border-primary transition-colors"
+            >
+              <Layers className="w-3.5 h-3.5" />
+              {sub.name}
+            </Link>
+          ))}
+        </div>
+      )}
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Filters sidebar */}
-        <aside className="w-full lg:w-60 shrink-0">
-          <div className="premium-card p-4 space-y-6">
+        <aside className="w-full lg:w-56 shrink-0">
+          <div className="premium-card p-4 space-y-6 sticky top-24">
             <div className="flex items-center gap-2 font-semibold text-foreground">
               <SlidersHorizontal className="w-4 h-4 text-primary" />
               Filtreler
@@ -109,42 +170,54 @@ export default function CategoryPage() {
 
             {/* Price range */}
             <div>
-              <p className="text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">Fiyat Aralığı</p>
+              <p className="text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">Fiyat Aralığı (₺)</p>
               <div className="flex gap-2">
                 <input
                   type="number"
-                  placeholder="Min ₺"
+                  placeholder="Min"
                   defaultValue={minPrice}
                   onBlur={(e) => updateParam('minPrice', e.target.value || null)}
                   className="w-full px-2 py-1.5 rounded-lg bg-background border border-border text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                 />
                 <input
                   type="number"
-                  placeholder="Max ₺"
+                  placeholder="Max"
                   defaultValue={maxPrice}
                   onBlur={(e) => updateParam('maxPrice', e.target.value || null)}
                   className="w-full px-2 py-1.5 rounded-lg bg-background border border-border text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </div>
             </div>
+
+            {/* Clear filters */}
+            {(minPrice !== undefined || maxPrice !== undefined) && (
+              <button
+                onClick={() => {
+                  const p = new URLSearchParams()
+                  if (sort !== 'newest') p.set('sort', sort)
+                  router.push(`?${p.toString()}`)
+                }}
+                className="w-full text-xs text-red-400 hover:underline text-left"
+              >
+                Filtreleri temizle
+              </button>
+            )}
           </div>
         </aside>
 
         {/* Product grid */}
         <div className="flex-1">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-sm text-slate-400">
-              {loading ? 'Yükleniyor...' : `${totalCount} ürün bulundu`}
-            </p>
-          </div>
-
           {loading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
               {Array.from({ length: 12 }).map((_, i) => <ProductSkeleton key={i} />)}
             </div>
           ) : products.length === 0 ? (
             <div className="text-center py-20 text-slate-400">
-              <p className="text-lg">Bu kategoride ürün bulunamadı.</p>
+              <Layers className="w-12 h-12 mx-auto mb-3 text-slate-600" />
+              <p className="text-lg font-medium">Bu kategoride ürün bulunamadı.</p>
+              <Link href="/ara" className="text-primary hover:underline text-sm mt-2 block">
+                Tüm ürünleri ara →
+              </Link>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -154,8 +227,14 @@ export default function CategoryPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-8">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+            <div className="flex items-center justify-center gap-2 mt-8 flex-wrap">
+              {page > 1 && (
+                <button onClick={() => updateParam('page', String(page - 1))}
+                  className="px-3 py-2 rounded-lg text-sm bg-surface border border-border text-foreground hover:border-primary transition-colors">
+                  ← Önceki
+                </button>
+              )}
+              {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => i + 1).map((p) => (
                 <button
                   key={p}
                   onClick={() => updateParam('page', String(p))}
@@ -166,10 +245,24 @@ export default function CategoryPage() {
                   {p}
                 </button>
               ))}
+              {page < totalPages && (
+                <button onClick={() => updateParam('page', String(page + 1))}
+                  className="px-3 py-2 rounded-lg text-sm bg-surface border border-border text-foreground hover:border-primary transition-colors">
+                  Sonraki →
+                </button>
+              )}
             </div>
           )}
         </div>
       </div>
     </div>
+  )
+}
+
+export default function CategoryPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-20 text-slate-400">Yükleniyor...</div>}>
+      <CategoryPageContent />
+    </Suspense>
   )
 }

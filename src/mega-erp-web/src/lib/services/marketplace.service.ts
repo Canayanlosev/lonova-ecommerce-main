@@ -84,6 +84,7 @@ export interface CatalogCategory {
 
 export interface ProductsQuery {
   categoryId?: string
+  categoryName?: string
   minPrice?: number
   maxPrice?: number
   search?: string
@@ -192,6 +193,7 @@ export const marketplaceService = {
   getProducts: async (query: ProductsQuery = {}): Promise<MarketplaceProductListResponse> => {
     const params = new URLSearchParams()
     if (query.categoryId) params.set('categoryId', query.categoryId)
+    if (query.categoryName) params.set('categoryName', query.categoryName)
     if (query.minPrice !== undefined) params.set('minPrice', String(query.minPrice))
     if (query.maxPrice !== undefined) params.set('maxPrice', String(query.maxPrice))
     if (query.search) params.set('search', query.search)

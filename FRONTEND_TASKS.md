@@ -914,3 +914,15 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     3. Bulk action bar'a "Fiyat Güncelle" butonu (amber)
     4. Bulk Price modal: Yüzde/Sabit radio toggle, değer input, Uygula
     5. handleBulkPrice(): selectedIds + priceType + value → API çağrısı
+
+- [x] FTASK-52: Marketplace Kategori Sayfası Düzeltmesi + İyileştirmesi
+  Dosya: src/app/(marketplace)/kategori/[...slug]/page.tsx
+  Adımlar:
+    1. findCategoryBySlug() helper: ağaçta recursive arama
+    2. Slug → kategori adı → categoryName filtresi (API'ye geçirilir)
+    3. Alt kategoriler bölümü (subCategories badge linkleri)
+    4. Breadcrumb: Ana Sayfa > Kategoriler > ... > Mevcut
+    5. Kategori başlığı + ürün sayısı gösterimi
+    6. "Filtreleri temizle" butonu
+    7. Önceki/Sonraki pagination butonları (sayfa listesine ek olarak)
+    8. Sticky sidebar (top-24)
