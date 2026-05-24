@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
+
 import { Skeleton, SkeletonRow } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
@@ -174,16 +174,16 @@ export default function EcommercePage() {
         </Link>
       </div>
 
-      <Card>
-        <CardHeader>
+      <div className="premium-card p-6">
+        <div className="mb-4">
           <div className="flex flex-col gap-3">
             <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-              <CardTitle>
+              <h3 className="text-base font-bold text-foreground">
                 Ürün Listesi
                 <span className="ml-2 text-sm font-normal text-slate-400">
                   {loading ? '' : `${filtered.length} / ${products.length} ürün`}
                 </span>
-              </CardTitle>
+              </h3>
               <div className="relative w-full sm:w-64">
                 <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
                 <input
@@ -236,8 +236,8 @@ export default function EcommercePage() {
               )}
             </div>
           </div>
-        </CardHeader>
-        <CardContent>
+        </div>
+        <div>
           {error ? (
             <div className="flex items-center gap-2 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-sm">
               <AlertCircle className="w-4 h-4" />
@@ -398,8 +398,8 @@ export default function EcommercePage() {
               </div>
             </>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Bulk Price Modal */}
       {priceModal && (

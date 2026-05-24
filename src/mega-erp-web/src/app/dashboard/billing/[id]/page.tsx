@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { billingService } from "@/lib/services/billing.service";
@@ -160,9 +160,9 @@ export default function InvoiceDetailPage() {
         </button>
       </div>
 
-      <Card>
-        <CardHeader><CardTitle>Fatura Kalemleri</CardTitle></CardHeader>
-        <CardContent>
+      <div className="premium-card p-6">
+        <div className="mb-4"><h3 className="text-base font-bold text-foreground">Fatura Kalemleri</h3></div>
+        <div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -202,8 +202,8 @@ export default function InvoiceDetailPage() {
               <span>₺{invoice.totalAmount.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}</span>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {invoice.status === "Issued" && (
         <div className="flex justify-end">

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet package *)",
+      "Bash(grep -oa \"OpenApi[A-Za-z]*\\\\|SecuritySchemeType\\\\|ParameterLocation\\\\|ReferenceType\" ~/.nuget/packages/microsoft.openapi/2.4.1/lib/net8.0/Microsoft.OpenApi.dll 2>/dev/null | sort -u | grep -E \"Security|ParameterLocation|ReferenceType|OpenApiInfo|OpenApiSecurity\" | head -20)",
+      "Read(//home/canayan/.nuget/packages/microsoft.openapi/2.4.1/lib/net8.0/**)",
+      "Bash(git commit -m ' *)",
+      "Bash(sed -i 's/- \\\\[ \\\\] TASK-17: WMS — Çoklu Depo/- [x] TASK-17: WMS — Çoklu Depo/' /home/canayan/Downloads/lonova-ecommerce-main-main/TASKS.md)",
+      "Bash(sed -i 's/- \\\\[ \\\\] TASK-18: WMS — Tedarikçi/- [x] TASK-18: WMS — Tedarikçi/' /home/canayan/Downloads/lonova-ecommerce-main-main/TASKS.md)"
+    ]
+  }
+}

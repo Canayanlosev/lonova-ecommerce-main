@@ -1,15 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "ojMU9e7hGEY=",
+  "dgSpecHash": "Pi5x+ypECNg=",
   "success": true,
   "projectFilePath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Sales/MegaERP.Modules.Sales.Core/MegaERP.Modules.Sales.Core.csproj",
   "expectedPackageFiles": [
     "/home/canayan/.nuget/packages/fluentvalidation/11.11.0/fluentvalidation.11.11.0.nupkg.sha512",
     "/home/canayan/.nuget/packages/mediatr/12.4.1/mediatr.12.4.1.nupkg.sha512",
     "/home/canayan/.nuget/packages/mediatr.contracts/2.0.1/mediatr.contracts.2.0.1.nupkg.sha512",
-    "/home/canayan/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/8.0.0/microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
-    "/home/canayan/.nuget/packages/microsoft.netcore.app.ref/9.0.15/microsoft.netcore.app.ref.9.0.15.nupkg.sha512",
-    "/home/canayan/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.15/microsoft.aspnetcore.app.ref.9.0.15.nupkg.sha512"
+    "/home/canayan/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/8.0.0/microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512"
   ],
   "logs": []
 }

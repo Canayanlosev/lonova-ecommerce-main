@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+
 import { SkeletonRow } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { CreditCard, BookOpen, RefreshCw, CheckCircle2, AlertTriangle } from "lucide-react";
@@ -148,9 +148,9 @@ export default function AccountingPage() {
       )}
 
       {tab === "accounts" && (
-        <Card>
-          <CardHeader><CardTitle>Hesap Planı ({accounts.length})</CardTitle></CardHeader>
-          <CardContent>
+        <div className="premium-card p-6">
+          <div className="mb-4"><h3 className="text-base font-bold text-foreground">Hesap Planı ({accounts.length})</h3></div>
+          <div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -180,16 +180,16 @@ export default function AccountingPage() {
                 </tbody>
               </table>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {tab === "journal" && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Yevmiye Kayıtları ({entries.length})</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="premium-card p-6">
+          <div className="mb-4">
+            <h3 className="text-base font-bold text-foreground">Yevmiye Kayıtları ({entries.length})</h3>
+          </div>
+          <div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -230,8 +230,8 @@ export default function AccountingPage() {
                 </tbody>
               </table>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
     </div>
   );

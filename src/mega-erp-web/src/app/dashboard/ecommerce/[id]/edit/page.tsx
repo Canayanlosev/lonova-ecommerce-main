@@ -7,7 +7,7 @@ import { VariantManager } from "@/components/products/VariantManager";
 import { productsService } from "@/lib/services/products.service";
 import type { Product } from "@/types/api.types";
 import { SkeletonCard } from "@/components/ui/Skeleton";
-import { Card, CardContent } from "@/components/ui/Card";
+
 
 export default function EditProductPage() {
   const { id } = useParams<{ id: string }>();
@@ -32,15 +32,15 @@ export default function EditProductPage() {
       ) : product ? (
         <>
           <ProductForm product={product} isEdit />
-          <Card>
-            <CardContent className="pt-5">
+          <div className="premium-card p-6">
+            <div className="pt-5">
               <VariantManager
                 productId={product.id}
                 baseSku={product.sku}
                 basePrice={product.basePrice}
               />
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </>
       ) : (
         <p className="text-red-500">Ürün bulunamadı.</p>

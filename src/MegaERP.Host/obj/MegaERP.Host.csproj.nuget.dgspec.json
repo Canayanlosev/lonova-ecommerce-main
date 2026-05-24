@@ -20,7 +20,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -156,7 +155,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -590,7 +589,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -640,7 +638,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -1074,7 +1072,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -1127,7 +1124,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -1421,7 +1418,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -1478,7 +1474,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -1772,7 +1768,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -1822,7 +1817,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -2256,7 +2251,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -2309,7 +2303,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -2603,7 +2597,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -2660,7 +2653,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -2954,7 +2947,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -3004,7 +2996,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -3438,7 +3430,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -3482,7 +3473,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -3776,7 +3767,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -3829,7 +3819,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -4123,7 +4113,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -4173,7 +4162,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -4607,7 +4596,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -4651,7 +4639,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -4945,7 +4933,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -4998,7 +4985,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -5292,7 +5279,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -5342,7 +5328,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -5776,7 +5762,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -5829,7 +5814,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -6123,7 +6108,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -6176,7 +6160,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -6470,7 +6454,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -6520,7 +6503,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -6954,7 +6937,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -6998,7 +6980,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -7292,7 +7274,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -7345,7 +7326,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -7639,7 +7620,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -7689,7 +7669,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -8123,7 +8103,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -8173,7 +8152,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -8467,7 +8446,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -8540,7 +8518,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -8834,7 +8812,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -8846,6 +8823,12 @@
               },
               "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Marketplace/MegaERP.Modules.Marketplace.Infrastructure/MegaERP.Modules.Marketplace.Infrastructure.csproj": {
                 "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Marketplace/MegaERP.Modules.Marketplace.Infrastructure/MegaERP.Modules.Marketplace.Infrastructure.csproj"
+              },
+              "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/WMS/MegaERP.Modules.WMS.Core/MegaERP.Modules.WMS.Core.csproj": {
+                "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/WMS/MegaERP.Modules.WMS.Core/MegaERP.Modules.WMS.Core.csproj"
+              },
+              "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/WMS/MegaERP.Modules.WMS.Infrastructure/MegaERP.Modules.WMS.Infrastructure.csproj": {
+                "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/WMS/MegaERP.Modules.WMS.Infrastructure/MegaERP.Modules.WMS.Infrastructure.csproj"
               }
             }
           }
@@ -8865,6 +8848,12 @@
       "frameworks": {
         "net10.0": {
           "targetAlias": "net10.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[10.0.7, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -8884,7 +8873,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -9318,7 +9307,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -9368,7 +9356,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -9662,7 +9650,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -9715,7 +9702,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -10009,7 +9996,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -10059,7 +10045,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -10493,7 +10479,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -10546,7 +10531,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -10840,7 +10825,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -10893,7 +10877,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -11187,7 +11171,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -11237,7 +11220,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -11671,7 +11654,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -11718,7 +11700,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -12012,7 +11994,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -12069,7 +12050,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -12363,7 +12344,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -12413,7 +12393,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -12847,7 +12827,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -12891,7 +12870,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -13185,7 +13164,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -13238,7 +13216,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -13532,7 +13510,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -13582,7 +13559,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -14016,7 +13993,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -14060,7 +14036,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -14354,7 +14330,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -14407,7 +14382,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -14701,7 +14676,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -14751,7 +14725,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -15045,7 +15019,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -15095,7 +15068,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -15389,7 +15362,6 @@
           "net10.0"
         ],
         "sources": {
-          "/snap/dotnet-sdk-100/25/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -15462,7 +15434,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk-100/25/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

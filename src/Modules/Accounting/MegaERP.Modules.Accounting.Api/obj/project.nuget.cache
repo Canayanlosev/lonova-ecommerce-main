@@ -1,11 +1,20 @@
 {
   "version": 2,
-  "dgSpecHash": "jlokBFvFBmA=",
+  "dgSpecHash": "NTr+HUF71Z8=",
   "success": true,
   "projectFilePath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Modules/Accounting/MegaERP.Modules.Accounting.Api/MegaERP.Modules.Accounting.Api.csproj",
   "expectedPackageFiles": [
-    "/home/canayan/.nuget/packages/microsoft.netcore.app.ref/9.0.15/microsoft.netcore.app.ref.9.0.15.nupkg.sha512",
-    "/home/canayan/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.15/microsoft.aspnetcore.app.ref.9.0.15.nupkg.sha512"
+    "/home/canayan/.nuget/packages/fluentvalidation/11.11.0/fluentvalidation.11.11.0.nupkg.sha512",
+    "/home/canayan/.nuget/packages/fluentvalidation.aspnetcore/11.3.0/fluentvalidation.aspnetcore.11.3.0.nupkg.sha512",
+    "/home/canayan/.nuget/packages/fluentvalidation.dependencyinjectionextensions/11.5.1/fluentvalidation.dependencyinjectionextensions.11.5.1.nupkg.sha512",
+    "/home/canayan/.nuget/packages/mediatr/12.4.1/mediatr.12.4.1.nupkg.sha512",
+    "/home/canayan/.nuget/packages/mediatr.contracts/2.0.1/mediatr.contracts.2.0.1.nupkg.sha512",
+    "/home/canayan/.nuget/packages/microsoft.entityframeworkcore/10.0.7/microsoft.entityframeworkcore.10.0.7.nupkg.sha512",
+    "/home/canayan/.nuget/packages/microsoft.entityframeworkcore.abstractions/10.0.7/microsoft.entityframeworkcore.abstractions.10.0.7.nupkg.sha512",
+    "/home/canayan/.nuget/packages/microsoft.entityframeworkcore.analyzers/10.0.7/microsoft.entityframeworkcore.analyzers.10.0.7.nupkg.sha512",
+    "/home/canayan/.nuget/packages/microsoft.entityframeworkcore.relational/10.0.7/microsoft.entityframeworkcore.relational.10.0.7.nupkg.sha512",
+    "/home/canayan/.nuget/packages/npgsql/10.0.2/npgsql.10.0.2.nupkg.sha512",
+    "/home/canayan/.nuget/packages/npgsql.entityframeworkcore.postgresql/10.0.1/npgsql.entityframeworkcore.postgresql.10.0.1.nupkg.sha512"
   ],
   "logs": []
 }

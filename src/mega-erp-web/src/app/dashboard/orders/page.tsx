@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+
 import { SkeletonRow } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Package, AlertCircle, Search, Download } from "lucide-react";
@@ -101,10 +101,10 @@ export default function OrdersPage() {
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
+      <div className="premium-card p-6">
+        <div className="mb-4">
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <CardTitle>Sipariş Listesi</CardTitle>
+            <h3 className="text-base font-bold text-foreground">Sipariş Listesi</h3>
             <div className="flex gap-3 w-full sm:w-auto">
               <div className="relative flex-1 sm:w-52">
                 <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
@@ -128,8 +128,8 @@ export default function OrdersPage() {
               </select>
             </div>
           </div>
-        </CardHeader>
-        <CardContent>
+        </div>
+        <div>
           {error ? (
             <div className="flex items-center gap-2 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-sm">
               <AlertCircle className="w-4 h-4" /> {error}
@@ -185,8 +185,8 @@ export default function OrdersPage() {
               </table>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

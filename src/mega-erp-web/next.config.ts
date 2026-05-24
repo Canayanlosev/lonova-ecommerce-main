@@ -13,6 +13,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/images/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/images/:path*`,
+      },
+    ]
+  },
 };
 
 export default nextConfig;

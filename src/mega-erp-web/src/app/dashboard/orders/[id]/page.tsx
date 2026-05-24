@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { ordersService } from "@/lib/services/orders.service";
@@ -64,8 +64,8 @@ export default function OrderDetailPage() {
         </div>
       </div>
 
-      <Card>
-        <CardContent>
+      <div className="premium-card p-6">
+        <div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div><p className="text-xs text-slate-500 mb-1">Durum</p>
               <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${status.className}`}>{status.label}</span>
@@ -80,12 +80,12 @@ export default function OrderDetailPage() {
               <p className="font-semibold text-sm">{order.items?.length ?? 0} ürün</p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      <Card>
-        <CardHeader><CardTitle>Sipariş Kalemleri</CardTitle></CardHeader>
-        <CardContent>
+      <div className="premium-card p-6">
+        <div className="mb-4"><h3 className="text-base font-bold text-foreground">Sipariş Kalemleri</h3></div>
+        <div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -108,8 +108,8 @@ export default function OrderDetailPage() {
               </tbody>
             </table>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {canCancel && (
         <div className="flex justify-end">

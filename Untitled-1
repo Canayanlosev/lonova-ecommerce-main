@@ -1,0 +1,13 @@
+Backend — http://localhost:5000
+
+Swagger UI: http://localhost:5000/swagger
+63 endpoint kayıtlı — tüm yeni modüller dahil
+Frontend — http://localhost:3000
+
+Marketplace ana sayfası (public, login gerekmez)
+Dashboard: http://localhost:3000/dashboard (firma girişi: canayan@megaerp.com / 67890memo)
+Alıcı girişi: http://localhost:3000/alici-auth/giris
+Yeni endpoint'ler Swagger'da görünüyor:
+
+Firma girişi (canayan@megaerp.com / 67890memo) → JWT valid, dashboard accessible
+Alıcı girişi (test@buyer.com / test123) → buyer JWT valid, marketplace functional

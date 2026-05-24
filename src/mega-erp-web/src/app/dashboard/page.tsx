@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import {
   TrendingUp, ShoppingBag, DollarSign, Package,
   AlertTriangle, BookOpen, Plus, ArrowRight, CheckCircle2,
@@ -333,11 +332,11 @@ export default function DashboardPage() {
       {/* Charts + Alert Widget */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Chart — 2 cols */}
-        <Card className="lg:col-span-2 min-h-[360px]">
-          <CardHeader>
-            <CardTitle>Son 7 Gün — Sipariş & Gelir</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="premium-card p-6 lg:col-span-2 min-h-[360px]">
+          <div className="mb-4">
+            <h3 className="text-base font-bold text-foreground">Son 7 Gün — Sipariş & Gelir</h3>
+          </div>
+          <div>
             {loading ? (
               <div className="flex items-center justify-center h-[280px]">
                 <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
@@ -371,12 +370,12 @@ export default function DashboardPage() {
                 </AreaChart>
               </ResponsiveContainer>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Alert Widget — 1 col */}
-        <Card className="min-h-[360px]">
-          <CardHeader className="pb-3">
+        <div className="premium-card p-6 min-h-[360px]">
+          <div className="mb-3">
             <div className="flex items-center gap-1 border border-border rounded-xl p-1 bg-background">
               <button
                 onClick={() => setAlertTab('stock')}
@@ -391,8 +390,8 @@ export default function DashboardPage() {
                 Muhasebe {unbookedCount > 0 && <span className="ml-1 px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-400 text-[10px]">{unbookedCount}</span>}
               </button>
             </div>
-          </CardHeader>
-          <CardContent>
+          </div>
+          <div>
             {alertTab === 'stock' ? (
               loading ? (
                 <div className="space-y-3">
@@ -444,21 +443,21 @@ export default function DashboardPage() {
                 </div>
               )
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {/* Son Siparişler */}
-      <Card>
-        <CardHeader>
+      <div className="premium-card p-6">
+        <div className="mb-4">
           <div className="flex items-center justify-between">
-            <CardTitle>Son Siparişler</CardTitle>
+            <h3 className="text-base font-bold text-foreground">Son Siparişler</h3>
             <Link href="/dashboard/orders" className="text-sm text-primary hover:text-primary/80 transition-colors flex items-center gap-1 font-medium">
               Tümü <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
-        </CardHeader>
-        <CardContent>
+        </div>
+        <div>
           {loading ? (
             <div className="space-y-4">
               {[1,2,3,4,5].map(i => (
@@ -509,8 +508,8 @@ export default function DashboardPage() {
               ))}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
@@ -521,13 +520,13 @@ function StatCard({
   title: string; value: string; sub: string; icon: React.ReactNode; color: string; loading: boolean;
 }) {
   return (
-    <Card className="hover:scale-[1.02] transition-transform">
+    <div className="premium-card p-6 hover:scale-[1.02] transition-transform">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm font-medium text-slate-500 mb-1">{title}</p>
           {loading
             ? <div className="h-8 w-24 bg-slate-800/60 rounded-lg animate-pulse mt-1" />
-            : <h4 className="text-2xl font-black">{value}</h4>
+            : <h4 className="text-2xl font-black text-foreground">{value}</h4>
           }
           <p className="text-xs mt-1 text-slate-400">{sub}</p>
         </div>
@@ -535,6 +534,6 @@ function StatCard({
           {icon}
         </div>
       </div>
-    </Card>
+    </div>
   );
 }

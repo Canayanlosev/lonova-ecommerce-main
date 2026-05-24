@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "hKTqeA3H5jQ=",
+  "dgSpecHash": "VnnLgwdrTBM=",
   "success": true,
   "projectFilePath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Infrastructure/MegaERP.Shared.Infrastructure.csproj",
   "expectedPackageFiles": [
@@ -10,23 +10,36 @@
     "/home/canayan/.nuget/packages/mediatr/12.4.1/mediatr.12.4.1.nupkg.sha512",
     "/home/canayan/.nuget/packages/mediatr.contracts/2.0.1/mediatr.contracts.2.0.1.nupkg.sha512",
     "/home/canayan/.nuget/packages/microsoft.aspnetcore.http.abstractions/2.3.9/microsoft.aspnetcore.http.abstractions.2.3.9.nupkg.sha512",
-    "/home/canayan/.nuget/packages/microsoft.aspnetcore.http.features/2.3.0/microsoft.aspnetcore.http.features.2.3.0.nupkg.sha512",
-    "/home/canayan/.nuget/packages/microsoft.entityframeworkcore/9.0.0/microsoft.entityframeworkcore.9.0.0.nupkg.sha512",
-    "/home/canayan/.nuget/packages/microsoft.entityframeworkcore.abstractions/9.0.0/microsoft.entityframeworkcore.abstractions.9.0.0.nupkg.sha512",
-    "/home/canayan/.nuget/packages/microsoft.entityframeworkcore.analyzers/9.0.0/microsoft.entityframeworkcore.analyzers.9.0.0.nupkg.sha512",
-    "/home/canayan/.nuget/packages/microsoft.entityframeworkcore.relational/9.0.0/microsoft.entityframeworkcore.relational.9.0.0.nupkg.sha512",
-    "/home/canayan/.nuget/packages/microsoft.extensions.caching.abstractions/9.0.0/microsoft.extensions.caching.abstractions.9.0.0.nupkg.sha512",
-    "/home/canayan/.nuget/packages/microsoft.extensions.caching.memory/9.0.0/microsoft.extensions.caching.memory.9.0.0.nupkg.sha512",
-    "/home/canayan/.nuget/packages/microsoft.extensions.configuration.abstractions/9.0.0/microsoft.extensions.configuration.abstractions.9.0.0.nupkg.sha512",
-    "/home/canayan/.nuget/packages/microsoft.extensions.dependencyinjection/9.0.0/microsoft.extensions.dependencyinjection.9.0.0.nupkg.sha512",
-    "/home/canayan/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/10.0.7/microsoft.extensions.dependencyinjection.abstractions.10.0.7.nupkg.sha512",
-    "/home/canayan/.nuget/packages/microsoft.extensions.logging/9.0.0/microsoft.extensions.logging.9.0.0.nupkg.sha512",
-    "/home/canayan/.nuget/packages/microsoft.extensions.logging.abstractions/9.0.0/microsoft.extensions.logging.abstractions.9.0.0.nupkg.sha512",
-    "/home/canayan/.nuget/packages/microsoft.extensions.options/9.0.0/microsoft.extensions.options.9.0.0.nupkg.sha512",
-    "/home/canayan/.nuget/packages/microsoft.extensions.primitives/9.0.0/microsoft.extensions.primitives.9.0.0.nupkg.sha512",
-    "/home/canayan/.nuget/packages/system.text.encodings.web/8.0.0/system.text.encodings.web.8.0.0.nupkg.sha512",
-    "/home/canayan/.nuget/packages/microsoft.netcore.app.ref/9.0.15/microsoft.netcore.app.ref.9.0.15.nupkg.sha512",
-    "/home/canayan/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.15/microsoft.aspnetcore.app.ref.9.0.15.nupkg.sha512"
+    "/home/canayan/.nuget/packages/microsoft.entityframeworkcore/10.0.7/microsoft.entityframeworkcore.10.0.7.nupkg.sha512",
+    "/home/canayan/.nuget/packages/microsoft.entityframeworkcore.abstractions/10.0.7/microsoft.entityframeworkcore.abstractions.10.0.7.nupkg.sha512",
+    "/home/canayan/.nuget/packages/microsoft.entityframeworkcore.analyzers/10.0.7/microsoft.entityframeworkcore.analyzers.10.0.7.nupkg.sha512",
+    "/home/canayan/.nuget/packages/microsoft.entityframeworkcore.relational/10.0.7/microsoft.entityframeworkcore.relational.10.0.7.nupkg.sha512",
+    "/home/canayan/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/10.0.7/microsoft.extensions.dependencyinjection.abstractions.10.0.7.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1510",
+      "level": "Warning",
+      "message": "PackageReference Microsoft.AspNetCore.Http.Abstractions will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
+      "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Infrastructure/MegaERP.Shared.Infrastructure.csproj",
+      "warningLevel": 1,
+      "filePath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Infrastructure/MegaERP.Shared.Infrastructure.csproj",
+      "libraryId": "Microsoft.AspNetCore.Http.Abstractions",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    },
+    {
+      "code": "NU1510",
+      "level": "Warning",
+      "message": "PackageReference Microsoft.Extensions.DependencyInjection.Abstractions will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
+      "projectPath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Infrastructure/MegaERP.Shared.Infrastructure.csproj",
+      "warningLevel": 1,
+      "filePath": "/home/canayan/Downloads/lonova-ecommerce-main-main/src/Shared/MegaERP.Shared.Infrastructure/MegaERP.Shared.Infrastructure.csproj",
+      "libraryId": "Microsoft.Extensions.DependencyInjection.Abstractions",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    }
+  ]
 }
