@@ -823,3 +823,12 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     3. Yorum modalı: StarRating + textarea (500 karakter) + gönder
     4. Gönderilince 'Yorumlandı' badge göster (reviewedProducts Set state)
     5. MarketplaceNavbar: hesabim/siparisler → hesabim (hub) link güncellemesi
+
+- [x] FTASK-42: Admin Yorum Yönetimi Sayfası
+  Dosya: src/app/dashboard/reviews/page.tsx (YENİ)
+  Adımlar:
+    1. Tablo: ürün adı, kullanıcı, puan (StarDisplay), yorum, tarih, sil butonu
+    2. Filtreler: arama (ürün/kullanıcı/yorum) + minimum puan dropdown
+    3. Sayfalama (önceki/sonraki)
+    4. Dashboard nav: Star ikonu + 'Yorumlar' linki eklendi
+    5. Doğrulanmış alıcı: CheckCircle yeşil badge

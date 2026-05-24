@@ -127,8 +127,21 @@ public record CreateAddressRequest(
 );
 
 public record CreateReviewRequest(int Rating, string? Comment);
-public record ProductReviewDto(Guid Id, Guid BuyerUserId, string BuyerName, int Rating, string? Comment, DateTime CreatedAt);
+public record ProductReviewDto(Guid Id, Guid BuyerUserId, string BuyerName, int Rating, string? Comment, DateTime CreatedAt, bool IsVerifiedPurchase = true);
 public record ProductReviewsResponse(List<ProductReviewDto> Items, int TotalCount, decimal AverageRating, int Page, int PageSize);
+
+// TASK-36: Admin review management
+public record AdminReviewDto(
+    Guid Id,
+    Guid ProductId,
+    string ProductName,
+    Guid BuyerUserId,
+    string BuyerName,
+    int Rating,
+    string? Comment,
+    DateTime CreatedAt,
+    bool IsVerifiedPurchase
+);
 
 public record MarketplaceProductDto(
     Guid Id,

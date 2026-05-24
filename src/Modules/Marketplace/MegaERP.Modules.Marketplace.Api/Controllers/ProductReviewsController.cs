@@ -66,6 +66,15 @@ public class ProductReviewsController : ControllerBase
         if (exists)
             return Conflict("Bu ürün için zaten yorum yaptınız.");
 
+        // TASK-35: Only verified purchasers (Delivered orders) can review
+        var hasPurchased = await _mkt.Orders
+            .Include(o => o.Items)
+            .AnyAsync(o => o.BuyerUserId == buyerId &&
+                           o.Status == "Delivered" &&
+                           o.Items.Any(i => i.ProductId == productId));
+        if (!hasPurchased)
+            return BadRequest("Bu ürünü değerlendirmek için önce satın almış ve teslim almış olmanız gerekmektedir.");
+
         var buyer = await _mkt.BuyerUsers.FindAsync(buyerId);
         if (buyer is null) return Unauthorized();
 

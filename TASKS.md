@@ -668,3 +668,19 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     2. CheckoutController'a WMSDbContext inject edildi
     3. DeductWmsStockAsync(): her order item için en yüksek stoklu binden Out hareketi
     4. WMS deduction best-effort — başarısız olsa checkout bloklanmaz
+
+- [x] TASK-35: Satın Alma Doğrulamalı Yorumlar
+  Hedef: Yalnızca teslim edilmiş siparişi olan alıcılar yorum yapabilsin.
+  Dosyalar: ProductReviewsController.cs, MarketplaceDtos.cs
+  Adımlar:
+    1. CreateReview: BuyerOrder.Status == 'Delivered' && Items.Any(i => i.ProductId == productId) kontrolü
+    2. ProductReviewDto: IsVerifiedPurchase (bool, default true) alanı eklendi
+    3. AdminReviewDto: yeni DTO (ProductName, IsVerifiedPurchase dahil)
+
+- [x] TASK-36: Admin Yorum Yönetimi
+  Hedef: Admin yorumları görebilsin ve sileibilsin.
+  Dosyalar: AdminReviewsController.cs (YENİ)
+  Adımlar:
+    1. GET /api/marketplace/admin/reviews — sayfalı, productId/minRating filtreli
+    2. DELETE /api/marketplace/admin/reviews/{reviewId}
+    3. Ürün adları EcommerceDbContext.Products ile çözümleniyor

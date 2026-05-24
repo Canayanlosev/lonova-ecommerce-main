@@ -4,7 +4,7 @@ import React from "react";
 import {
   LayoutDashboard, ShoppingCart, Users, CreditCard,
   Package, Truck, Settings, LogOut, Bell, Menu, X, Receipt,
-  Store, Warehouse, Layout, CheckSquare, BarChart2, ShoppingBag, Tag
+  Store, Warehouse, Layout, CheckSquare, BarChart2, ShoppingBag, Tag, Star
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -28,6 +28,7 @@ const navItems = [
   { icon: ShoppingBag, label: "Mağaza Siparişleri", href: "/dashboard/marketplace-orders" },
   { icon: BarChart2, label: "Analitik", href: "/dashboard/analytics" },
   { icon: Tag, label: "Kuponlar", href: "/dashboard/coupons" },
+  { icon: Star, label: "Yorumlar", href: "/dashboard/reviews" },
   { icon: CheckSquare, label: "Kurulum Rehberi", href: "/dashboard/setup", badge: true },
 ];
 
