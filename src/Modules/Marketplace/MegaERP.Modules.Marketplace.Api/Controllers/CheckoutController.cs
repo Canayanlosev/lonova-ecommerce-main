@@ -58,14 +58,35 @@ public class CheckoutController : ControllerBase
 
         var subtotal = cartItems.Sum(c => c.UnitPrice * c.Quantity);
 
+        // Apply coupon discount
+        decimal couponDiscount = 0;
+        CouponCode? appliedCoupon = null;
+        if (!string.IsNullOrWhiteSpace(request.CouponCode))
+        {
+            var code = request.CouponCode.Trim().ToUpperInvariant();
+            var coupon = await _mkt.CouponCodes.FirstOrDefaultAsync(c => c.Code == code && c.IsActive);
+            if (coupon is not null &&
+                !(coupon.ExpiresAt.HasValue && coupon.ExpiresAt.Value < DateTime.UtcNow) &&
+                !(coupon.MaxUses > 0 && coupon.UsedCount >= coupon.MaxUses) &&
+                subtotal >= coupon.MinimumOrderAmount)
+            {
+                couponDiscount = coupon.DiscountType == "Percent"
+                    ? Math.Round(subtotal * coupon.DiscountValue / 100, 2)
+                    : Math.Min(coupon.DiscountValue, subtotal);
+                appliedCoupon = coupon;
+            }
+        }
+
+        var discountedSubtotal = Math.Max(0, subtotal - couponDiscount);
+
         // Calculate installment
         int installmentCount = 1;
-        decimal installmentAmount = subtotal;
+        decimal installmentAmount = discountedSubtotal;
         if (request.PaymentMethod == "Card" && request.Card is not null)
         {
             installmentCount = Math.Max(1, request.Card.InstallmentCount);
             var rate = InstallmentRate(installmentCount);
-            installmentAmount = Math.Round(subtotal * (1 + rate) / installmentCount, 2);
+            installmentAmount = Math.Round(discountedSubtotal * (1 + rate) / installmentCount, 2);
         }
 
         // Mock payment processing — always succeeds unless card starts with "0000"
@@ -79,7 +100,7 @@ public class CheckoutController : ControllerBase
             BuyerUserId = BuyerId,
             TotalAmount = request.PaymentMethod == "Card"
                 ? installmentAmount * installmentCount
-                : subtotal,
+                : discountedSubtotal,
             Status = request.PaymentMethod == "CashOnDelivery" ? "Confirmed" : "Processing",
             PaymentMethod = request.PaymentMethod,
             PaymentStatus = request.PaymentMethod == "CashOnDelivery" ? "Pending" : paymentStatus,
@@ -111,6 +132,11 @@ public class CheckoutController : ControllerBase
 
         _mkt.Orders.Add(order);
         _mkt.CartItems.RemoveRange(cartItems);
+
+        // Increment coupon usage
+        if (appliedCoupon is not null)
+            appliedCoupon.UsedCount++;
+
         await _mkt.SaveChangesAsync();
 
         return Ok(new CheckoutResponse(true, null, ToOrderDto(order)));

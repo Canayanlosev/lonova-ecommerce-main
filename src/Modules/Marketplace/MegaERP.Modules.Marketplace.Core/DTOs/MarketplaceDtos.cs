@@ -60,7 +60,8 @@ public record CheckoutCardDto(
 public record CheckoutRequest(
     CheckoutAddressDto Address,
     string PaymentMethod,          // Card | BankTransfer | CashOnDelivery
-    CheckoutCardDto? Card          // required when PaymentMethod == "Card"
+    CheckoutCardDto? Card,         // required when PaymentMethod == "Card"
+    string? CouponCode             // optional discount coupon
 );
 
 public record CheckoutResponse(

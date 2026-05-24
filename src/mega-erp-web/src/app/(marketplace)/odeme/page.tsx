@@ -152,6 +152,7 @@ export default function OdemePage() {
           cvv: card.cvv,
           installmentCount: card.installmentCount,
         } : undefined,
+        couponCode: appliedCoupon ?? undefined,
       })
 
       if (!result.success) {

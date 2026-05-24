@@ -157,6 +157,7 @@ export interface CheckoutRequest {
   address: CheckoutAddress
   paymentMethod: 'Card' | 'BankTransfer' | 'CashOnDelivery'
   card?: CheckoutCard
+  couponCode?: string
 }
 
 export interface CheckoutResponse {
