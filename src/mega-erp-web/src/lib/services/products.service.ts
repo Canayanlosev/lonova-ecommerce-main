@@ -1,5 +1,14 @@
 import api from '../api'
-import type { Product, Category, CreateProductRequest, UpdateProductRequest } from '@/types/api.types'
+import type { Product, Category, CreateProductRequest, UpdateProductRequest, ProductVariant } from '@/types/api.types'
+
+export interface CreateVariantRequest {
+  name: string
+  variantType: string
+  colorHex?: string | null
+  sku: string
+  priceOverride: number
+  stockQuantity: number
+}
 
 export const productsService = {
   getAll: () => api.get<Product[]>('/api/ecommerce/products').then((r) => r.data),
@@ -17,6 +26,12 @@ export const productsService = {
       headers: { 'Content-Type': 'multipart/form-data' }
     }).then((r) => r.data)
   },
+
+  // Variants
+  getVariants: (id: string) => api.get<ProductVariant[]>(`/api/ecommerce/products/${id}/variants`).then((r) => r.data),
+  addVariant: (id: string, data: CreateVariantRequest) => api.post<ProductVariant>(`/api/ecommerce/products/${id}/variants`, data).then((r) => r.data),
+  updateVariant: (id: string, variantId: string, data: CreateVariantRequest) => api.put(`/api/ecommerce/products/${id}/variants/${variantId}`, data),
+  deleteVariant: (id: string, variantId: string) => api.delete(`/api/ecommerce/products/${id}/variants/${variantId}`),
 
   getCategories: () => api.get<Category[]>('/api/ecommerce/categories').then((r) => r.data),
   getCategoryById: (id: string) => api.get<Category>(`/api/ecommerce/categories/${id}`).then((r) => r.data),

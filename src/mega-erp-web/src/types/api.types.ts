@@ -6,7 +6,12 @@ export interface AuthResponse { token: string; email: string; firstName: string;
 // Ecommerce
 export interface Category { id: string; name: string; description?: string; parentCategoryId?: string | null }
 export interface CreateCategoryRequest { name: string; description?: string; parentCategoryId?: string | null }
-export interface ProductVariant { id: string; sku: string; name: string; priceDifference: number; stockQuantity: number }
+export interface ProductVariant {
+  id: string; sku: string; name: string; variantType: string; colorHex?: string | null
+  priceOverride: number; stockQuantity: number
+  /** @deprecated kept for backward compatibility — use priceOverride */
+  priceDifference?: number
+}
 export interface Product {
   id: string; name: string; description?: string; basePrice: number; sku: string
   categoryId: string; category?: Category; variants: ProductVariant[]; imageUrl?: string

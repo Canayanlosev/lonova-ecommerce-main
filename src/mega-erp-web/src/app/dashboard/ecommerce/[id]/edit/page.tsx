@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { ProductForm } from "@/components/products/ProductForm";
+import { VariantManager } from "@/components/products/VariantManager";
 import { productsService } from "@/lib/services/products.service";
 import type { Product } from "@/types/api.types";
 import { SkeletonCard } from "@/components/ui/Skeleton";
+import { Card, CardContent } from "@/components/ui/Card";
 
 export default function EditProductPage() {
   const { id } = useParams<{ id: string }>();
@@ -17,12 +19,32 @@ export default function EditProductPage() {
   }, [id]);
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4 animate-fade-in">
+    <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
       <div>
         <h1 className="text-3xl font-black tracking-tight">Ürünü Düzenle</h1>
         <p className="text-slate-500">Ürün bilgilerini güncelleyin</p>
       </div>
-      {loading ? <SkeletonCard /> : product ? <ProductForm product={product} isEdit /> : <p className="text-red-500">Ürün bulunamadı.</p>}
+      {loading ? (
+        <>
+          <SkeletonCard />
+          <SkeletonCard />
+        </>
+      ) : product ? (
+        <>
+          <ProductForm product={product} isEdit />
+          <Card>
+            <CardContent className="pt-5">
+              <VariantManager
+                productId={product.id}
+                baseSku={product.sku}
+                basePrice={product.basePrice}
+              />
+            </CardContent>
+          </Card>
+        </>
+      ) : (
+        <p className="text-red-500">Ürün bulunamadı.</p>
+      )}
     </div>
   );
 }
