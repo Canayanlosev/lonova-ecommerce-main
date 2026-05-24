@@ -12,7 +12,7 @@ import { ArrowLeft, CheckCircle, Printer } from "lucide-react";
 import Link from "next/link";
 
 const statusConfig: Record<string, { label: string; className: string }> = {
-  Draft: { label: "Taslak", className: "bg-slate-100 text-slate-600" },
+  Draft: { label: "Taslak", className: "bg-slate-700/40 text-slate-300" },
   Issued: { label: "Kesildi", className: "bg-primary/15 text-primary" },
   Paid: { label: "Ödendi", className: "bg-emerald-500/15 text-emerald-400" },
   Cancelled: { label: "İptal", className: "bg-red-500/15 text-red-400" },

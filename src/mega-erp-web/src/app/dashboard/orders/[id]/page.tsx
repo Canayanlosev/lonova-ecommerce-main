@@ -47,7 +47,7 @@ export default function OrderDetailPage() {
   if (loading) return <div className="space-y-4 animate-fade-in"><Skeleton className="h-8 w-48" /><Skeleton className="h-64 w-full" /></div>;
   if (!order) return <p className="text-red-500">Sipariş bulunamadı.</p>;
 
-  const status = statusConfig[order.status] ?? { label: order.status, className: "bg-slate-100 text-slate-600" };
+  const status = statusConfig[order.status] ?? { label: order.status, className: "bg-slate-700/40 text-slate-300" };
   const canCancel = order.status === "Pending" || order.status === "Placed";
 
   return (

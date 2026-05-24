@@ -156,7 +156,7 @@ export default function OrdersPage() {
                       </td></tr>
                     )
                     : filtered.map((o) => {
-                      const status = statusConfig[o.status] ?? { label: o.status, className: "bg-slate-100 text-slate-600" };
+                      const status = statusConfig[o.status] ?? { label: o.status, className: "bg-slate-700/40 text-slate-300" };
                       return (
                         <tr key={o.id} className="border-b border-border hover:bg-slate-800/20 transition-colors">
                           <td className="px-4 py-3">
