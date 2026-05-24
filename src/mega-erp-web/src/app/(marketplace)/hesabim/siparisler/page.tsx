@@ -6,7 +6,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {
   Package, ArrowRight, CreditCard, Banknote, Truck, MapPin,
-  ChevronDown, ChevronUp, CheckCircle, Clock, XCircle, LogOut
+  ChevronDown, ChevronUp, CheckCircle, Clock, XCircle, LogOut,
+  AlertTriangle, ExternalLink, RefreshCw, X
 } from 'lucide-react'
 import { marketplaceService, BuyerOrderDto } from '@/lib/services/marketplace.service'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
@@ -39,11 +40,71 @@ const PAYMENT_METHOD_LABELS: Record<string, string> = {
   CashOnDelivery: 'Kapıda Ödeme',
 }
 
-function OrderCard({ order }: { order: BuyerOrderDto }) {
+const CANCEL_REASONS = [
+  'Yanlış ürün seçtim',
+  'Ürüne artık ihtiyacım yok',
+  'Daha iyi fiyat buldum',
+  'Teslimat süresi çok uzun',
+  'Ödeme sorunu',
+  'Diğer',
+]
+
+const REFUND_REASONS = [
+  'Ürün hasarlı geldi',
+  'Yanlış ürün geldi',
+  'Ürün açıklamaya uymuyor',
+  'Ürün istediğimden küçük/büyük',
+  'Vazgeçtim',
+  'Diğer',
+]
+
+function OrderCard({ order, onUpdate }: { order: BuyerOrderDto; onUpdate: (updated: BuyerOrderDto) => void }) {
   const [expanded, setExpanded] = useState(false)
+  const [cancelOpen, setCancelOpen] = useState(false)
+  const [refundOpen, setRefundOpen] = useState(false)
+  const [selectedReason, setSelectedReason] = useState('')
+  const [actionLoading, setActionLoading] = useState(false)
+  const [actionError, setActionError] = useState('')
+
   const status = STATUS_LABELS[order.status] ?? { label: order.status, color: 'text-slate-400', icon: null }
   const payStatus = PAYMENT_STATUS_LABELS[order.paymentStatus] ?? { label: order.paymentStatus, color: 'text-slate-400' }
   const createdDate = new Date(order.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })
+
+  const canCancel = order.status === 'Pending' || order.status === 'Processing'
+  const canRefund = (order.status === 'Delivered' || order.status === 'Shipped') && !order.refundStatus
+  const hasTracking = order.status === 'Shipped' || order.status === 'Delivered'
+
+  const handleCancel = async () => {
+    if (!selectedReason) { setActionError('Lütfen bir iptal sebebi seçin.'); return }
+    setActionLoading(true)
+    setActionError('')
+    try {
+      const updated = await marketplaceService.cancelOrder(order.id, selectedReason)
+      onUpdate(updated)
+      setCancelOpen(false)
+      setSelectedReason('')
+    } catch {
+      setActionError('İptal işlemi başarısız oldu. Lütfen tekrar deneyin.')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const handleRefund = async () => {
+    if (!selectedReason) { setActionError('Lütfen bir iade sebebi seçin.'); return }
+    setActionLoading(true)
+    setActionError('')
+    try {
+      const updated = await marketplaceService.requestRefund(order.id, selectedReason)
+      onUpdate(updated)
+      setRefundOpen(false)
+      setSelectedReason('')
+    } catch {
+      setActionError('İade talebi gönderilemedi. Lütfen tekrar deneyin.')
+    } finally {
+      setActionLoading(false)
+    }
+  }
 
   return (
     <div className="premium-card overflow-hidden">
@@ -99,13 +160,136 @@ function OrderCard({ order }: { order: BuyerOrderDto }) {
           </p>
         </div>
 
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className="mt-3 text-xs text-primary flex items-center gap-1 hover:opacity-80 transition-opacity"
-        >
-          {expanded ? <><ChevronUp className="w-3 h-3" /> Gizle</> : <><ChevronDown className="w-3 h-3" /> Detayları Göster</>}
-        </button>
+        {/* Action buttons */}
+        <div className="flex items-center gap-2 mt-3 flex-wrap">
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="text-xs text-primary flex items-center gap-1 hover:opacity-80 transition-opacity"
+          >
+            {expanded ? <><ChevronUp className="w-3 h-3" /> Gizle</> : <><ChevronDown className="w-3 h-3" /> Detayları Göster</>}
+          </button>
+
+          {canCancel && (
+            <button
+              onClick={() => { setCancelOpen(true); setActionError(''); setSelectedReason('') }}
+              className="ml-auto text-xs text-red-400 border border-red-400/30 hover:bg-red-400/10 rounded-lg px-3 py-1.5 transition-colors flex items-center gap-1"
+            >
+              <XCircle className="w-3.5 h-3.5" /> Siparişi İptal Et
+            </button>
+          )}
+
+          {canRefund && (
+            <button
+              onClick={() => { setRefundOpen(true); setActionError(''); setSelectedReason('') }}
+              className="ml-auto text-xs text-orange-400 border border-orange-400/30 hover:bg-orange-400/10 rounded-lg px-3 py-1.5 transition-colors flex items-center gap-1"
+            >
+              <RefreshCw className="w-3.5 h-3.5" /> İade Talebi
+            </button>
+          )}
+
+          {order.refundStatus && (
+            <span className={`ml-auto text-xs px-2 py-1 rounded-lg ${
+              order.refundStatus === 'Refunded' ? 'bg-green-500/15 text-green-400' : 'bg-orange-500/15 text-orange-400'
+            }`}>
+              İade: {order.refundStatus === 'Requested' ? 'Talep Edildi' : order.refundStatus === 'Processing' ? 'İşleniyor' : 'Tamamlandı'}
+            </span>
+          )}
+        </div>
+
+        {/* Tracking info */}
+        {hasTracking && order.trackingNumber && (
+          <div className="mt-3 p-3 bg-cyan-500/10 border border-cyan-500/20 rounded-xl flex items-center gap-3">
+            <Truck className="w-4 h-4 text-cyan-400 shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-cyan-300">{order.carrierName ?? 'Kargo'}</p>
+              <p className="text-xs text-cyan-400 font-mono">{order.trackingNumber}</p>
+            </div>
+            <ExternalLink className="w-3.5 h-3.5 text-cyan-500 ml-auto shrink-0" />
+          </div>
+        )}
+
+        {/* Cancel reason display */}
+        {order.status === 'Cancelled' && order.cancelReason && (
+          <div className="mt-3 p-3 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+            <p className="text-xs text-red-300">İptal sebebi: {order.cancelReason}</p>
+          </div>
+        )}
       </div>
+
+      {/* Cancel dialog */}
+      {cancelOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setCancelOpen(false)}>
+          <div className="premium-card p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-semibold text-foreground">Siparişi İptal Et</h3>
+              <button onClick={() => setCancelOpen(false)}><X className="w-4 h-4 text-slate-400 hover:text-white" /></button>
+            </div>
+            <p className="text-sm text-slate-400 mb-4">Bu siparişi iptal etmek istediğinize emin misiniz?</p>
+            <div className="mb-4">
+              <label className="text-xs text-slate-400 mb-2 block">İptal Sebebi</label>
+              <select
+                value={selectedReason}
+                onChange={e => setSelectedReason(e.target.value)}
+                className="w-full bg-slate-800 border border-border rounded-lg px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary"
+              >
+                <option value="">Seçin...</option>
+                {CANCEL_REASONS.map(r => <option key={r} value={r}>{r}</option>)}
+              </select>
+            </div>
+            {actionError && <p className="text-xs text-red-400 mb-3">{actionError}</p>}
+            <div className="flex gap-3">
+              <button onClick={() => setCancelOpen(false)} className="flex-1 px-4 py-2.5 text-sm border border-border rounded-xl hover:bg-slate-800 transition-colors">
+                Vazgeç
+              </button>
+              <button
+                onClick={handleCancel}
+                disabled={actionLoading}
+                className="flex-1 px-4 py-2.5 text-sm bg-red-600 hover:bg-red-500 text-white rounded-xl transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+              >
+                {actionLoading ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> İptal ediliyor...</> : 'Evet, İptal Et'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Refund dialog */}
+      {refundOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setRefundOpen(false)}>
+          <div className="premium-card p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-semibold text-foreground">İade Talebi Oluştur</h3>
+              <button onClick={() => setRefundOpen(false)}><X className="w-4 h-4 text-slate-400 hover:text-white" /></button>
+            </div>
+            <p className="text-sm text-slate-400 mb-4">İade talebiniz incelenerek en kısa sürede geri dönüş sağlanacaktır.</p>
+            <div className="mb-4">
+              <label className="text-xs text-slate-400 mb-2 block">İade Sebebi</label>
+              <select
+                value={selectedReason}
+                onChange={e => setSelectedReason(e.target.value)}
+                className="w-full bg-slate-800 border border-border rounded-lg px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary"
+              >
+                <option value="">Seçin...</option>
+                {REFUND_REASONS.map(r => <option key={r} value={r}>{r}</option>)}
+              </select>
+            </div>
+            {actionError && <p className="text-xs text-red-400 mb-3">{actionError}</p>}
+            <div className="flex gap-3">
+              <button onClick={() => setRefundOpen(false)} className="flex-1 px-4 py-2.5 text-sm border border-border rounded-xl hover:bg-slate-800 transition-colors">
+                Vazgeç
+              </button>
+              <button
+                onClick={handleRefund}
+                disabled={actionLoading}
+                className="flex-1 px-4 py-2.5 text-sm bg-orange-600 hover:bg-orange-500 text-white rounded-xl transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+              >
+                {actionLoading ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Gönderiliyor...</> : 'İade Talep Et'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Expanded details */}
       {expanded && (
@@ -201,6 +385,10 @@ export default function BuyerOrdersPage() {
       .finally(() => setLoading(false))
   }, [isAuthenticated, router])
 
+  const handleOrderUpdate = (updated: BuyerOrderDto) => {
+    setOrders(prev => prev.map(o => o.id === updated.id ? updated : o))
+  }
+
   if (!isAuthenticated) return null
 
   return (
@@ -245,7 +433,7 @@ export default function BuyerOrdersPage() {
       ) : (
         <div className="space-y-4">
           {orders.map((order) => (
-            <OrderCard key={order.id} order={order} />
+            <OrderCard key={order.id} order={order} onUpdate={handleOrderUpdate} />
           ))}
         </div>
       )}

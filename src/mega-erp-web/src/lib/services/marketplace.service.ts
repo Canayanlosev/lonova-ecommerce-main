@@ -126,6 +126,13 @@ export interface BuyerOrderDto {
   postalCode: string
   createdAt: string
   items: BuyerOrderItemDto[]
+  // TASK-24
+  cancelledAt?: string
+  cancelReason?: string
+  refundStatus?: string
+  // TASK-26
+  trackingNumber?: string
+  carrierName?: string
 }
 
 export interface CheckoutAddress {
@@ -229,6 +236,16 @@ export const marketplaceService = {
   // Orders
   getOrders: async (): Promise<BuyerOrderDto[]> => {
     const { data } = await buyerApi().get('/api/marketplace/orders')
+    return data
+  },
+
+  cancelOrder: async (orderId: string, reason?: string): Promise<BuyerOrderDto> => {
+    const { data } = await buyerApi().put(`/api/marketplace/orders/${orderId}/cancel`, { reason: reason ?? null })
+    return data
+  },
+
+  requestRefund: async (orderId: string, reason: string): Promise<BuyerOrderDto> => {
+    const { data } = await buyerApi().post(`/api/marketplace/orders/${orderId}/refund-request`, { reason })
     return data
   },
 

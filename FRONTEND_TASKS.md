@@ -697,7 +697,7 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
 - [x] FTASK-23: Marketplace Sepet UI — Mini-cart, /sepet sayfası, checkout
 - [x] FTASK-24: Ürün Görseli Marketplace'te Göster
 
-- [ ] FTASK-25: Ürün Yorum ve Puan UI
+- [x] FTASK-25: Ürün Yorum ve Puan UI
   Hedef: Ürün detay sayfasında yorumlar sekmesi; giriş yapmış alıcılar yorum yazabilsin.
   Dosyalar: src/app/(marketplace)/urun/[id]/page.tsx
   Adımlar:
@@ -707,7 +707,7 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     4. Yorum formu: sadece giriş yapmış alıcılara göster
     5. Ortalama puan + kaç yorum olduğu ürün başlığının altında göster
 
-- [ ] FTASK-26: Marketplace Arama Sayfası
+- [x] FTASK-26: Marketplace Arama Sayfası
   Hedef: /ara?q=... sayfası — anlık arama sonuçları, filtreler, kategori drill-down.
   Dosyalar: src/app/(marketplace)/ara/page.tsx
   Adımlar:
@@ -717,7 +717,7 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     4. Sıralama dropdown: en düşük/yüksek fiyat, en yeni
     5. Boş sonuç state: "... için sonuç bulunamadı" + öneriler
 
-- [ ] FTASK-27: Sipariş İptal ve Takip Numarası UI
+- [x] FTASK-27: Sipariş İptal ve Takip Numarası UI
   Hedef: /hesabim/siparisler'de iptal butonu + kargo takip numarası göster.
   Dosyalar: src/app/(marketplace)/hesabim/siparisler/page.tsx
   Adımlar:
@@ -726,7 +726,7 @@ Otonom agent her oturumda bu dosyayı okur, ilk `[ ]` olan görevi uygular, `[x]
     3. Shipped siparişlerde kargo firma + takip no göster
     4. marketplaceService'e cancelOrder() metodu ekle
 
-- [ ] FTASK-28: Dashboard Satış Analitik Sayfası
+- [x] FTASK-28: Dashboard Satış Analitik Sayfası
   Hedef: /dashboard/analytics — günlük gelir grafiği, top ürünler, sipariş sayıları.
   Dosyalar: src/app/dashboard/analytics/page.tsx
   Adımlar:
