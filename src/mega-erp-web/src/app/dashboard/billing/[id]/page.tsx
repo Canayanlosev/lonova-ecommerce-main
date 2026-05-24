@@ -13,7 +13,7 @@ import Link from "next/link";
 
 const statusConfig: Record<string, { label: string; className: string }> = {
   Draft: { label: "Taslak", className: "bg-slate-100 text-slate-600" },
-  Issued: { label: "Kesildi", className: "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400" },
+  Issued: { label: "Kesildi", className: "bg-primary/15 text-primary" },
   Paid: { label: "Ödendi", className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400" },
   Cancelled: { label: "İptal", className: "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400" },
 };
@@ -153,7 +153,7 @@ export default function InvoiceDetailPage() {
         </div>
         <button
           onClick={() => handlePrint(invoice)}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-indigo-500 border border-slate-200 dark:border-slate-700 hover:border-indigo-400 rounded-xl transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary border border-slate-200 dark:border-slate-700 hover:border-primary/80 rounded-xl transition-colors"
           title="Faturayı Yazdır / PDF olarak kaydet"
         >
           <Printer size={16} /> Yazdır

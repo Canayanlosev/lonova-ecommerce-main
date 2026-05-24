@@ -191,7 +191,7 @@ export default function EcommercePage() {
                   placeholder="Ad veya SKU ara..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500/50 text-sm transition-all"
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent outline-none focus:ring-2 focus:ring-primary/50 text-sm transition-all"
                 />
               </div>
             </div>
@@ -202,7 +202,7 @@ export default function EcommercePage() {
               <select
                 value={categoryFilter}
                 onChange={e => { setCategoryFilter(e.target.value); setSelectedIds(new Set()); }}
-                className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-transparent text-xs outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-400"
+                className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-transparent text-xs outline-none focus:ring-2 focus:ring-primary/50 text-slate-400"
               >
                 <option value="">Tüm Kategoriler</option>
                 {categories.map(c => (
@@ -217,7 +217,7 @@ export default function EcommercePage() {
                     onClick={() => { setVisibilityFilter(v); setSelectedIds(new Set()); }}
                     className={`px-3 py-1.5 font-medium transition-colors ${
                       visibilityFilter === v
-                        ? 'bg-indigo-500/15 text-indigo-400'
+                        ? 'bg-primary/15 text-primary'
                         : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
                     }`}
                   >
@@ -248,8 +248,8 @@ export default function EcommercePage() {
             <>
               {/* Bulk Action Bar */}
               {selectedIds.size > 0 && (
-                <div className="flex items-center gap-3 px-4 py-3 mb-2 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
-                  <span className="text-sm font-semibold text-indigo-400">{selectedIds.size} ürün seçili</span>
+                <div className="flex items-center gap-3 px-4 py-3 mb-2 bg-primary/10 border border-primary/20 rounded-xl">
+                  <span className="text-sm font-semibold text-primary">{selectedIds.size} ürün seçili</span>
                   <div className="flex gap-2 ml-auto">
                     <button
                       onClick={() => handleBulkVisibility(true)}
@@ -293,7 +293,7 @@ export default function EcommercePage() {
                       <th className="px-3 py-3 w-10">
                         <button onClick={toggleSelectAll} className="text-slate-400 hover:text-foreground transition-colors">
                           {filtered.length > 0 && selectedIds.size === filtered.length
-                            ? <CheckSquare size={16} className="text-indigo-500" />
+                            ? <CheckSquare size={16} className="text-primary" />
                             : <Square size={16} />
                           }
                         </button>
@@ -318,11 +318,11 @@ export default function EcommercePage() {
                         </tr>
                       )
                       : filtered.map((p) => (
-                        <tr key={p.id} className={`border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors ${selectedIds.has(p.id) ? 'bg-indigo-500/5' : ''}`}>
+                        <tr key={p.id} className={`border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors ${selectedIds.has(p.id) ? 'bg-primary/5' : ''}`}>
                           <td className="px-3 py-3">
-                            <button onClick={() => toggleSelect(p.id)} className="text-slate-400 hover:text-indigo-500 transition-colors">
+                            <button onClick={() => toggleSelect(p.id)} className="text-slate-400 hover:text-primary transition-colors">
                               {selectedIds.has(p.id)
-                                ? <CheckSquare size={16} className="text-indigo-500" />
+                                ? <CheckSquare size={16} className="text-primary" />
                                 : <Square size={16} />
                               }
                             </button>
@@ -345,7 +345,7 @@ export default function EcommercePage() {
                           <td className="px-4 py-3 font-mono text-xs text-slate-500">{p.sku}</td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-2">
-                              <Link href={`/dashboard/ecommerce/${p.id}`} className="font-semibold hover:text-indigo-500 transition-colors">
+                              <Link href={`/dashboard/ecommerce/${p.id}`} className="font-semibold hover:text-primary transition-colors">
                                 {p.name}
                               </Link>
                               {p.isPublishedToMarketplace === false && (
@@ -378,7 +378,7 @@ export default function EcommercePage() {
                                 <Copy size={15} />
                               </button>
                               <Link href={`/dashboard/ecommerce/${p.id}/edit`}>
-                                <button className="p-1.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-500/10 text-indigo-500 transition-colors">
+                                <button className="p-1.5 rounded-lg hover:bg-primary/10 text-primary transition-colors">
                                   <PencilLine size={16} />
                                 </button>
                               </Link>
@@ -416,13 +416,13 @@ export default function EcommercePage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setPriceType('Percent')}
-                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-medium transition-colors ${priceType === 'Percent' ? 'border-indigo-500 bg-indigo-500/10 text-indigo-400' : 'border-slate-200 dark:border-slate-700 text-slate-500'}`}
+                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-medium transition-colors ${priceType === 'Percent' ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 dark:border-slate-700 text-slate-500'}`}
                   >
                     <Percent size={14} /> Yüzde (%)
                   </button>
                   <button
                     onClick={() => setPriceType('Fixed')}
-                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-medium transition-colors ${priceType === 'Fixed' ? 'border-indigo-500 bg-indigo-500/10 text-indigo-400' : 'border-slate-200 dark:border-slate-700 text-slate-500'}`}
+                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-medium transition-colors ${priceType === 'Fixed' ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 dark:border-slate-700 text-slate-500'}`}
                   >
                     <DollarSign size={14} /> Sabit (₺)
                   </button>
@@ -437,7 +437,7 @@ export default function EcommercePage() {
                   value={priceValue}
                   onChange={e => setPriceValue(e.target.value)}
                   placeholder={priceType === 'Percent' ? 'Örn: -10 (%10 indirim), 5 (%5 artış)' : 'Örn: -50 (50₺ indirim), 100 (100₺ artış)'}
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                   onKeyDown={e => e.key === 'Enter' && handleBulkPrice()}
                 />
               </div>
@@ -447,7 +447,7 @@ export default function EcommercePage() {
               <button
                 onClick={handleBulkPrice}
                 disabled={priceApplying || !priceValue}
-                className="flex items-center gap-2 px-5 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-colors"
+                className="flex items-center gap-2 px-5 py-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-colors"
               >
                 {priceApplying ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Percent size={14} />}
                 Uygula

@@ -10,12 +10,12 @@ import type { Order } from "@/types/api.types";
 import Link from "next/link";
 
 const statusConfig: Record<string, { label: string; className: string }> = {
-  Pending: { label: "Beklemede", className: "bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400" },
-  Placed: { label: "Alındı", className: "bg-primary/15 text-primary" },
-  Paid: { label: "Ödendi", className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400" },
-  Shipped: { label: "Kargoda", className: "bg-primary/15 text-primary" },
-  Delivered: { label: "Teslim Edildi", className: "bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400" },
-  Cancelled: { label: "İptal", className: "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400" },
+  Pending:   { label: "Beklemede",     className: "bg-amber-500/15 text-amber-400" },
+  Placed:    { label: "Alındı",        className: "bg-cyan-500/15 text-cyan-400" },
+  Paid:      { label: "Ödendi",        className: "bg-emerald-500/15 text-emerald-400" },
+  Shipped:   { label: "Kargoda",       className: "bg-primary/15 text-primary" },
+  Delivered: { label: "Teslim Edildi", className: "bg-green-500/15 text-green-400" },
+  Cancelled: { label: "İptal",         className: "bg-red-500/15 text-red-400" },
 };
 
 export default function OrdersPage() {
@@ -75,7 +75,7 @@ export default function OrdersPage() {
         <button
           onClick={handleExportCsv}
           disabled={filtered.length === 0}
-          className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-500 hover:text-emerald-400 border border-slate-200 dark:border-slate-700 hover:border-emerald-600 rounded-xl transition-colors disabled:opacity-40"
+          className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-500 hover:text-emerald-400 border border-border hover:border-emerald-600 rounded-xl transition-colors disabled:opacity-40"
         >
           <Download className="w-4 h-4" /> CSV İndir
         </button>
@@ -113,13 +113,13 @@ export default function OrdersPage() {
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                   placeholder="Sipariş no ara..."
-                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm outline-none focus:ring-2 focus:ring-primary/50"
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-border bg-transparent text-sm outline-none focus:ring-2 focus:ring-primary/50"
                 />
               </div>
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm outline-none focus:ring-2 focus:ring-primary/50"
+                className="px-3 py-2 rounded-xl border border-border bg-transparent text-sm outline-none focus:ring-2 focus:ring-primary/50"
               >
                 <option value="all">Tümü</option>
                 {Object.entries(statusConfig).map(([k, v]) => (
@@ -138,7 +138,7 @@ export default function OrdersPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-200 dark:border-slate-800">
+                  <tr className="border-b border-border">
                     <th className="text-left px-4 py-3 text-slate-500 font-medium">Sipariş</th>
                     <th className="text-left px-4 py-3 text-slate-500 font-medium hidden sm:table-cell">Tarih</th>
                     <th className="text-left px-4 py-3 text-slate-500 font-medium">Durum</th>
@@ -158,7 +158,7 @@ export default function OrdersPage() {
                     : filtered.map((o) => {
                       const status = statusConfig[o.status] ?? { label: o.status, className: "bg-slate-100 text-slate-600" };
                       return (
-                        <tr key={o.id} className="border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                        <tr key={o.id} className="border-b border-border hover:bg-slate-800/20 transition-colors">
                           <td className="px-4 py-3">
                             <div>
                               <p className="font-mono text-xs text-slate-400">{o.id.slice(0, 8).toUpperCase()}</p>

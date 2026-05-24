@@ -37,8 +37,8 @@ interface AdminOrdersResponse {
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   Pending:    { label: 'Beklemede',     color: 'bg-yellow-500/15 text-yellow-400',  icon: <Clock className="w-3.5 h-3.5" /> },
-  Processing: { label: 'İşleniyor',     color: 'bg-blue-500/15 text-blue-400',      icon: <Clock className="w-3.5 h-3.5" /> },
-  Confirmed:  { label: 'Onaylandı',     color: 'bg-indigo-500/15 text-indigo-400',  icon: <CheckCircle className="w-3.5 h-3.5" /> },
+  Processing: { label: 'İşleniyor',     color: 'bg-primary/15 text-primary',      icon: <Clock className="w-3.5 h-3.5" /> },
+  Confirmed:  { label: 'Onaylandı',     color: 'bg-secondary/15 text-secondary',  icon: <CheckCircle className="w-3.5 h-3.5" /> },
   Shipped:    { label: 'Kargoda',       color: 'bg-cyan-500/15 text-cyan-400',      icon: <Truck className="w-3.5 h-3.5" /> },
   Delivered:  { label: 'Teslim Edildi', color: 'bg-green-500/15 text-green-400',    icon: <CheckCircle className="w-3.5 h-3.5" /> },
   Cancelled:  { label: 'İptal',         color: 'bg-red-500/15 text-red-400',        icon: <XCircle className="w-3.5 h-3.5" /> },
@@ -297,7 +297,7 @@ export default function MarketplaceOrdersPage() {
                           {canShip && (
                             <button
                               onClick={() => { setShipModal(o); setTrackingNo(''); setCarrier(CARRIERS[0]); setShipError('') }}
-                              className="flex items-center gap-1 text-xs px-2.5 py-1.5 bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white border border-blue-600/30 rounded-lg transition-colors whitespace-nowrap"
+                              className="flex items-center gap-1 text-xs px-2.5 py-1.5 bg-primary/20 hover:bg-primary text-primary hover:text-white border border-primary/30 rounded-lg transition-colors whitespace-nowrap"
                             >
                               <Truck className="w-3.5 h-3.5" /> Kargoya Ver
                             </button>
@@ -409,7 +409,7 @@ export default function MarketplaceOrdersPage() {
               <button
                 onClick={handleShip}
                 disabled={shipping}
-                className="flex-1 px-4 py-2.5 text-sm bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-2.5 text-sm bg-primary hover:bg-primary/90 text-white rounded-xl transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
               >
                 {shipping ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Kaydediliyor...</> : <><Truck className="w-3.5 h-3.5" /> Kargoya Ver</>}
               </button>

@@ -101,8 +101,8 @@ export default function BasketPage() {
               <div key={item.id} className="premium-card p-6 hover:translate-y-0">
                 <div>
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-indigo-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <ShoppingCart className="w-5 h-5 text-indigo-500" />
+                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <ShoppingCart className="w-5 h-5 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold truncate">{item.productName}</p>
@@ -146,7 +146,7 @@ export default function BasketPage() {
                   {checkingOut ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                   Ödemeye Geç
                 </Button>
-                <Link href="/dashboard/ecommerce" className="block text-center text-sm text-indigo-500 hover:underline">
+                <Link href="/dashboard/ecommerce" className="block text-center text-sm text-primary hover:underline">
                   Alışverişe Devam Et
                 </Link>
               </div>

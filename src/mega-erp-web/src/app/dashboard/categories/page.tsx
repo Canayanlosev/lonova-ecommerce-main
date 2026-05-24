@@ -52,7 +52,7 @@ function CategoryRow({
         <td className="px-4 py-3">
           <div className="flex items-center gap-2" style={{ paddingLeft: depth * 20 }}>
             {hasChildren ? (
-              <button onClick={() => setOpen(o => !o)} className="text-slate-400 hover:text-indigo-400 transition-colors shrink-0">
+              <button onClick={() => setOpen(o => !o)} className="text-slate-400 hover:text-primary transition-colors shrink-0">
                 {open ? <FolderOpen size={16} className="text-amber-400" /> : <Folder size={16} className="text-amber-500" />}
               </button>
             ) : (
@@ -62,7 +62,7 @@ function CategoryRow({
             )}
             <span className="font-medium text-sm">{node.name}</span>
             {hasChildren && (
-              <span className="ml-1 px-1.5 py-0.5 text-[10px] bg-indigo-500/15 text-indigo-400 rounded-full font-semibold">
+              <span className="ml-1 px-1.5 py-0.5 text-[10px] bg-primary/15 text-primary rounded-full font-semibold">
                 {node.children.length}
               </span>
             )}
@@ -78,7 +78,7 @@ function CategoryRow({
           <div className="flex items-center justify-end gap-2">
             <button
               onClick={() => onEdit(node)}
-              className="p-1.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-500/10 text-indigo-500 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-primary/10 text-primary transition-colors"
               title="Düzenle"
             >
               <PencilLine size={15} />
@@ -202,7 +202,7 @@ export default function CategoriesPage() {
         </div>
         <button
           onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold text-sm transition-colors shadow-lg shadow-indigo-500/20"
+          className="flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl font-semibold text-sm transition-colors shadow-lg shadow-primary/20"
         >
           <Plus size={16} /> Yeni Kategori
         </button>
@@ -220,7 +220,7 @@ export default function CategoriesPage() {
         </div>
         <div className="premium-card p-4">
           <p className="text-xs text-slate-500 mb-1">Alt Kategori</p>
-          <p className="text-2xl font-black text-indigo-400">{categories.filter(c => c.parentCategoryId).length}</p>
+          <p className="text-2xl font-black text-primary">{categories.filter(c => c.parentCategoryId).length}</p>
         </div>
         <div className="premium-card p-4">
           <p className="text-xs text-slate-500 mb-1">Derinlik</p>
@@ -266,7 +266,7 @@ export default function CategoriesPage() {
                     <div className="flex flex-col items-center py-16 gap-3 text-slate-400">
                       <Folder className="w-10 h-10 text-slate-600" />
                       <p className="font-medium">Henüz kategori yok</p>
-                      <button onClick={openCreate} className="text-indigo-400 hover:underline text-sm">
+                      <button onClick={openCreate} className="text-primary hover:underline text-sm">
                         İlk kategoriyi oluştur
                       </button>
                     </div>
@@ -319,7 +319,7 @@ export default function CategoriesPage() {
                   value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                   placeholder="Örn: Elektronik, Giyim..."
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
                   autoFocus
                   onKeyDown={e => e.key === 'Enter' && handleSave()}
                 />
@@ -332,7 +332,7 @@ export default function CategoriesPage() {
                   onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
                   rows={2}
                   placeholder="Kategori hakkında kısa açıklama (opsiyonel)"
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all resize-none"
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-none"
                 />
               </div>
 
@@ -341,7 +341,7 @@ export default function CategoriesPage() {
                 <select
                   value={form.parentCategoryId}
                   onChange={e => setForm(f => ({ ...f, parentCategoryId: e.target.value }))}
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
                 >
                   <option value="">— Ana Kategori (üst yok) —</option>
                   {categories
@@ -366,7 +366,7 @@ export default function CategoriesPage() {
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex items-center gap-2 px-5 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-colors"
+                className="flex items-center gap-2 px-5 py-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-colors"
               >
                 {saving ? (
                   <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

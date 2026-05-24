@@ -100,13 +100,13 @@ export default function ReviewsDashboardPage() {
             placeholder="Ürün, kullanıcı veya yorum ara..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+            className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm outline-none focus:ring-2 focus:ring-primary/50 transition-all"
           />
         </div>
         <select
           value={minRating}
           onChange={e => setMinRating(e.target.value ? Number(e.target.value) : '')}
-          className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm outline-none focus:ring-2 focus:ring-indigo-500/50"
+          className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm outline-none focus:ring-2 focus:ring-primary/50"
         >
           <option value="">Tüm Puanlar</option>
           <option value="5">★★★★★ (5)</option>

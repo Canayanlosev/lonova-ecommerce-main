@@ -206,7 +206,7 @@ export default function HRPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { label: 'Toplam Çalışan', value: employees.length, icon: Users, color: 'bg-primary/10 text-primary' },
-          { label: 'Departman',      value: departments.length, icon: Building2, color: 'bg-indigo-500/10 text-indigo-400' },
+          { label: 'Departman',      value: departments.length, icon: Building2, color: 'bg-primary/10 text-primary' },
           { label: 'Bekleyen İzin',  value: pendingLeaveCount, icon: CalendarDays, color: pendingLeaveCount > 0 ? 'bg-amber-500/10 text-amber-400' : 'bg-slate-800 text-slate-400' },
           { label: 'Aylık Bordro',   value: `₺${totalPayroll.toLocaleString('tr-TR')}`, icon: DollarSign, color: 'bg-emerald-500/10 text-emerald-400', isText: true },
         ].map(({ label, value, icon: Icon, color, isText }) => (
@@ -383,8 +383,8 @@ export default function HRPage() {
                 return (
                   <div key={d.id} className="premium-card p-5 hover:border-primary/30 transition-all group">
                     <div className="flex items-start justify-between mb-3">
-                      <div className="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center">
-                        <Building2 className="w-5 h-5 text-indigo-400" />
+                      <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                        <Building2 className="w-5 h-5 text-primary" />
                       </div>
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button

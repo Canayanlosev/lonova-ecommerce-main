@@ -12,8 +12,8 @@ import type { Shipment, ShippingMethod } from "@/types/api.types";
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   Pending:   { label: "Beklemede",       color: "bg-amber-500/15 text-amber-400" },
-  Shipped:   { label: "Gönderildi",      color: "bg-blue-500/15 text-blue-400" },
-  InTransit: { label: "Yolda",           color: "bg-indigo-500/15 text-indigo-400" },
+  Shipped:   { label: "Gönderildi",      color: "bg-primary/15 text-primary" },
+  InTransit: { label: "Yolda",           color: "bg-secondary/15 text-secondary" },
   Delivered: { label: "Teslim Edildi",   color: "bg-emerald-500/15 text-emerald-400" },
   Returned:  { label: "İade",            color: "bg-red-500/15 text-red-400" },
 };
@@ -188,7 +188,7 @@ export default function ShippingPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <StatCard icon={<Package className="w-4 h-4 text-slate-400" />} label="Toplam Kargo" value={stats.total} color="bg-slate-800" />
         <StatCard icon={<Clock className="w-4 h-4 text-amber-400" />} label="Beklemede" value={stats.pending} color="bg-amber-500/10" />
-        <StatCard icon={<MapPin className="w-4 h-4 text-blue-400" />} label="Yolda" value={stats.inTransit} color="bg-blue-500/10" />
+        <StatCard icon={<MapPin className="w-4 h-4 text-secondary" />} label="Yolda" value={stats.inTransit} color="bg-secondary/10" />
         <StatCard icon={<CheckCircle2 className="w-4 h-4 text-emerald-400" />} label="Teslim Edildi" value={stats.delivered} color="bg-emerald-500/10" />
       </div>
 

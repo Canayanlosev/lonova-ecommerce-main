@@ -13,7 +13,7 @@ import Link from "next/link";
 
 const statusConfig: Record<string, { label: string; className: string }> = {
   Pending: { label: "Beklemede", className: "bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400" },
-  Placed: { label: "Alındı", className: "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400" },
+  Placed: { label: "Alındı", className: "bg-primary/15 text-primary" },
   Paid: { label: "Ödendi", className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400" },
   Cancelled: { label: "İptal", className: "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400" },
 };

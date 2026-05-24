@@ -12,7 +12,7 @@ import type { Invoice } from '@/types/api.types'
 
 const STATUS_CONFIG: Record<string, { label: string; cls: string }> = {
   Draft:     { label: 'Taslak',  cls: 'bg-slate-700 text-slate-300' },
-  Issued:    { label: 'Kesildi', cls: 'bg-indigo-500/15 text-indigo-400' },
+  Issued:    { label: 'Kesildi', cls: 'bg-primary/15 text-primary' },
   Paid:      { label: 'Ödendi',  cls: 'bg-emerald-500/15 text-emerald-400' },
   Cancelled: { label: 'İptal',   cls: 'bg-red-500/15 text-red-400' },
 }

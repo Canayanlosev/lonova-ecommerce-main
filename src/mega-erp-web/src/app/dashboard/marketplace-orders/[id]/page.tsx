@@ -48,8 +48,8 @@ interface AdminOrderDetail {
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   Pending:    { label: 'Beklemede',     color: 'text-amber-400 bg-amber-500/10 border-amber-500/30',  icon: <Clock className="w-4 h-4" /> },
-  Processing: { label: 'İşleniyor',    color: 'text-blue-400 bg-blue-500/10 border-blue-500/30',     icon: <Clock className="w-4 h-4" /> },
-  Confirmed:  { label: 'Onaylandı',    color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/30', icon: <CheckCircle className="w-4 h-4" /> },
+  Processing: { label: 'İşleniyor',    color: 'text-primary bg-primary/10 border-primary/30',     icon: <Clock className="w-4 h-4" /> },
+  Confirmed:  { label: 'Onaylandı',    color: 'text-secondary bg-secondary/10 border-secondary/30', icon: <CheckCircle className="w-4 h-4" /> },
   Shipped:    { label: 'Kargoda',      color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/30',     icon: <Truck className="w-4 h-4" /> },
   Delivered:  { label: 'Teslim Edildi', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30', icon: <CheckCircle className="w-4 h-4" /> },
   Cancelled:  { label: 'İptal Edildi', color: 'text-red-400 bg-red-500/10 border-red-500/30',        icon: <XCircle className="w-4 h-4" /> },
