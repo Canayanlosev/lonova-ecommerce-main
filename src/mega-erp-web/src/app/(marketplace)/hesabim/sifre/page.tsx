@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { Lock, Eye, EyeOff, CheckCircle, Package, Heart, MapPin } from 'lucide-react'
+import { Lock, Eye, EyeOff, CheckCircle } from 'lucide-react'
 import { marketplaceService } from '@/lib/services/marketplace.service'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
+import { AccountTabs } from '@/components/marketplace/AccountTabs'
 
 export default function SifreDegistirPage() {
   const router = useRouter()
@@ -57,41 +57,14 @@ export default function SifreDegistirPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Hesabım</h1>
-          <p className="text-slate-400 text-sm mt-1">Güvenlik ayarları</p>
-        </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex gap-2 mb-8 border-b border-border">
-        <Link
-          href="/hesabim/siparisler"
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors"
-        >
-          <Package className="w-4 h-4" /> Siparişlerim
-        </Link>
-        <Link
-          href="/hesabim/favoriler"
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors"
-        >
-          <Heart className="w-4 h-4" /> Favorilerim
-        </Link>
-        <Link
-          href="/hesabim/adresler"
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors"
-        >
-          <MapPin className="w-4 h-4" /> Adreslerim
-        </Link>
-        <Link
-          href="/hesabim/sifre"
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-primary text-primary -mb-px transition-colors"
-        >
-          <Lock className="w-4 h-4" /> Şifre Değiştir
-        </Link>
-      </div>
+      <AccountTabs
+        header={
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Hesabım</h1>
+            <p className="text-slate-400 text-sm mt-1">Güvenlik ayarları</p>
+          </div>
+        }
+      />
 
       <div className="max-w-md">
         <div className="premium-card p-6">

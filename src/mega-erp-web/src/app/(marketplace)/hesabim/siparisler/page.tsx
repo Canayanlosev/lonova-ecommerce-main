@@ -7,10 +7,11 @@ import Image from 'next/image'
 import {
   Package, ArrowRight, CreditCard, Banknote, Truck, MapPin,
   ChevronDown, ChevronUp, CheckCircle, Clock, XCircle, LogOut,
-  AlertTriangle, ExternalLink, RefreshCw, X, Heart, Lock, Star, User
+  AlertTriangle, ExternalLink, RefreshCw, X, Star, User
 } from 'lucide-react'
 import { marketplaceService, BuyerOrderDto, type BuyerOrderItemDto } from '@/lib/services/marketplace.service'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
+import { AccountTabs } from '@/components/marketplace/AccountTabs'
 
 const STATUS_LABELS: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   Pending:   { label: 'Beklemede',    color: 'text-yellow-400', icon: <Clock className="w-4 h-4" /> },
@@ -519,27 +520,7 @@ export default function BuyerOrdersPage() {
         </button>
       </div>
 
-      {/* Hesap Sekmeler */}
-      <div className="flex gap-2 mb-6 border-b border-border flex-wrap">
-        <Link href="/hesabim" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors">
-          <User className="w-4 h-4" /> Genel Bakış
-        </Link>
-        <Link href="/hesabim/profil" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors">
-          <User className="w-4 h-4" /> Profilim
-        </Link>
-        <Link href="/hesabim/siparisler" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-primary text-primary -mb-px transition-colors">
-          <Package className="w-4 h-4" /> Siparişlerim
-        </Link>
-        <Link href="/hesabim/favoriler" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors">
-          <Heart className="w-4 h-4" /> Favorilerim
-        </Link>
-        <Link href="/hesabim/adresler" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors">
-          <MapPin className="w-4 h-4" /> Adreslerim
-        </Link>
-        <Link href="/hesabim/sifre" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors">
-          <Lock className="w-4 h-4" /> Şifre Değiştir
-        </Link>
-      </div>
+      <AccountTabs />
 
       {loading ? (
         <div className="space-y-4">

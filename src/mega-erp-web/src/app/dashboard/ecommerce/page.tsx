@@ -5,18 +5,22 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Skeleton, SkeletonRow } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
-import { Package, Search, PencilLine, Trash2, Plus, AlertCircle, Eye, EyeOff, CheckSquare, Square, X, Copy, Percent, DollarSign } from "lucide-react";
+import { Package, Search, PencilLine, Trash2, Plus, AlertCircle, Eye, EyeOff, CheckSquare, Square, X, Copy, Percent, DollarSign, Filter } from "lucide-react";
 import { productsService } from "@/lib/services/products.service";
 import { useToast } from "@/store/ui.store";
-import type { Product } from "@/types/api.types";
+import type { Product, Category } from "@/types/api.types";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function EcommercePage() {
   const toast = useToast();
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [visibilityFilter, setVisibilityFilter] = useState<'all' | 'published' | 'hidden'>('all');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkLoading, setBulkLoading] = useState(false);
 
@@ -30,8 +34,12 @@ export default function EcommercePage() {
     setLoading(true);
     setError("");
     try {
-      const data = await productsService.getAll();
+      const [data, cats] = await Promise.all([
+        productsService.getAll(),
+        productsService.getCategories().catch(() => [] as Category[]),
+      ]);
       setProducts(data);
+      setCategories(cats);
     } catch {
       setError("Ürünler yüklenirken hata oluştu.");
     } finally {
@@ -140,11 +148,17 @@ export default function EcommercePage() {
     }
   };
 
-  const filtered = products.filter(
-    (p) =>
+  const filtered = products.filter((p) => {
+    const matchSearch =
       p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.sku.toLowerCase().includes(search.toLowerCase())
-  );
+      p.sku.toLowerCase().includes(search.toLowerCase());
+    const matchCategory = !categoryFilter || p.categoryId === categoryFilter;
+    const matchVisibility =
+      visibilityFilter === 'all' ? true :
+      visibilityFilter === 'published' ? p.isPublishedToMarketplace !== false :
+      p.isPublishedToMarketplace === false;
+    return matchSearch && matchCategory && matchVisibility;
+  });
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -162,17 +176,64 @@ export default function EcommercePage() {
 
       <Card>
         <CardHeader>
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <CardTitle>Ürün Listesi</CardTitle>
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Ad veya SKU ara..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500/50 text-sm transition-all"
-              />
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+              <CardTitle>
+                Ürün Listesi
+                <span className="ml-2 text-sm font-normal text-slate-400">
+                  {loading ? '' : `${filtered.length} / ${products.length} ürün`}
+                </span>
+              </CardTitle>
+              <div className="relative w-full sm:w-64">
+                <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Ad veya SKU ara..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500/50 text-sm transition-all"
+                />
+              </div>
+            </div>
+            {/* Filters row */}
+            <div className="flex flex-wrap gap-2 items-center">
+              <Filter className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              {/* Category filter */}
+              <select
+                value={categoryFilter}
+                onChange={e => { setCategoryFilter(e.target.value); setSelectedIds(new Set()); }}
+                className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-transparent text-xs outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-400"
+              >
+                <option value="">Tüm Kategoriler</option>
+                {categories.map(c => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+              {/* Visibility filter */}
+              <div className="flex rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden text-xs">
+                {(['all', 'published', 'hidden'] as const).map(v => (
+                  <button
+                    key={v}
+                    onClick={() => { setVisibilityFilter(v); setSelectedIds(new Set()); }}
+                    className={`px-3 py-1.5 font-medium transition-colors ${
+                      visibilityFilter === v
+                        ? 'bg-indigo-500/15 text-indigo-400'
+                        : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    {v === 'all' ? 'Tümü' : v === 'published' ? '● Yayında' : '○ Gizli'}
+                  </button>
+                ))}
+              </div>
+              {/* Clear filters */}
+              {(categoryFilter || visibilityFilter !== 'all' || search) && (
+                <button
+                  onClick={() => { setCategoryFilter(''); setVisibilityFilter('all'); setSearch(''); }}
+                  className="flex items-center gap-1 text-xs text-slate-400 hover:text-foreground px-2 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                >
+                  <X size={12} /> Temizle
+                </button>
+              )}
             </div>
           </div>
         </CardHeader>
@@ -237,6 +298,7 @@ export default function EcommercePage() {
                           }
                         </button>
                       </th>
+                      <th className="w-10 px-2 py-3 hidden sm:table-cell" />
                       <th className="text-left px-4 py-3 text-slate-500 font-medium">SKU</th>
                       <th className="text-left px-4 py-3 text-slate-500 font-medium">Ürün Adı</th>
                       <th className="text-left px-4 py-3 text-slate-500 font-medium hidden md:table-cell">Kategori</th>
@@ -250,7 +312,7 @@ export default function EcommercePage() {
                       : filtered.length === 0
                       ? (
                         <tr>
-                          <td colSpan={6}>
+                          <td colSpan={7}>
                             <EmptyState icon={<Package />} title="Ürün bulunamadı" description="Henüz ürün eklenmemiş veya arama sonucu boş." />
                           </td>
                         </tr>
@@ -265,11 +327,31 @@ export default function EcommercePage() {
                               }
                             </button>
                           </td>
+                          <td className="px-2 py-2 hidden sm:table-cell">
+                            <div className="w-9 h-9 rounded-lg bg-slate-800/60 overflow-hidden shrink-0 flex items-center justify-center">
+                              {p.imageUrl ? (
+                                <Image
+                                  src={p.imageUrl}
+                                  alt={p.name}
+                                  width={36}
+                                  height={36}
+                                  className="object-cover w-full h-full"
+                                />
+                              ) : (
+                                <Package className="w-4 h-4 text-slate-500" />
+                              )}
+                            </div>
+                          </td>
                           <td className="px-4 py-3 font-mono text-xs text-slate-500">{p.sku}</td>
                           <td className="px-4 py-3">
-                            <Link href={`/dashboard/ecommerce/${p.id}`} className="font-semibold hover:text-indigo-500 transition-colors">
-                              {p.name}
-                            </Link>
+                            <div className="flex items-center gap-2">
+                              <Link href={`/dashboard/ecommerce/${p.id}`} className="font-semibold hover:text-indigo-500 transition-colors">
+                                {p.name}
+                              </Link>
+                              {p.isPublishedToMarketplace === false && (
+                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-700 text-slate-400 font-medium">Gizli</span>
+                              )}
+                            </div>
                           </td>
                           <td className="px-4 py-3 text-slate-500 hidden md:table-cell">{p.category?.name || "-"}</td>
                           <td className="px-4 py-3 text-right font-bold">₺{p.basePrice.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}</td>

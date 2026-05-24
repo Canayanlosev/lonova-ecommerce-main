@@ -10,6 +10,7 @@ import {
 import { marketplaceService, type BuyerOrderDto } from '@/lib/services/marketplace.service'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
 import { useWishlistStore } from '@/store/wishlist.store'
+import { AccountTabs } from '@/components/marketplace/AccountTabs'
 
 const STATUS_COLORS: Record<string, string> = {
   Delivered: 'text-emerald-400 bg-emerald-500/10',
@@ -61,26 +62,7 @@ export default function HesabimPage() {
         </div>
       </div>
 
-      <div className="flex gap-2 mb-8 border-b border-border flex-wrap">
-        <Link href="/hesabim" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-primary text-primary -mb-px">
-          <User className="w-4 h-4" /> Genel Bakış
-        </Link>
-        <Link href="/hesabim/profil" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors">
-          <Settings className="w-4 h-4" /> Profilim
-        </Link>
-        <Link href="/hesabim/siparisler" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors">
-          <Package className="w-4 h-4" /> Siparişlerim
-        </Link>
-        <Link href="/hesabim/favoriler" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors">
-          <Heart className="w-4 h-4" /> Favorilerim
-        </Link>
-        <Link href="/hesabim/adresler" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors">
-          <MapPin className="w-4 h-4" /> Adreslerim
-        </Link>
-        <Link href="/hesabim/sifre" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors">
-          <Lock className="w-4 h-4" /> Şifre Değiştir
-        </Link>
-      </div>
+      <AccountTabs />
 
       {/* Profile card */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

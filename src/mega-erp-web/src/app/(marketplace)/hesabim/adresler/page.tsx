@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { MapPin, Plus, Trash2, Star, Check, X, Package, Heart, Lock, Edit2 } from 'lucide-react'
+import { MapPin, Plus, Trash2, Star, Check, X, Edit2 } from 'lucide-react'
 import { marketplaceService, type BuyerAddressDto } from '@/lib/services/marketplace.service'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
+import { AccountTabs } from '@/components/marketplace/AccountTabs'
 
 const CITIES = [
   'Adana','Ankara','Antalya','Bursa','Denizli','Diyarbakır','Eskişehir','Gaziantep',
@@ -92,28 +92,14 @@ export default function AdreslerPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Hesabım</h1>
-          <p className="text-slate-400 text-sm mt-1">Adres defteri</p>
-        </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex gap-2 mb-8 border-b border-border flex-wrap">
-        <Link href="/hesabim/siparisler" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors">
-          <Package className="w-4 h-4" /> Siparişlerim
-        </Link>
-        <Link href="/hesabim/favoriler" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors">
-          <Heart className="w-4 h-4" /> Favorilerim
-        </Link>
-        <Link href="/hesabim/adresler" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-primary text-primary -mb-px transition-colors">
-          <MapPin className="w-4 h-4" /> Adreslerim
-        </Link>
-        <Link href="/hesabim/sifre" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-foreground -mb-px transition-colors">
-          <Lock className="w-4 h-4" /> Şifre Değiştir
-        </Link>
-      </div>
+      <AccountTabs
+        header={
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Hesabım</h1>
+            <p className="text-slate-400 text-sm mt-1">Adres defteri</p>
+          </div>
+        }
+      />
 
       {/* Add new address button */}
       <div className="flex items-center justify-between mb-4">
