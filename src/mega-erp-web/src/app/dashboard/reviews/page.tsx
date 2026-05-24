@@ -100,13 +100,13 @@ export default function ReviewsDashboardPage() {
             placeholder="Ürün, kullanıcı veya yorum ara..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+            className="w-full pl-9 pr-4 py-2 rounded-xl border border-border bg-transparent text-sm outline-none focus:ring-2 focus:ring-primary/50 transition-all"
           />
         </div>
         <select
           value={minRating}
           onChange={e => setMinRating(e.target.value ? Number(e.target.value) : '')}
-          className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm outline-none focus:ring-2 focus:ring-primary/50"
+          className="px-3 py-2 rounded-xl border border-border bg-transparent text-sm outline-none focus:ring-2 focus:ring-primary/50"
         >
           <option value="">Tüm Puanlar</option>
           <option value="5">★★★★★ (5)</option>
@@ -130,7 +130,7 @@ export default function ReviewsDashboardPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-200 dark:border-slate-800">
+              <tr className="border-b border-border">
                 <th className="text-left px-4 py-3 text-slate-500 font-medium">Ürün</th>
                 <th className="text-left px-4 py-3 text-slate-500 font-medium hidden md:table-cell">Kullanıcı</th>
                 <th className="text-left px-4 py-3 text-slate-500 font-medium">Puan</th>
@@ -142,7 +142,7 @@ export default function ReviewsDashboardPage() {
             <tbody>
               {loading
                 ? Array.from({ length: 8 }).map((_, i) => (
-                    <tr key={i} className="border-b border-slate-100 dark:border-slate-800/50">
+                    <tr key={i} className="border-b border-border">
                       <td colSpan={6} className="px-4 py-3">
                         <div className="h-4 bg-slate-700/40 rounded animate-pulse w-full" />
                       </td>
@@ -160,7 +160,7 @@ export default function ReviewsDashboardPage() {
                   </tr>
                 )
                 : filtered.map(r => (
-                  <tr key={r.id} className="border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                  <tr key={r.id} className="border-b border-border hover:bg-slate-800/20 transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <Package className="w-4 h-4 text-slate-400 shrink-0" />

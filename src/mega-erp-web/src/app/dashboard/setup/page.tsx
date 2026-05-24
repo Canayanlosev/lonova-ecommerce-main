@@ -64,7 +64,7 @@ export default function SetupPage() {
         </p>
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition-all shadow-sm shadow-blue-500/20"
+          className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-sm transition-all shadow-sm shadow-primary/20"
         >
           Komuta Merkezi'ne Git <ChevronRight className="w-4 h-4" />
         </Link>
@@ -84,17 +84,17 @@ export default function SetupPage() {
       <div className="space-y-3">
         <div className="h-1.5 w-full bg-border rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"
+            className="h-full bg-gradient-to-r from-primary to-secondary rounded-full"
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.4 }}
           />
         </div>
         <div className="flex justify-between">
           {STEPS.map((s) => (
-            <div key={s.id} className={`flex flex-col items-center gap-1 ${s.id <= step ? 'text-blue-400' : 'text-slate-600'}`}>
+            <div key={s.id} className={`flex flex-col items-center gap-1 ${s.id <= step ? 'text-primary' : 'text-slate-600'}`}>
               <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${
-                s.id < step ? 'bg-blue-500 border-blue-500 text-white' :
-                s.id === step ? 'border-blue-500 text-blue-400' :
+                s.id < step ? 'bg-primary border-primary text-white' :
+                s.id === step ? 'border-primary text-primary' :
                 'border-border text-slate-600'
               }`}>
                 {s.id < step ? <Check className="w-3.5 h-3.5" /> : s.id}
@@ -152,8 +152,8 @@ function Step1({ onNext }: { onNext: () => void }) {
   return (
     <div className="premium-card p-6 space-y-5">
       <div className="flex items-center gap-3 mb-2">
-        <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-          <Building2 className="w-5 h-5 text-blue-400" />
+        <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+          <Building2 className="w-5 h-5 text-primary" />
         </div>
         <div>
           <h2 className="font-bold text-foreground">İşletme Bilgileri</h2>
@@ -168,7 +168,7 @@ function Step1({ onNext }: { onNext: () => void }) {
             value={form.name ?? ''}
             onChange={e => setForm((f: typeof form) => ({ ...f, name: e.target.value }))}
             placeholder="Örn: Ahmet Usta Bakkaliyesi"
-            className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500/50 transition-all"
+            className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 transition-all"
           />
         </div>
         <div>
@@ -177,7 +177,7 @@ function Step1({ onNext }: { onNext: () => void }) {
             value={form.taxNo ?? ''}
             onChange={e => setForm((f: typeof form) => ({ ...f, taxNo: e.target.value }))}
             placeholder="1234567890"
-            className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500/50 transition-all"
+            className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 transition-all"
           />
         </div>
         <div>
@@ -186,7 +186,7 @@ function Step1({ onNext }: { onNext: () => void }) {
             value={form.phone ?? ''}
             onChange={e => setForm((f: typeof form) => ({ ...f, phone: e.target.value }))}
             placeholder="0532 000 00 00"
-            className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500/50 transition-all"
+            className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 transition-all"
           />
         </div>
         <div className="sm:col-span-2">
@@ -195,7 +195,7 @@ function Step1({ onNext }: { onNext: () => void }) {
             value={form.city ?? ''}
             onChange={e => setForm((f: typeof form) => ({ ...f, city: e.target.value }))}
             placeholder="İstanbul"
-            className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500/50 transition-all"
+            className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 transition-all"
           />
         </div>
       </div>
@@ -203,7 +203,7 @@ function Step1({ onNext }: { onNext: () => void }) {
       <button
         onClick={handleNext}
         disabled={!ok}
-        className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white transition-all"
+        className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold bg-primary hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed text-white transition-all"
       >
         Devam Et <ChevronRight className="w-4 h-4" />
       </button>
@@ -249,7 +249,7 @@ function Step2({ onNext, onSkip }: { onNext: () => void; onSkip: () => void }) {
         <h2 className="font-bold text-foreground">Ürünler zaten mevcut</h2>
         <p className="text-sm text-slate-400">Kataloğunuzda ürün var, bu adımı atlayabilirsiniz.</p>
         <div className="flex gap-3 justify-center">
-          <button onClick={onNext} className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-all">
+          <button onClick={onNext} className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-primary hover:bg-primary/90 text-white transition-all">
             Devam Et
           </button>
           <button onClick={onSkip} className="px-5 py-2.5 rounded-xl text-sm font-medium border border-border text-slate-400 hover:text-foreground hover:bg-surface transition-all">
@@ -263,8 +263,8 @@ function Step2({ onNext, onSkip }: { onNext: () => void; onSkip: () => void }) {
   return (
     <div className="premium-card p-6 space-y-5">
       <div className="flex items-center gap-3 mb-2">
-        <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-          <Package className="w-5 h-5 text-blue-400" />
+        <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+          <Package className="w-5 h-5 text-primary" />
         </div>
         <div>
           <h2 className="font-bold text-foreground">İlk Ürününüzü Ekleyin</h2>
@@ -277,27 +277,27 @@ function Step2({ onNext, onSkip }: { onNext: () => void; onSkip: () => void }) {
           <label className="text-xs text-slate-400 mb-1.5 block font-medium">Ürün Adı <span className="text-red-400">*</span></label>
           <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
             placeholder="Örn: Organik Zeytinyağı 1L"
-            className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500/50 transition-all" />
+            className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 transition-all" />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="text-xs text-slate-400 mb-1.5 block font-medium">Fiyat (₺) <span className="text-red-400">*</span></label>
             <input type="number" value={form.basePrice} onChange={e => setForm(f => ({ ...f, basePrice: e.target.value }))}
               placeholder="0.00" min={0} step={0.01}
-              className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500/50 transition-all" />
+              className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 transition-all" />
           </div>
           <div>
             <label className="text-xs text-slate-400 mb-1.5 block font-medium">SKU</label>
             <input value={form.sku} onChange={e => setForm(f => ({ ...f, sku: e.target.value }))}
               placeholder="Otomatik oluşturulur"
-              className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500/50 transition-all" />
+              className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 transition-all" />
           </div>
         </div>
         {categories.length > 0 && (
           <div>
             <label className="text-xs text-slate-400 mb-1.5 block font-medium">Kategori</label>
             <select value={form.categoryId} onChange={e => setForm(f => ({ ...f, categoryId: e.target.value }))}
-              className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500/50 transition-all">
+              className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 transition-all">
               <option value="">Kategori seçin (isteğe bağlı)</option>
               {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
@@ -307,7 +307,7 @@ function Step2({ onNext, onSkip }: { onNext: () => void; onSkip: () => void }) {
 
       <div className="flex gap-3">
         <button onClick={handleSave} disabled={saving || !form.name || !form.basePrice}
-          className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white transition-all">
+          className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold bg-primary hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed text-white transition-all">
           {saving && <Loader2 className="w-4 h-4 animate-spin" />}
           Ürünü Ekle & Devam Et <ChevronRight className="w-4 h-4" />
         </button>
@@ -348,8 +348,8 @@ function Step3({ onNext, onSkip }: { onNext: () => void; onSkip: () => void }) {
   return (
     <div className="premium-card p-6 space-y-5">
       <div className="flex items-center gap-3 mb-2">
-        <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-          <Warehouse className="w-5 h-5 text-blue-400" />
+        <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+          <Warehouse className="w-5 h-5 text-primary" />
         </div>
         <div>
           <h2 className="font-bold text-foreground">Başlangıç Stoğu</h2>
@@ -362,7 +362,7 @@ function Step3({ onNext, onSkip }: { onNext: () => void; onSkip: () => void }) {
           <label className="text-xs text-slate-400 mb-1.5 block font-medium">Ürün</label>
           {products.length > 0 ? (
             <select value={form.productId} onChange={e => setForm(f => ({ ...f, productId: e.target.value }))}
-              className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500/50 transition-all">
+              className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 transition-all">
               <option value="">Ürün seçin...</option>
               {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
@@ -376,13 +376,13 @@ function Step3({ onNext, onSkip }: { onNext: () => void; onSkip: () => void }) {
           <label className="text-xs text-slate-400 mb-1.5 block font-medium">Başlangıç Miktarı</label>
           <input type="number" value={form.quantity} onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))}
             placeholder="10" min={1}
-            className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500/50 transition-all" />
+            className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 transition-all" />
         </div>
       </div>
 
       <div className="flex gap-3">
         <button onClick={handleSave} disabled={saving || !form.productId || !form.quantity}
-          className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white transition-all">
+          className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold bg-primary hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed text-white transition-all">
           {saving && <Loader2 className="w-4 h-4 animate-spin" />}
           Stoğu Kaydet & Devam Et <ChevronRight className="w-4 h-4" />
         </button>
@@ -421,8 +421,8 @@ function Step4({ onNext }: { onNext: () => void }) {
   return (
     <div className="premium-card p-6 space-y-5">
       <div className="flex items-center gap-3 mb-2">
-        <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-          <CreditCard className="w-5 h-5 text-blue-400" />
+        <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+          <CreditCard className="w-5 h-5 text-primary" />
         </div>
         <div>
           <h2 className="font-bold text-foreground">Muhasebe Hesapları</h2>
@@ -432,7 +432,7 @@ function Step4({ onNext }: { onNext: () => void }) {
 
       {loading ? (
         <div className="flex items-center justify-center py-6">
-          <Loader2 className="w-5 h-5 animate-spin text-blue-400" />
+          <Loader2 className="w-5 h-5 animate-spin text-primary" />
         </div>
       ) : (
         <>
@@ -451,11 +451,11 @@ function Step4({ onNext }: { onNext: () => void }) {
               </p>
               <div className="grid grid-cols-3 gap-3">
                 <input value={newAccount.code} onChange={e => setNewAccount(a => ({ ...a, code: e.target.value }))}
-                  placeholder="100" className="px-3 py-2 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500/50 transition-all" />
+                  placeholder="100" className="px-3 py-2 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 transition-all" />
                 <input value={newAccount.name} onChange={e => setNewAccount(a => ({ ...a, name: e.target.value }))}
-                  placeholder="Kasa" className="px-3 py-2 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500/50 transition-all" />
+                  placeholder="Kasa" className="px-3 py-2 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 transition-all" />
                 <button onClick={handleCreate} disabled={saving}
-                  className="px-3 py-2 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white transition-all">
+                  className="px-3 py-2 rounded-xl text-sm font-semibold bg-primary hover:bg-primary/90 disabled:opacity-40 text-white transition-all">
                   {saving ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Ekle'}
                 </button>
               </div>
@@ -473,7 +473,7 @@ function Step4({ onNext }: { onNext: () => void }) {
       )}
 
       <button onClick={onNext}
-        className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-all">
+        className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold bg-primary hover:bg-primary/90 text-white transition-all">
         Devam Et <ChevronRight className="w-4 h-4" />
       </button>
     </div>
@@ -485,8 +485,8 @@ function Step5({ onComplete }: { onComplete: () => void }) {
   return (
     <div className="premium-card p-6 space-y-6">
       <div className="flex items-center gap-3 mb-2">
-        <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-          <Layout className="w-5 h-5 text-blue-400" />
+        <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+          <Layout className="w-5 h-5 text-primary" />
         </div>
         <div>
           <h2 className="font-bold text-foreground">Storefront Özelleştirme</h2>
@@ -496,11 +496,11 @@ function Step5({ onComplete }: { onComplete: () => void }) {
 
       {/* Preview card */}
       <div className="rounded-xl border border-border bg-background overflow-hidden">
-        <div className="h-2 bg-gradient-to-r from-blue-500 to-indigo-500" />
+        <div className="h-2 bg-gradient-to-r from-primary to-secondary" />
         <div className="p-4 space-y-2">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded bg-blue-500/20 flex items-center justify-center">
-              <span className="text-blue-400 text-xs font-bold">M</span>
+            <div className="w-6 h-6 rounded bg-primary/20 flex items-center justify-center">
+              <span className="text-primary text-xs font-bold">M</span>
             </div>
             <span className="text-sm font-semibold text-foreground">Mağazanız</span>
           </div>
@@ -519,7 +519,7 @@ function Step5({ onComplete }: { onComplete: () => void }) {
       <div className="flex flex-col sm:flex-row gap-3">
         <Link
           href="/dashboard/site-builder"
-          className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-all"
+          className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold bg-primary hover:bg-primary/90 text-white transition-all"
         >
           <Layout className="w-4 h-4" /> Site Builder'ı Aç
         </Link>

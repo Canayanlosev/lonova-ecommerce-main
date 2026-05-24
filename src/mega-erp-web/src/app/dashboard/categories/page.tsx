@@ -48,7 +48,7 @@ function CategoryRow({
   const hasChildren = node.children.length > 0
   return (
     <>
-      <tr className="border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+      <tr className="border-b border-border hover:bg-slate-800/20 transition-colors">
         <td className="px-4 py-3">
           <div className="flex items-center gap-2" style={{ paddingLeft: depth * 20 }}>
             {hasChildren ? (
@@ -244,7 +244,7 @@ export default function CategoriesPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-200 dark:border-slate-800">
+              <tr className="border-b border-border">
                 <th className="text-left px-4 py-3 text-slate-500 font-medium">Kategori</th>
                 <th className="text-left px-4 py-3 text-slate-500 font-medium hidden md:table-cell">Açıklama</th>
                 <th className="text-left px-4 py-3 text-slate-500 font-medium hidden lg:table-cell">Üst Kategori</th>
@@ -254,7 +254,7 @@ export default function CategoriesPage() {
             <tbody>
               {loading ? (
                 Array.from({ length: 6 }).map((_, i) => (
-                  <tr key={i} className="border-b border-slate-100 dark:border-slate-800/50">
+                  <tr key={i} className="border-b border-border">
                     <td colSpan={4} className="px-4 py-3">
                       <div className="h-4 bg-slate-700/40 rounded animate-pulse" style={{ width: `${60 + i * 5}%` }} />
                     </td>
@@ -292,11 +292,11 @@ export default function CategoriesPage() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border overflow-hidden">
             {/* Modal header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
               <h2 className="text-lg font-bold">{editId ? 'Kategori Düzenle' : 'Yeni Kategori'}</h2>
-              <button onClick={() => setShowModal(false)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+              <button onClick={() => setShowModal(false)} className="p-1.5 rounded-lg hover:bg-slate-800 transition-colors">
                 <X size={18} />
               </button>
             </div>
@@ -319,7 +319,7 @@ export default function CategoriesPage() {
                   value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                   placeholder="Örn: Elektronik, Giyim..."
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
                   autoFocus
                   onKeyDown={e => e.key === 'Enter' && handleSave()}
                 />
@@ -332,7 +332,7 @@ export default function CategoriesPage() {
                   onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
                   rows={2}
                   placeholder="Kategori hakkında kısa açıklama (opsiyonel)"
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-none"
+                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-none"
                 />
               </div>
 
@@ -341,7 +341,7 @@ export default function CategoriesPage() {
                 <select
                   value={form.parentCategoryId}
                   onChange={e => setForm(f => ({ ...f, parentCategoryId: e.target.value }))}
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
                 >
                   <option value="">— Ana Kategori (üst yok) —</option>
                   {categories

@@ -191,7 +191,7 @@ export default function EcommercePage() {
                   placeholder="Ad veya SKU ara..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent outline-none focus:ring-2 focus:ring-primary/50 text-sm transition-all"
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-border bg-transparent outline-none focus:ring-2 focus:ring-primary/50 text-sm transition-all"
                 />
               </div>
             </div>
@@ -202,7 +202,7 @@ export default function EcommercePage() {
               <select
                 value={categoryFilter}
                 onChange={e => { setCategoryFilter(e.target.value); setSelectedIds(new Set()); }}
-                className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-transparent text-xs outline-none focus:ring-2 focus:ring-primary/50 text-slate-400"
+                className="px-3 py-1.5 rounded-lg border border-border bg-transparent text-xs outline-none focus:ring-2 focus:ring-primary/50 text-slate-400"
               >
                 <option value="">Tüm Kategoriler</option>
                 {categories.map(c => (
@@ -210,7 +210,7 @@ export default function EcommercePage() {
                 ))}
               </select>
               {/* Visibility filter */}
-              <div className="flex rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden text-xs">
+              <div className="flex rounded-lg border border-border overflow-hidden text-xs">
                 {(['all', 'published', 'hidden'] as const).map(v => (
                   <button
                     key={v}
@@ -218,7 +218,7 @@ export default function EcommercePage() {
                     className={`px-3 py-1.5 font-medium transition-colors ${
                       visibilityFilter === v
                         ? 'bg-primary/15 text-primary'
-                        : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                        : 'text-slate-400 hover:bg-slate-800'
                     }`}
                   >
                     {v === 'all' ? 'Tümü' : v === 'published' ? '● Yayında' : '○ Gizli'}
@@ -229,7 +229,7 @@ export default function EcommercePage() {
               {(categoryFilter || visibilityFilter !== 'all' || search) && (
                 <button
                   onClick={() => { setCategoryFilter(''); setVisibilityFilter('all'); setSearch(''); }}
-                  className="flex items-center gap-1 text-xs text-slate-400 hover:text-foreground px-2 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  className="flex items-center gap-1 text-xs text-slate-400 hover:text-foreground px-2 py-1.5 rounded-lg hover:bg-slate-800 transition-colors"
                 >
                   <X size={12} /> Temizle
                 </button>
@@ -289,7 +289,7 @@ export default function EcommercePage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-slate-200 dark:border-slate-800">
+                    <tr className="border-b border-border">
                       <th className="px-3 py-3 w-10">
                         <button onClick={toggleSelectAll} className="text-slate-400 hover:text-foreground transition-colors">
                           {filtered.length > 0 && selectedIds.size === filtered.length
@@ -318,7 +318,7 @@ export default function EcommercePage() {
                         </tr>
                       )
                       : filtered.map((p) => (
-                        <tr key={p.id} className={`border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors ${selectedIds.has(p.id) ? 'bg-primary/5' : ''}`}>
+                        <tr key={p.id} className={`border-b border-border hover:bg-slate-800/20 transition-colors ${selectedIds.has(p.id) ? 'bg-primary/5' : ''}`}>
                           <td className="px-3 py-3">
                             <button onClick={() => toggleSelect(p.id)} className="text-slate-400 hover:text-primary transition-colors">
                               {selectedIds.has(p.id)
@@ -404,10 +404,10 @@ export default function EcommercePage() {
       {/* Bulk Price Modal */}
       {priceModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-sm bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800">
+          <div className="w-full max-w-sm bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
               <h2 className="text-lg font-bold">Toplu Fiyat Güncelle</h2>
-              <button onClick={() => setPriceModal(false)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"><X size={18} /></button>
+              <button onClick={() => setPriceModal(false)} className="p-1.5 rounded-lg hover:bg-slate-800"><X size={18} /></button>
             </div>
             <div className="px-6 py-5 space-y-4">
               <p className="text-sm text-slate-400">{selectedIds.size} ürünün fiyatı güncellenecek.</p>
@@ -437,7 +437,7 @@ export default function EcommercePage() {
                   value={priceValue}
                   onChange={e => setPriceValue(e.target.value)}
                   placeholder={priceType === 'Percent' ? 'Örn: -10 (%10 indirim), 5 (%5 artış)' : 'Örn: -50 (50₺ indirim), 100 (100₺ artış)'}
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                   onKeyDown={e => e.key === 'Enter' && handleBulkPrice()}
                 />
               </div>

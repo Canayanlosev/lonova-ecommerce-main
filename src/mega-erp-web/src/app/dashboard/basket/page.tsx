@@ -109,11 +109,11 @@ export default function BasketPage() {
                       <p className="text-sm text-slate-500">₺{item.unitPrice.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}</p>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      <button onClick={() => updateQty(item, -1)} className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                      <button onClick={() => updateQty(item, -1)} className="w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-slate-800 transition-colors">
                         <Minus size={14} />
                       </button>
                       <span className="w-8 text-center font-bold">{item.quantity}</span>
-                      <button onClick={() => updateQty(item, 1)} className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                      <button onClick={() => updateQty(item, 1)} className="w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-slate-800 transition-colors">
                         <Plus size={14} />
                       </button>
                       <button onClick={() => remove(item.productId)} className="ml-2 p-1.5 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors">

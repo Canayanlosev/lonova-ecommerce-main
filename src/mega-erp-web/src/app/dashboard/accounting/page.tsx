@@ -154,7 +154,7 @@ export default function AccountingPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-200 dark:border-slate-800">
+                  <tr className="border-b border-border">
                     <th className="text-left px-4 py-3 text-slate-500 font-medium">Kod</th>
                     <th className="text-left px-4 py-3 text-slate-500 font-medium">Hesap Adı</th>
                     <th className="text-left px-4 py-3 text-slate-500 font-medium hidden sm:table-cell">Tür</th>
@@ -167,7 +167,7 @@ export default function AccountingPage() {
                     : accounts.length === 0
                     ? <tr><td colSpan={4}><EmptyState icon={<CreditCard />} title="Hesap bulunamadı" /></td></tr>
                     : accounts.map((a) => (
-                      <tr key={a.id} className="border-b border-slate-100 dark:border-slate-800/50 hover:bg-surface/50 transition-colors">
+                      <tr key={a.id} className="border-b border-border hover:bg-surface/50 transition-colors">
                         <td className="px-4 py-3 font-mono text-xs text-primary">{a.code}</td>
                         <td className="px-4 py-3 font-medium">{a.name}</td>
                         <td className="px-4 py-3 text-slate-500 hidden sm:table-cell">{a.type}</td>
@@ -193,7 +193,7 @@ export default function AccountingPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-200 dark:border-slate-800">
+                  <tr className="border-b border-border">
                     <th className="text-left px-4 py-3 text-slate-500 font-medium">Tarih</th>
                     <th className="text-left px-4 py-3 text-slate-500 font-medium">Açıklama</th>
                     <th className="text-right px-4 py-3 text-slate-500 font-medium">Borç</th>
@@ -206,7 +206,7 @@ export default function AccountingPage() {
                     : entries.length === 0
                     ? <tr><td colSpan={4}><EmptyState icon={<BookOpen />} title="Yevmiye kaydı bulunamadı" description='Satış siparişlerini aktarmak için "Satış Siparişlerini Aktar" butonuna basın.' /></td></tr>
                     : entries.map((e) => (
-                      <tr key={e.id} className="border-b border-slate-100 dark:border-slate-800/50 hover:bg-surface/50 transition-colors">
+                      <tr key={e.id} className="border-b border-border hover:bg-surface/50 transition-colors">
                         <td className="px-4 py-3 text-xs text-slate-500 whitespace-nowrap">
                           {new Date(e.date).toLocaleDateString("tr-TR")}
                         </td>

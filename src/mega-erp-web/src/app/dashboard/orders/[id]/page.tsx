@@ -54,7 +54,7 @@ export default function OrderDetailPage() {
     <div className="max-w-3xl mx-auto space-y-6 animate-fade-in">
       <div className="flex items-center gap-4">
         <Link href="/dashboard/orders">
-          <button className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <button className="p-2 rounded-xl hover:bg-slate-800 transition-colors">
             <ArrowLeft size={20} />
           </button>
         </Link>
@@ -89,7 +89,7 @@ export default function OrderDetailPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-800">
+                <tr className="border-b border-border">
                   <th className="text-left px-4 py-3 text-slate-500 font-medium">Ürün</th>
                   <th className="text-center px-4 py-3 text-slate-500 font-medium">Adet</th>
                   <th className="text-right px-4 py-3 text-slate-500 font-medium">Birim Fiyat</th>
@@ -98,7 +98,7 @@ export default function OrderDetailPage() {
               </thead>
               <tbody>
                 {order.items?.map((item) => (
-                  <tr key={item.id} className="border-b border-slate-100 dark:border-slate-800/50">
+                  <tr key={item.id} className="border-b border-border">
                     <td className="px-4 py-3 font-medium">{item.productName}</td>
                     <td className="px-4 py-3 text-center">{item.quantity}</td>
                     <td className="px-4 py-3 text-right">₺{item.unitPrice.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}</td>
