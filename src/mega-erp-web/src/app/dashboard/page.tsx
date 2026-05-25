@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {
   TrendingUp, ShoppingBag, DollarSign, Package,
   AlertTriangle, BookOpen, Plus, ArrowRight, CheckCircle2,
-  Clock, Warehouse, Store, Target, Edit3, Check, X
+  Clock, Warehouse, Store, Target, Edit3, Check, X, Users
 } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
@@ -153,6 +153,18 @@ export default function DashboardPage() {
 
   const targetProgress = monthlyTarget > 0 ? Math.min(100, Math.round((currentMonthRevenue / monthlyTarget) * 100)) : 0
   const ayAdi = new Date().toLocaleDateString('tr-TR', { month: 'long' })
+
+  // Top customers from marketplace orders
+  const topCustomers = useMemo(() => {
+    const map: Record<string, { name: string; orderCount: number; totalSpent: number }> = {}
+    for (const o of mktOrders) {
+      if (!o.recipientName || o.status === 'Cancelled') continue
+      if (!map[o.recipientName]) map[o.recipientName] = { name: o.recipientName, orderCount: 0, totalSpent: 0 }
+      map[o.recipientName].orderCount += 1
+      map[o.recipientName].totalSpent += o.totalAmount ?? 0
+    }
+    return Object.values(map).sort((a, b) => b.totalSpent - a.totalSpent).slice(0, 5)
+  }, [mktOrders])
 
   const handleSaveTarget = () => {
     const val = Number(targetInput.replace(/[.\s]/g, '').replace(',', '.'))
@@ -588,6 +600,45 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Top Customers */}
+      {!mktLoading && topCustomers.length > 0 && (
+        <div className="premium-card p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+              <Users className="w-4 h-4 text-violet-400" /> En İyi Müşteriler
+            </h3>
+            <Link href="/dashboard/analytics" className="text-sm text-primary hover:text-primary/80 transition-colors flex items-center gap-1 font-medium">
+              Analitik <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+          <div className="space-y-2">
+            {topCustomers.map((c, i) => {
+              const pct = topCustomers[0].totalSpent > 0 ? (c.totalSpent / topCustomers[0].totalSpent) * 100 : 0
+              const MEDALS = ['🥇', '🥈', '🥉', '4.', '5.']
+              return (
+                <div key={c.name} className="flex items-center gap-3">
+                  <span className="text-sm w-6 shrink-0 text-center">{MEDALS[i]}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-0.5">
+                      <p className="text-sm font-semibold text-foreground truncate">{c.name}</p>
+                      <p className="text-xs font-bold text-primary shrink-0 ml-2">
+                        ₺{c.totalSpent.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                        <div className="h-full bg-violet-500 rounded-full" style={{ width: `${pct}%` }} />
+                      </div>
+                      <span className="text-[10px] text-slate-500 shrink-0">{c.orderCount} sipariş</span>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Son Siparişler */}
       <div className="premium-card p-6">
