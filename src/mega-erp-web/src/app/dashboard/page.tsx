@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
-  TrendingUp, ShoppingBag, DollarSign, Package,
+  TrendingUp, TrendingDown, ShoppingBag, DollarSign, Package,
   AlertTriangle, BookOpen, Plus, ArrowRight, CheckCircle2,
   Clock, Warehouse, Store, Target, Edit3, Check, X, Users
 } from "lucide-react";
@@ -38,21 +38,44 @@ const ORDER_STATUS: Record<string, { label: string; cls: string }> = {
   Processing: { label: 'İşleniyor',     cls: 'bg-violet-500/10 text-violet-400 border border-violet-500/20' },
 }
 
-function buildLast7Days(orders: Order[]): DayStats[] {
+function buildLastNDays(orders: Order[], n: number): DayStats[] {
   const days: DayStats[] = [];
-  for (let i = 6; i >= 0; i--) {
+  // For longer ranges, group by week or show every Nth day
+  const step = n <= 7 ? 1 : n <= 30 ? 1 : 7
+  const totalPoints = Math.ceil(n / step)
+  for (let i = totalPoints - 1; i >= 0; i--) {
     const d = new Date();
-    d.setDate(d.getDate() - i);
+    d.setDate(d.getDate() - i * step);
     const label = d.toLocaleDateString('tr-TR', { month: 'short', day: 'numeric' });
     const dateStr = d.toISOString().slice(0, 10);
-    const dayOrders = orders.filter(o => o.orderDate?.slice(0, 10) === dateStr);
-    days.push({
-      date: label,
-      orders: dayOrders.length,
-      revenue: dayOrders.reduce((s, o) => s + (o.totalAmount ?? 0), 0),
-    });
+    // For weekly step, sum the 7 days ending at d
+    if (step === 7) {
+      const weekOrders = orders.filter(o => {
+        const orderDate = o.orderDate?.slice(0, 10)
+        if (!orderDate) return false
+        const diffMs = new Date(dateStr).getTime() - new Date(orderDate).getTime()
+        return diffMs >= 0 && diffMs < 7 * 24 * 60 * 60 * 1000
+      })
+      days.push({
+        date: label,
+        orders: weekOrders.length,
+        revenue: weekOrders.reduce((s, o) => s + (o.totalAmount ?? 0), 0),
+      })
+    } else {
+      const dayOrders = orders.filter(o => o.orderDate?.slice(0, 10) === dateStr);
+      days.push({
+        date: label,
+        orders: dayOrders.length,
+        revenue: dayOrders.reduce((s, o) => s + (o.totalAmount ?? 0), 0),
+      });
+    }
   }
   return days;
+}
+
+// Keep backward-compatible alias
+function buildLast7Days(orders: Order[]): DayStats[] {
+  return buildLastNDays(orders, 7);
 }
 
 function buildToday(orders: Order[]) {
@@ -74,6 +97,7 @@ export default function DashboardPage() {
   const [lowStock, setLowStock] = useState<StockDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [alertTab, setAlertTab] = useState<'stock' | 'accounting'>('stock');
+  const [chartRange, setChartRange] = useState<7 | 30 | 90>(7);
 
   // Marketplace orders
   const [mktOrders, setMktOrders] = useState<MktOrder[]>([]);
@@ -119,6 +143,7 @@ export default function DashboardPage() {
   }, []);
 
   const today = useMemo(() => buildToday(orders), [orders]);
+  const displayChartData = useMemo(() => buildLastNDays(orders, chartRange), [orders, chartRange]);
   const totalRevenue = orders.reduce((s, o) => s + (o.totalAmount ?? 0), 0);
   const recentOrders = [...orders]
     .sort((a, b) => (b.orderDate ?? '').localeCompare(a.orderDate ?? ''))
@@ -153,6 +178,24 @@ export default function DashboardPage() {
 
   const targetProgress = monthlyTarget > 0 ? Math.min(100, Math.round((currentMonthRevenue / monthlyTarget) * 100)) : 0
   const ayAdi = new Date().toLocaleDateString('tr-TR', { month: 'long' })
+
+  // Last month revenue comparison
+  const lastMonthRevenue = useMemo(() => {
+    const now = new Date()
+    const lm = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+    const lastMonthISO = lm.toISOString().slice(0, 7)
+    const b2b = orders
+      .filter(o => o.orderDate?.slice(0, 7) === lastMonthISO)
+      .reduce((s, o) => s + (o.totalAmount ?? 0), 0)
+    const b2c = mktOrders
+      .filter(o => o.createdAt?.slice(0, 7) === lastMonthISO)
+      .reduce((s, o) => s + (o.totalAmount ?? 0), 0)
+    return b2b + b2c
+  }, [orders, mktOrders])
+
+  const momChange = lastMonthRevenue > 0
+    ? Math.round(((currentMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100)
+    : null
 
   // Top customers from marketplace orders
   const topCustomers = useMemo(() => {
@@ -399,8 +442,23 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Chart — 2 cols */}
         <div className="premium-card p-6 lg:col-span-2 min-h-[360px]">
-          <div className="mb-4">
-            <h3 className="text-base font-bold text-foreground">Son 7 Gün — Sipariş & Gelir</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-base font-bold text-foreground">
+              Son {chartRange} Gün — Sipariş & Gelir
+            </h3>
+            <div className="flex items-center gap-1 p-0.5 rounded-lg border border-border bg-background">
+              {([7, 30, 90] as const).map(r => (
+                <button
+                  key={r}
+                  onClick={() => setChartRange(r)}
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
+                    chartRange === r ? 'bg-surface text-primary border border-border/40 shadow-sm' : 'text-slate-400 hover:text-foreground'
+                  }`}
+                >
+                  {r}g
+                </button>
+              ))}
+            </div>
           </div>
           <div>
             {loading ? (
@@ -409,7 +467,7 @@ export default function DashboardPage() {
               </div>
             ) : (
               <ResponsiveContainer width="100%" height={280}>
-                <AreaChart data={chartData} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
+                <AreaChart data={displayChartData} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorOrders" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.25} />
@@ -561,12 +619,27 @@ export default function DashboardPage() {
 
         <div className="flex items-end justify-between mb-2.5">
           <div>
-            <span className="text-2xl font-black text-foreground">
-              ₺{currentMonthRevenue.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}
-            </span>
-            {monthlyTarget > 0 && (
-              <span className="text-slate-500 text-sm ml-2">/ ₺{monthlyTarget.toLocaleString('tr-TR')}</span>
-            )}
+            <div className="flex items-center gap-3 flex-wrap">
+              <span className="text-2xl font-black text-foreground">
+                ₺{currentMonthRevenue.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}
+              </span>
+              {monthlyTarget > 0 && (
+                <span className="text-slate-500 text-sm">/ ₺{monthlyTarget.toLocaleString('tr-TR')}</span>
+              )}
+              {momChange !== null && !mktLoading && !loading && (
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-bold border ${
+                  momChange >= 0
+                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                    : 'bg-red-500/10 text-red-400 border-red-500/20'
+                }`}>
+                  {momChange >= 0
+                    ? <TrendingUp className="w-3 h-3" />
+                    : <TrendingDown className="w-3 h-3" />
+                  }
+                  {momChange >= 0 ? '+' : ''}{momChange}% geçen ay
+                </span>
+              )}
+            </div>
           </div>
           {monthlyTarget > 0 && (
             <span className={`text-lg font-black ${targetProgress >= 100 ? 'text-emerald-400' : targetProgress >= 70 ? 'text-primary' : targetProgress >= 40 ? 'text-amber-400' : 'text-red-400'}`}>

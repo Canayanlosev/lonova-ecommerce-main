@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Tag, Plus, Trash2, Edit2, Check, X, RefreshCw } from 'lucide-react'
+import { Tag, Plus, Trash2, Edit2, Check, X, RefreshCw, Copy, CheckCheck } from 'lucide-react'
 import api from '@/lib/api'
 
 interface CouponDto {
@@ -35,6 +35,7 @@ export default function CouponsPage() {
   const [saving, setSaving] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
   const [error, setError] = useState('')
+  const [copiedId, setCopiedId] = useState<string | null>(null)
 
   const load = async () => {
     setLoading(true)
@@ -110,6 +111,13 @@ export default function CouponsPage() {
 
   const isExpired = (expiresAt?: string | null) =>
     expiresAt ? new Date(expiresAt) < new Date() : false
+
+  const handleCopy = (code: string, id: string) => {
+    navigator.clipboard.writeText(code).then(() => {
+      setCopiedId(id)
+      setTimeout(() => setCopiedId(null), 2000)
+    })
+  }
 
   return (
     <div className="space-y-6">
@@ -267,12 +275,23 @@ export default function CouponsPage() {
               <tbody className="divide-y divide-border">
                 {coupons.map((c) => {
                   const expired = isExpired(c.expiresAt)
+                  const usagePct = c.maxUses > 0 ? Math.min(100, (c.usedCount / c.maxUses) * 100) : null
+                  const isCopied = copiedId === c.id
                   return (
                     <tr key={c.id} className={`hover:bg-slate-800/30 transition-colors ${!c.isActive || expired ? 'opacity-60' : ''}`}>
                       <td className="px-4 py-3">
-                        <span className="font-mono font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded text-xs">
-                          {c.code}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded text-xs">
+                            {c.code}
+                          </span>
+                          <button
+                            onClick={() => handleCopy(c.code, c.id)}
+                            className="p-1 rounded text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors"
+                            title="Kopyala"
+                          >
+                            {isCopied ? <CheckCheck className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                          </button>
+                        </div>
                       </td>
                       <td className="px-4 py-3 text-foreground">
                         {c.discountType === 'Percent'
@@ -282,8 +301,22 @@ export default function CouponsPage() {
                       <td className="px-4 py-3 text-slate-400">
                         {c.minimumOrderAmount > 0 ? fmt(c.minimumOrderAmount) : '—'}
                       </td>
-                      <td className="px-4 py-3 text-slate-400">
-                        {c.usedCount}{c.maxUses > 0 ? ` / ${c.maxUses}` : ' / ∞'}
+                      <td className="px-4 py-3">
+                        <div className="space-y-1">
+                          <span className="text-slate-400 text-xs">
+                            {c.usedCount}{c.maxUses > 0 ? ` / ${c.maxUses}` : ' / ∞'}
+                          </span>
+                          {usagePct !== null && (
+                            <div className="w-24 h-1.5 rounded-full bg-slate-700 overflow-hidden">
+                              <div
+                                className={`h-full rounded-full transition-all ${
+                                  usagePct >= 90 ? 'bg-red-500' : usagePct >= 70 ? 'bg-amber-400' : 'bg-emerald-500'
+                                }`}
+                                style={{ width: `${usagePct}%` }}
+                              />
+                            </div>
+                          )}
+                        </div>
                       </td>
                       <td className="px-4 py-3 text-slate-400">
                         {c.expiresAt

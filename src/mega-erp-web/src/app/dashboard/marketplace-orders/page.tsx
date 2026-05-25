@@ -56,6 +56,9 @@ export default function MarketplaceOrdersPage() {
   const [statusFilter, setStatusFilter] = useState('')
   const [search, setSearch] = useState('')
 
+  // Detail side panel
+  const [detailOrder, setDetailOrder] = useState<AdminOrder | null>(null)
+
   // Ship modal state
   const [shipModal, setShipModal] = useState<AdminOrder | null>(null)
   const [trackingNo, setTrackingNo] = useState('')
@@ -255,7 +258,11 @@ export default function MarketplaceOrdersPage() {
                   const hasRefund = o.refundStatus === 'Requested'
 
                   return (
-                    <tr key={o.id} className="hover:bg-primary/5 hover:border-primary/10 transition-colors">
+                    <tr
+                      key={o.id}
+                      className="hover:bg-primary/5 hover:border-primary/10 transition-colors cursor-pointer"
+                      onClick={(e) => { if ((e.target as HTMLElement).closest('button,a')) return; setDetailOrder(o) }}
+                    >
                       <td className="px-4 py-3">
                         <span className="font-mono text-xs text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">{o.id.slice(0, 8).toUpperCase()}</span>
                         {o.trackingNumber && (
@@ -356,6 +363,144 @@ export default function MarketplaceOrdersPage() {
           </div>
         )}
       </div>
+
+      {/* Order Detail Side Panel */}
+      {detailOrder && (
+        <div className="fixed inset-0 z-50 flex justify-end" onClick={() => setDetailOrder(null)}>
+          <div className="w-full max-w-md h-full bg-background border-l border-border shadow-2xl flex flex-col overflow-y-auto" onClick={e => e.stopPropagation()}>
+            {/* Panel Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border sticky top-0 bg-background z-10">
+              <div>
+                <h3 className="font-bold text-foreground">Sipariş Detayı</h3>
+                <p className="text-xs text-slate-400 font-mono">#{detailOrder.id.slice(0, 8).toUpperCase()}</p>
+              </div>
+              <button
+                onClick={() => setDetailOrder(null)}
+                className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="px-6 py-5 space-y-5 flex-1">
+              {/* Status & date */}
+              <div className="flex items-center justify-between">
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold ${STATUS_CONFIG[detailOrder.status]?.color ?? 'bg-slate-700 text-slate-300'}`}>
+                  {STATUS_CONFIG[detailOrder.status]?.icon}
+                  {STATUS_CONFIG[detailOrder.status]?.label ?? detailOrder.status}
+                </span>
+                <span className="text-xs text-slate-400">
+                  {new Date(detailOrder.createdAt).toLocaleString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </div>
+
+              {/* Recipient */}
+              <div className="premium-card p-4 space-y-2">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Alıcı Bilgileri</p>
+                <div className="flex items-start justify-between">
+                  <p className="font-semibold text-foreground">{detailOrder.recipientName}</p>
+                  {detailOrder.phone && (
+                    <a href={`tel:${detailOrder.phone}`} className="text-xs text-primary hover:underline font-mono">{detailOrder.phone}</a>
+                  )}
+                </div>
+                <p className="text-sm text-slate-400 leading-relaxed">
+                  {detailOrder.addressLine}<br />
+                  {detailOrder.district && `${detailOrder.district}, `}{detailOrder.city}
+                </p>
+              </div>
+
+              {/* Payment */}
+              <div className="premium-card p-4 space-y-2">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Ödeme</p>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-slate-400">Yöntem</span>
+                  <span className="font-semibold text-foreground">{detailOrder.paymentMethod || '—'}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-slate-400">Durum</span>
+                  <span className={`font-semibold ${detailOrder.paymentStatus === 'Paid' ? 'text-emerald-400' : 'text-amber-400'}`}>{detailOrder.paymentStatus}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm border-t border-border pt-2 mt-2">
+                  <span className="text-slate-400">Toplam</span>
+                  <span className="font-black text-foreground text-base">
+                    {detailOrder.totalAmount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+                  </span>
+                </div>
+              </div>
+
+              {/* Items */}
+              <div className="premium-card p-4">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Ürünler</p>
+                <div className="flex items-center gap-2">
+                  <Package className="w-4 h-4 text-primary" />
+                  <span className="text-sm text-foreground font-semibold">{detailOrder.itemCount} ürün</span>
+                </div>
+              </div>
+
+              {/* Tracking */}
+              {detailOrder.trackingNumber && (
+                <div className="premium-card p-4 space-y-2">
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Kargo Takip</p>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-slate-400">Firma</span>
+                    <span className="font-semibold text-foreground">{detailOrder.carrierName}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-slate-400">Takip No</span>
+                    <span className="font-mono text-cyan-400 text-xs">{detailOrder.trackingNumber}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Cancel reason */}
+              {detailOrder.cancelReason && (
+                <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
+                  <p className="text-xs font-bold text-red-400 mb-1">İptal Nedeni</p>
+                  <p className="text-xs text-slate-300">{detailOrder.cancelReason}</p>
+                </div>
+              )}
+
+              {/* Refund status */}
+              {detailOrder.refundStatus && (
+                <div className="p-3 rounded-xl bg-orange-500/10 border border-orange-500/20">
+                  <p className="text-xs font-bold text-orange-400 mb-1">İade Durumu</p>
+                  <p className="text-xs text-slate-300">
+                    {detailOrder.refundStatus === 'Requested' ? 'Talep Edildi' : detailOrder.refundStatus === 'Refunded' ? 'Onaylandı' : detailOrder.refundStatus}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Panel Footer actions */}
+            <div className="px-6 py-4 border-t border-border bg-background sticky bottom-0">
+              <div className="flex gap-2">
+                {(detailOrder.status === 'Processing' || detailOrder.status === 'Confirmed' || detailOrder.status === 'Pending') && (
+                  <button
+                    onClick={() => { setShipModal(detailOrder); setDetailOrder(null); setTrackingNo(''); setCarrier(CARRIERS[0]); setShipError('') }}
+                    className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl text-sm font-bold transition-colors"
+                  >
+                    <Truck className="w-4 h-4" /> Kargoya Ver
+                  </button>
+                )}
+                {detailOrder.status === 'Shipped' && (
+                  <button
+                    onClick={() => { handleDeliver(detailOrder.id); setDetailOrder(null) }}
+                    className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-bold transition-colors"
+                  >
+                    <CheckCircle className="w-4 h-4" /> Teslim Edildi
+                  </button>
+                )}
+                <Link
+                  href={`/dashboard/marketplace-orders/${detailOrder.id}`}
+                  className="flex items-center gap-1.5 px-4 py-2.5 border border-border text-slate-400 hover:text-foreground hover:bg-slate-800 rounded-xl text-sm font-semibold transition-colors"
+                >
+                  <ExternalLink className="w-4 h-4" /> Tam Sayfa
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Ship Modal */}
       {shipModal && (

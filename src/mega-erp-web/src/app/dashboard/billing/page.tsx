@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link'
 import {
   Receipt, CheckCircle, RefreshCw, FileText, Clock, XCircle,
-  Download, Filter
+  Download, Filter, Printer, X as CloseIcon
 } from 'lucide-react'
 import { billingService } from '@/lib/services/billing.service'
 import { useToast } from '@/store/ui.store'
@@ -25,6 +25,7 @@ export default function BillingPage() {
   const [loading, setLoading] = useState(true)
   const [marking, setMarking] = useState<string | null>(null)
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+  const [printInv, setPrintInv] = useState<Invoice | null>(null)
 
   const load = () => {
     setLoading(true)
@@ -84,6 +85,7 @@ export default function BillingPage() {
   }
 
   return (
+    <>
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
@@ -242,6 +244,13 @@ export default function BillingPage() {
                                 : <CheckCircle className="w-3.5 h-3.5" />}
                             </button>
                           )}
+                          <button
+                            onClick={() => setPrintInv(inv)}
+                            className="p-1.5 rounded-lg border border-transparent hover:border-border text-slate-400 hover:text-foreground hover:bg-slate-800 transition-all"
+                            title="Yazdır / Önizle"
+                          >
+                            <Printer className="w-3.5 h-3.5" />
+                          </button>
                           <Link
                             href={`/dashboard/billing/${inv.id}`}
                             className="inline-flex items-center justify-center text-xs text-primary font-semibold hover:text-primary/80 hover:underline bg-primary/5 hover:bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-lg"
@@ -271,5 +280,118 @@ export default function BillingPage() {
         )}
       </div>
     </div>
+
+      {/* Print / Preview Modal */}
+
+      {printInv && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 print:bg-transparent" onClick={() => setPrintInv(null)}>
+          <div
+            className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-auto shadow-2xl border border-border"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Modal header (hidden in print) */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border print:hidden">
+              <h3 className="font-bold text-foreground">Fatura Önizleme</h3>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => window.print()}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-xl text-sm font-bold transition-colors"
+                >
+                  <Printer className="w-4 h-4" /> Yazdır
+                </button>
+                <button onClick={() => setPrintInv(null)} className="p-2 rounded-lg text-slate-400 hover:text-foreground hover:bg-slate-800 transition-all">
+                  <CloseIcon className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Invoice content */}
+            <div className="p-8 text-slate-800 dark:text-slate-100">
+              {/* Header */}
+              <div className="flex items-start justify-between mb-8">
+                <div>
+                  <div className="text-2xl font-black mb-1">
+                    <span className="text-slate-800 dark:text-white">Canayan</span>
+                    <span className="text-primary">Web</span>
+                  </div>
+                  <p className="text-sm text-slate-500">CanayanWeb KOBİ Platform</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-2xl font-black text-foreground">FATURA</p>
+                  <p className="font-mono text-primary font-semibold mt-1">{printInv.invoiceNumber}</p>
+                  <span className={`inline-block mt-1 px-2 py-0.5 rounded text-xs font-semibold ${STATUS_CONFIG[printInv.status]?.cls ?? ''}`}>
+                    {STATUS_CONFIG[printInv.status]?.label ?? printInv.status}
+                  </span>
+                </div>
+              </div>
+
+              {/* Dates */}
+              <div className="grid grid-cols-2 gap-4 mb-8 text-sm">
+                <div>
+                  <p className="text-slate-500 text-xs mb-1 font-medium uppercase tracking-wide">Fatura Tarihi</p>
+                  <p className="font-semibold">{new Date(printInv.invoiceDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                </div>
+                <div>
+                  <p className="text-slate-500 text-xs mb-1 font-medium uppercase tracking-wide">Vade Tarihi</p>
+                  <p className={`font-semibold ${printInv.status === 'Issued' && new Date(printInv.dueDate) < new Date() ? 'text-red-500' : ''}`}>
+                    {new Date(printInv.dueDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  </p>
+                </div>
+              </div>
+
+              {/* Items table */}
+              {printInv.items && printInv.items.length > 0 ? (
+                <table className="w-full text-sm border border-slate-200 dark:border-border rounded-xl overflow-hidden mb-6">
+                  <thead>
+                    <tr className="bg-slate-100 dark:bg-slate-800">
+                      <th className="text-left px-4 py-2.5 font-semibold text-slate-600 dark:text-slate-400">Açıklama</th>
+                      <th className="text-right px-4 py-2.5 font-semibold text-slate-600 dark:text-slate-400">Adet</th>
+                      <th className="text-right px-4 py-2.5 font-semibold text-slate-600 dark:text-slate-400">Birim Fiyat</th>
+                      <th className="text-right px-4 py-2.5 font-semibold text-slate-600 dark:text-slate-400">KDV %</th>
+                      <th className="text-right px-4 py-2.5 font-semibold text-slate-600 dark:text-slate-400">Toplam</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {printInv.items.map((item) => (
+                      <tr key={item.id} className="border-t border-slate-200 dark:border-border">
+                        <td className="px-4 py-2.5">{item.description}</td>
+                        <td className="px-4 py-2.5 text-right">{item.quantity}</td>
+                        <td className="px-4 py-2.5 text-right">₺{item.unitPrice.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}</td>
+                        <td className="px-4 py-2.5 text-right">%{item.taxRate}</td>
+                        <td className="px-4 py-2.5 text-right font-semibold">₺{item.lineTotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <div className="py-4 text-center text-sm text-slate-400 mb-6">Kalem bilgisi yok</div>
+              )}
+
+              {/* Totals */}
+              <div className="flex justify-end">
+                <div className="w-64 space-y-2 text-sm">
+                  <div className="flex justify-between text-slate-500">
+                    <span>Ara Toplam</span>
+                    <span>₺{(printInv.totalAmount - printInv.totalTax).toLocaleString('tr-TR', { minimumFractionDigits: 2 })}</span>
+                  </div>
+                  <div className="flex justify-between text-slate-500">
+                    <span>KDV</span>
+                    <span>₺{printInv.totalTax.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}</span>
+                  </div>
+                  <div className="flex justify-between font-bold text-base border-t border-slate-200 dark:border-border pt-2">
+                    <span>Toplam</span>
+                    <span className="text-primary">₺{printInv.totalAmount.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-slate-200 dark:border-border text-xs text-slate-400 text-center">
+                Bu fatura CanayanWeb KOBİ Platformu tarafından oluşturulmuştur.
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   )
 }
