@@ -7,7 +7,7 @@ import {
 
 import { SkeletonRow } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { CreditCard, BookOpen, RefreshCw, CheckCircle2, AlertTriangle, TrendingUp } from "lucide-react";
+import { CreditCard, BookOpen, RefreshCw, CheckCircle2, AlertTriangle, TrendingUp, Plus, X, Check } from "lucide-react";
 import api from "@/lib/api";
 import { ordersService } from "@/lib/services/orders.service";
 import { useToast } from "@/store/ui.store";
@@ -25,6 +25,19 @@ export default function AccountingPage() {
   const [loading, setLoading] = useState(true);
   const [importing, setImporting] = useState(false);
   const [unbookedCount, setUnbookedCount] = useState(0);
+
+  // Expense entry modal
+  const [expenseModal, setExpenseModal] = useState(false)
+  const [expForm, setExpForm] = useState({ date: '', description: '', amount: '', accountId: '' })
+  const [expSaving, setExpSaving] = useState(false)
+  const [expError, setExpError] = useState('')
+
+  const GIDER_KATEGORILER = [
+    'Kira', 'Elektrik', 'Su', 'Doğalgaz', 'İnternet', 'Telefon',
+    'Pazarlama & Reklam', 'Nakliye & Kargo', 'Ofis Malzemeleri',
+    'Bakım & Onarım', 'Sigorta', 'Vergi & SGK', 'Personel Maaşı',
+    'Diğer Gider',
+  ]
 
   const loadData = async () => {
     try {
@@ -96,6 +109,37 @@ export default function AccountingPage() {
     }
   };
 
+  // ─── Expense entry ────────────────────────────────────────────────────────
+  const openExpenseModal = () => {
+    setExpForm({ date: new Date().toISOString().slice(0, 10), description: '', amount: '', accountId: '' })
+    setExpError('')
+    setExpenseModal(true)
+  }
+
+  const handleSaveExpense = async () => {
+    if (!expForm.description.trim()) { setExpError('Açıklama zorunludur.'); return }
+    const amount = Number(expForm.amount)
+    if (!amount || amount <= 0) { setExpError('Geçerli bir tutar giriniz.'); return }
+    setExpSaving(true); setExpError('')
+    try {
+      await api.post('/api/accounting/journal-entries', {
+        date: expForm.date || new Date().toISOString().slice(0, 10),
+        description: expForm.description.trim(),
+        debit: 0,
+        credit: amount,
+        accountingAccountId: expForm.accountId || null,
+      })
+      toast.success('Gider kaydedildi.')
+      setExpenseModal(false)
+      setLoading(true)
+      await loadData()
+    } catch {
+      setExpError('Gider kaydedilemedi.')
+    } finally {
+      setExpSaving(false)
+    }
+  }
+
   // ─── P&L computation ──────────────────────────────────────────────────────
   const totalGelir = useMemo(() => entries.reduce((s, e) => s + (e.debit || 0), 0), [entries])
   const totalGider = useMemo(() => entries.reduce((s, e) => s + (e.credit || 0), 0), [entries])
@@ -143,14 +187,22 @@ export default function AccountingPage() {
         </div>
 
         {tab === "journal" && (
-          <button
-            onClick={handleImportSalesOrders}
-            disabled={importing || loading}
-            className="premium-button inline-flex items-center gap-2"
-          >
-            <RefreshCw className={`w-4 h-4 ${importing ? 'animate-spin' : ''}`} />
-            {importing ? 'Aktarılıyor…' : 'Satış Siparişlerini Aktar'}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={openExpenseModal}
+              className="flex items-center gap-2 px-3 py-2 rounded-xl border border-border text-slate-400 hover:text-foreground hover:border-primary/40 text-sm font-medium transition-all"
+            >
+              <Plus className="w-4 h-4" /> Gider Ekle
+            </button>
+            <button
+              onClick={handleImportSalesOrders}
+              disabled={importing || loading}
+              className="premium-button inline-flex items-center gap-2"
+            >
+              <RefreshCw className={`w-4 h-4 ${importing ? 'animate-spin' : ''}`} />
+              {importing ? 'Aktarılıyor…' : 'Satış Siparişlerini Aktar'}
+            </button>
+          </div>
         )}
       </div>
 
@@ -351,6 +403,88 @@ export default function AccountingPage() {
                   }
                 </tbody>
               </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ Expense Modal ═══════════════════════════════════════════════════ */}
+      {expenseModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <div className="w-full max-w-md bg-slate-900 rounded-2xl shadow-2xl border border-border">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+              <h2 className="text-base font-bold text-foreground">Gider Kaydı Ekle</h2>
+              <button onClick={() => setExpenseModal(false)} className="p-1.5 rounded-lg text-slate-400 hover:text-foreground hover:bg-slate-800 transition-all">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="px-6 py-5 space-y-4">
+              {expError && (
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+                  <AlertTriangle className="w-4 h-4 shrink-0" />{expError}
+                </div>
+              )}
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1.5">Tarih</label>
+                <input
+                  type="date"
+                  value={expForm.date}
+                  onChange={e => setExpForm(f => ({ ...f, date: e.target.value }))}
+                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1.5">Gider Kategorisi / Açıklama *</label>
+                <input
+                  list="gider-cats"
+                  value={expForm.description}
+                  onChange={e => setExpForm(f => ({ ...f, description: e.target.value }))}
+                  placeholder="Kira, Elektrik, Malzeme..."
+                  autoFocus
+                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
+                />
+                <datalist id="gider-cats">
+                  {GIDER_KATEGORILER.map(k => <option key={k} value={k} />)}
+                </datalist>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1.5">Tutar (₺) *</label>
+                <input
+                  type="number"
+                  value={expForm.amount}
+                  onChange={e => setExpForm(f => ({ ...f, amount: e.target.value }))}
+                  placeholder="0.00"
+                  min={0}
+                  step={0.01}
+                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
+                />
+              </div>
+              {accounts.length > 0 && (
+                <div>
+                  <label className="block text-xs font-medium text-slate-400 mb-1.5">Hesap (opsiyonel)</label>
+                  <select
+                    value={expForm.accountId}
+                    onChange={e => setExpForm(f => ({ ...f, accountId: e.target.value }))}
+                    className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
+                  >
+                    <option value="">— Hesap seçin —</option>
+                    {accounts.map(a => (
+                      <option key={a.id} value={a.id}>{a.code} — {a.name}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+            <div className="flex justify-end gap-3 px-6 py-4 border-t border-border">
+              <button onClick={() => setExpenseModal(false)} className="px-4 py-2 text-sm text-slate-400 hover:text-foreground transition-colors">İptal</button>
+              <button
+                onClick={handleSaveExpense}
+                disabled={expSaving}
+                className="flex items-center gap-2 px-5 py-2.5 bg-red-500 hover:bg-red-500/90 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-colors"
+              >
+                {expSaving ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Check className="w-4 h-4" />}
+                Gider Kaydet
+              </button>
             </div>
           </div>
         </div>
