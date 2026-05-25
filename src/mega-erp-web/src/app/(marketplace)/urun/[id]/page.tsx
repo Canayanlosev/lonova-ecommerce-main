@@ -169,6 +169,10 @@ export default function ProductDetailPage() {
   // Similar products
   const [similarProducts, setSimilarProducts] = useState<MarketplaceProduct[]>([])
 
+  // Recently viewed
+  type RecentItem = { id: string; name: string; imageUrl?: string; basePrice: number }
+  const [recentlyViewed, setRecentlyViewed] = useState<RecentItem[]>([])
+
   useEffect(() => {
     if (!id) return
     marketplaceService.getProduct(id)
@@ -187,6 +191,17 @@ export default function ProductDetailPage() {
             .then((res) => setSimilarProducts(res.items.filter((s) => s.id !== id).slice(0, 4)))
             .catch(() => {})
         }
+        // Save to & load recently viewed (localStorage)
+        try {
+          const RKEY = 'recently-viewed'
+          const saved: RecentItem[] = JSON.parse(localStorage.getItem(RKEY) ?? '[]')
+          const updated = [
+            { id: p.id, name: p.name, imageUrl: p.imageUrl, basePrice: p.basePrice },
+            ...saved.filter(s => s.id !== p.id),
+          ].slice(0, 8)
+          localStorage.setItem(RKEY, JSON.stringify(updated))
+          setRecentlyViewed(updated.filter(s => s.id !== p.id).slice(0, 6))
+        } catch { /* ignore */ }
       })
       .catch(() => router.push('/'))
       .finally(() => setLoading(false))
@@ -514,6 +529,36 @@ export default function ProductDetailPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {similarProducts.map((p) => (
               <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Recently Viewed */}
+      {recentlyViewed.length > 0 && (
+        <div className="mt-10 pt-8 border-t border-border">
+          <h2 className="text-base font-bold text-foreground mb-4">Son Baktıklarınız</h2>
+          <div className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1">
+            {recentlyViewed.map((p) => (
+              <Link
+                key={p.id}
+                href={`/urun/${p.id}`}
+                className="shrink-0 w-36 premium-card p-3 flex flex-col gap-2 hover:border-primary/30 transition-all group"
+              >
+                <div className="aspect-square bg-gradient-to-br from-slate-800 to-slate-700 rounded-lg overflow-hidden">
+                  {p.imageUrl ? (
+                    <Image src={p.imageUrl} alt={p.name} width={144} height={144} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Package className="w-6 h-6 text-slate-600" />
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-foreground line-clamp-2 leading-tight">{p.name}</p>
+                  <p className="text-xs text-primary font-bold mt-1">₺{p.basePrice.toLocaleString('tr-TR')}</p>
+                </div>
+              </Link>
             ))}
           </div>
         </div>
