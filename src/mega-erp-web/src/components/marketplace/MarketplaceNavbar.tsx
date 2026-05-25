@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
-import { Search, ShoppingCart, User, Menu, X, LogOut, ChevronDown, Heart, Grid3X3 } from 'lucide-react'
+import { Search, ShoppingCart, User, Menu, X, LogOut, ChevronDown, Heart, Grid3X3, Clock, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useBuyerCartStore } from '@/store/buyerCart.store'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
@@ -53,12 +53,12 @@ function CategoryNavItem({ cat, basePath }: { cat: CatalogCategory; basePath: st
 
       {open && (
         <div className="absolute top-full left-0 pt-1 z-50">
-          <div className="bg-surface border border-border rounded-xl shadow-xl shadow-black/20 py-2 min-w-[180px]">
+          <div className="bg-surface/90 backdrop-blur-xl border border-border/80 rounded-xl shadow-2xl py-2 min-w-[180px]">
             {cat.children.map((sub) => (
               <Link
                 key={sub.id}
                 href={`${href}/${sub.slug}`}
-                className="flex items-center px-4 py-2 text-sm text-slate-400 hover:text-foreground hover:bg-background transition-colors"
+                className="flex items-center px-4 py-2 text-sm text-slate-400 hover:text-primary hover:bg-primary/5 transition-colors"
               >
                 {sub.name}
               </Link>
@@ -72,10 +72,13 @@ function CategoryNavItem({ cat, basePath }: { cat: CatalogCategory; basePath: st
 
 export function MarketplaceNavbar() {
   const [searchQuery, setSearchQuery] = useState('')
+  const [searchFocused, setSearchFocused] = useState(false)
+  const [recentSearches, setRecentSearches] = useState<string[]>([])
   const [mobileOpen, setMobileOpen] = useState(false)
   const [categories, setCategories] = useState<CatalogCategory[]>([])
   const [allCatsOpen, setAllCatsOpen] = useState(false)
   const allCatsRef = useRef<HTMLDivElement>(null)
+  const searchRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
   const itemCount = useBuyerCartStore((s) => s.itemCount)
   const wishlistCount = useWishlistStore((s) => s.count())
@@ -86,22 +89,53 @@ export function MarketplaceNavbar() {
     marketplaceService.getCategories().then(setCategories).catch(() => { /* silent — static fallback omitted */ })
   }, [])
 
+  // Load recent searches from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('recent-searches')
+      if (saved) setRecentSearches(JSON.parse(saved))
+    } catch { /* ignore */ }
+  }, [])
+
   // Close "Tüm Kategoriler" panel on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (allCatsRef.current && !allCatsRef.current.contains(e.target as Node)) {
         setAllCatsOpen(false)
       }
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setSearchFocused(false)
+      }
     }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [])
 
+  const saveSearch = (q: string) => {
+    const updated = [q, ...recentSearches.filter(s => s !== q)].slice(0, 5)
+    setRecentSearches(updated)
+    try { localStorage.setItem('recent-searches', JSON.stringify(updated)) } catch { /* ignore */ }
+  }
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
+      saveSearch(searchQuery.trim())
+      setSearchFocused(false)
       router.push(`/ara?q=${encodeURIComponent(searchQuery.trim())}`)
     }
+  }
+
+  const runRecentSearch = (q: string) => {
+    setSearchQuery(q)
+    saveSearch(q)
+    setSearchFocused(false)
+    router.push(`/ara?q=${encodeURIComponent(q)}`)
+  }
+
+  const clearRecentSearches = () => {
+    setRecentSearches([])
+    try { localStorage.removeItem('recent-searches') } catch { /* ignore */ }
   }
 
   const handleLogout = () => {
@@ -129,15 +163,42 @@ export function MarketplaceNavbar() {
 
           {/* Search */}
           <form onSubmit={handleSearch} className="flex-1 max-w-2xl">
-            <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <div className="relative" ref={searchRef}>
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10 pointer-events-none" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setSearchFocused(true)}
                 placeholder="Ürün, marka veya kategori ara..."
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 transition-all placeholder:text-slate-500"
               />
+              {/* Recent searches dropdown */}
+              {searchFocused && !searchQuery && recentSearches.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-surface border border-border rounded-xl shadow-2xl z-50 overflow-hidden animate-fade-in">
+                  <div className="flex items-center justify-between px-3 py-2 border-b border-border">
+                    <span className="text-xs text-slate-500 font-medium">Son Aramalar</span>
+                    <button
+                      type="button"
+                      onClick={clearRecentSearches}
+                      className="flex items-center gap-1 text-[10px] text-slate-500 hover:text-red-400 transition-colors"
+                    >
+                      <Trash2 className="w-3 h-3" /> Temizle
+                    </button>
+                  </div>
+                  {recentSearches.map((q) => (
+                    <button
+                      key={q}
+                      type="button"
+                      onClick={() => runRecentSearch(q)}
+                      className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm text-foreground hover:bg-primary/5 transition-colors text-left"
+                    >
+                      <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </form>
 
@@ -219,7 +280,7 @@ export function MarketplaceNavbar() {
             {/* Mega dropdown */}
             {allCatsOpen && categories.length > 0 && (
               <div className="absolute top-full left-0 pt-2 z-50">
-                <div className="bg-surface border border-border rounded-2xl shadow-2xl shadow-black/30 p-4 w-[640px]">
+                <div className="bg-surface/90 backdrop-blur-xl border border-border/85 rounded-2xl shadow-2xl shadow-black/30 p-5 w-[640px]">
                   <div className="grid grid-cols-3 gap-4">
                     {categories.map((cat) => (
                       <div key={cat.id}>
@@ -235,7 +296,7 @@ export function MarketplaceNavbar() {
                             key={sub.id}
                             href={`/kategori/${cat.slug}/${sub.slug}`}
                             onClick={() => setAllCatsOpen(false)}
-                            className="block text-xs text-slate-400 hover:text-foreground py-0.5 transition-colors"
+                            className="block text-xs text-slate-400 hover:text-primary hover:bg-primary/5 py-1 px-2 rounded-lg transition-colors"
                           >
                             {sub.name}
                           </Link>
@@ -244,7 +305,7 @@ export function MarketplaceNavbar() {
                           <Link
                             href={`/kategori/${cat.slug}`}
                             onClick={() => setAllCatsOpen(false)}
-                            className="block text-xs text-primary hover:underline pt-0.5"
+                            className="block text-xs text-primary hover:underline pt-0.5 pl-2"
                           >
                             +{(cat.children?.length ?? 0) - 4} daha
                           </Link>
