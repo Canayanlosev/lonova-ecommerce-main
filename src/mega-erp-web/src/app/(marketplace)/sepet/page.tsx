@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, Package } from 'lucide-react'
+import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, Package, Tag, Check, X, Loader2 } from 'lucide-react'
 import { marketplaceService } from '@/lib/services/marketplace.service'
 import { useBuyerCartStore } from '@/store/buyerCart.store'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
@@ -14,6 +14,9 @@ export default function CartPage() {
   const { items, total, setCart, clear } = useBuyerCartStore()
   const { isAuthenticated } = useBuyerAuthStore()
   const [loading, setLoading] = useState(true)
+  const [couponCode, setCouponCode] = useState('')
+  const [couponApplying, setCouponApplying] = useState(false)
+  const [couponResult, setCouponResult] = useState<{ valid: boolean; discount: number; message?: string } | null>(null)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -43,6 +46,23 @@ export default function CartPage() {
   const handleCheckout = () => {
     router.push('/odeme')
   }
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return
+    setCouponApplying(true)
+    setCouponResult(null)
+    try {
+      const res = await marketplaceService.validateCoupon(couponCode.trim(), total)
+      setCouponResult({ valid: res.valid, discount: res.discountAmount, message: res.message })
+    } catch {
+      setCouponResult({ valid: false, discount: 0, message: 'Kupon doğrulanamadı.' })
+    } finally {
+      setCouponApplying(false)
+    }
+  }
+
+  const couponDiscount = couponResult?.valid ? couponResult.discount : 0
+  const finalTotal = Math.max(0, total - couponDiscount)
 
   if (loading) {
     return (
@@ -125,21 +145,60 @@ export default function CartPage() {
         </div>
 
         {/* Order summary */}
-        <div className="premium-card p-6 h-fit sticky top-24">
-          <h2 className="text-lg font-bold text-foreground mb-4">Sipariş Özeti</h2>
-          <div className="space-y-2 text-sm mb-4">
+        <div className="premium-card p-6 h-fit sticky top-24 space-y-4">
+          <h2 className="text-lg font-bold text-foreground">Sipariş Özeti</h2>
+
+          {/* Coupon input */}
+          <div className="space-y-2">
+            <p className="text-xs font-medium text-slate-400 flex items-center gap-1.5">
+              <Tag className="w-3 h-3" /> Kupon / İndirim Kodu
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={couponCode}
+                onChange={e => { setCouponCode(e.target.value.toUpperCase()); setCouponResult(null) }}
+                placeholder="KODU GİRİN"
+                className="flex-1 px-3 py-2 rounded-lg bg-background border border-border text-sm text-foreground uppercase font-mono placeholder:normal-case placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/25"
+                onKeyDown={e => e.key === 'Enter' && handleApplyCoupon()}
+              />
+              <button
+                onClick={handleApplyCoupon}
+                disabled={couponApplying || !couponCode.trim()}
+                className="px-3 py-2 rounded-lg bg-primary/10 text-primary text-xs font-bold hover:bg-primary hover:text-white transition-colors disabled:opacity-40"
+              >
+                {couponApplying ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Uygula'}
+              </button>
+            </div>
+            {couponResult && (
+              <div className={`flex items-center gap-1.5 text-xs font-medium ${couponResult.valid ? 'text-emerald-400' : 'text-red-400'}`}>
+                {couponResult.valid ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
+                {couponResult.valid
+                  ? `${couponResult.discount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })} indirim uygulandı!`
+                  : (couponResult.message ?? 'Geçersiz kupon kodu.')}
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-2 text-sm">
             <div className="flex justify-between text-slate-400">
               <span>Ürünler ({items.reduce((s, i) => s + i.quantity, 0)} adet)</span>
               <span>{total.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
             </div>
+            {couponDiscount > 0 && (
+              <div className="flex justify-between text-emerald-400">
+                <span>Kupon İndirimi</span>
+                <span>− {couponDiscount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+              </div>
+            )}
             <div className="flex justify-between text-slate-400">
               <span>Kargo</span>
               <span className="text-green-400">Ücretsiz</span>
             </div>
           </div>
-          <div className="border-t border-border pt-3 flex justify-between font-bold text-foreground mb-5">
+          <div className="border-t border-border pt-3 flex justify-between font-bold text-foreground">
             <span>Toplam</span>
-            <span className="text-primary text-lg">{total.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+            <span className="text-primary text-lg">{finalTotal.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
           </div>
           <button
             onClick={handleCheckout}
