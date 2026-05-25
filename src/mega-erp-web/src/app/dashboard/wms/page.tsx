@@ -5,7 +5,7 @@ import Link from 'next/link'
 import {
   Warehouse, Package, TrendingDown, Plus, RefreshCw,
   Loader2, AlertTriangle, ExternalLink, Truck,
-  ShoppingBag, Check, X, Edit2, Trash2, ChevronDown, ChevronUp
+  ShoppingBag, Check, X, Edit2, Trash2, ChevronDown, ChevronUp, DollarSign
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import api from '@/lib/api'
@@ -60,6 +60,7 @@ export default function WMSPage() {
   const [bins, setBins] = useState<BinDto[]>([])
   const [stock, setStock] = useState<StockDto[]>([])
   const [productNames, setProductNames] = useState<Record<string, string>>({})
+  const [productPrices, setProductPrices] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<'warehouses' | 'stock' | 'movements' | 'suppliers' | 'purchase-orders'>('warehouses')
 
@@ -105,8 +106,10 @@ export default function WMSPage() {
       setWarehouses(wh)
       setStock(st)
       const map: Record<string, string> = {}
-      prods.forEach(p => { map[p.id] = p.name })
+      const priceMap: Record<string, number> = {}
+      prods.forEach(p => { map[p.id] = p.name; priceMap[p.id] = p.basePrice ?? 0 })
       setProductNames(map)
+      setProductPrices(priceMap)
     }).catch(() => {}).finally(() => setLoading(false))
   }, [])
 
@@ -137,6 +140,10 @@ export default function WMSPage() {
 
   // ─ Computed ──────────────────────────────────────────────────────────────
   const lowStockItems = useMemo(() => stock.filter(s => s.isLowStock), [stock])
+  const totalStockValue = useMemo(
+    () => stock.reduce((s, item) => s + (productPrices[item.productId] ?? 0) * item.quantity, 0),
+    [stock, productPrices]
+  )
   const resolveProductName = (id: string) => productNames[id] ?? `#${id.slice(0, 8)}…`
 
   // ─ Warehouse handlers ─────────────────────────────────────────────────────
@@ -317,19 +324,24 @@ export default function WMSPage() {
       )}
 
       {/* Summary cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        {[
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
+        {([
           { label: 'Toplam Depo', value: warehouses.length, icon: Warehouse, color: 'text-primary', border: 'border-primary/20', bg: 'bg-primary/5' },
           { label: 'Toplam SKU', value: stock.length, icon: Package, color: 'text-secondary', border: 'border-secondary/20', bg: 'bg-secondary/5' },
           { label: 'Düşük Stok', value: lowStockItems.length, icon: TrendingDown, color: 'text-amber-400', border: 'border-amber-500/20', bg: 'bg-amber-500/5' },
           { label: 'Tedarikçi', value: suppliersLoaded ? suppliers.length : '—', icon: Truck, color: 'text-cyan-400', border: 'border-cyan-500/20', bg: 'bg-cyan-500/5' },
-        ].map(({ label, value, icon: Icon, color, border, bg }) => (
+          {
+            label: 'Stok Değeri',
+            value: totalStockValue > 0 ? `₺${totalStockValue.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}` : '—',
+            icon: DollarSign, color: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'bg-emerald-500/5',
+          },
+        ] as const).map(({ label, value, icon: Icon, color, border, bg }) => (
           <div key={label} className="premium-card p-5 flex items-center gap-4">
             <div className={`w-10 h-10 rounded-xl ${bg} ${border} border flex items-center justify-center shrink-0`}>
               <Icon className={`w-5 h-5 ${color}`} />
             </div>
-            <div>
-              <p className="text-2xl font-black text-foreground">{value}</p>
+            <div className="min-w-0">
+              <p className={`font-black text-foreground ${String(value).length > 8 ? 'text-base' : 'text-2xl'}`}>{value}</p>
               <p className="text-xs text-slate-400 mt-0.5">{label}</p>
             </div>
           </div>
