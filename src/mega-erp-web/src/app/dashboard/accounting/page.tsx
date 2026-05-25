@@ -7,13 +7,13 @@ import {
 
 import { SkeletonRow } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { CreditCard, BookOpen, RefreshCw, CheckCircle2, AlertTriangle, TrendingUp, Plus, X, Check } from "lucide-react";
+import { CreditCard, BookOpen, RefreshCw, CheckCircle2, AlertTriangle, TrendingUp, Plus, X, Check, Target, Edit3 } from "lucide-react";
 import api from "@/lib/api";
 import { ordersService } from "@/lib/services/orders.service";
 import { useToast } from "@/store/ui.store";
 import type { AccountingAccount, JournalEntry } from "@/types/api.types";
 
-type Tab = "accounts" | "journal" | "rapor";
+type Tab = "accounts" | "journal" | "rapor" | "bütçe";
 
 const BOOKED_STATUSES = ['Paid', 'Shipped', 'Delivered'];
 
@@ -31,6 +31,26 @@ export default function AccountingPage() {
   const [expForm, setExpForm] = useState({ date: '', description: '', amount: '', accountId: '' })
   const [expSaving, setExpSaving] = useState(false)
   const [expError, setExpError] = useState('')
+
+  // Budget tracking
+  const BUDGET_KEY = 'accounting-budgets'
+  const [budgets, setBudgets] = useState<Record<string, number>>({})
+  const [editingBudget, setEditingBudget] = useState<string | null>(null)
+  const [budgetInput, setBudgetInput] = useState('')
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(BUDGET_KEY) ?? '{}')
+      setBudgets(saved)
+    } catch { /* */ }
+  }, [])
+
+  const saveBudget = (category: string, value: number) => {
+    const next = { ...budgets, [category]: value }
+    setBudgets(next)
+    try { localStorage.setItem(BUDGET_KEY, JSON.stringify(next)) } catch { /* */ }
+    setEditingBudget(null)
+  }
 
   const GIDER_KATEGORILER = [
     'Kira', 'Elektrik', 'Su', 'Doğalgaz', 'İnternet', 'Telefon',
@@ -140,6 +160,20 @@ export default function AccountingPage() {
     }
   }
 
+  // ─── Spending per category (this month) ────────────────────────────────────
+  const currentMonthISO = useMemo(() => new Date().toISOString().slice(0, 7), [])
+  const spendingByCategory = useMemo(() => {
+    const map: Record<string, number> = {}
+    for (const e of entries) {
+      if (!e.credit || e.credit <= 0) continue
+      if (e.date.slice(0, 7) !== currentMonthISO) continue
+      const matched = GIDER_KATEGORILER.find(k => e.description.includes(k))
+      const key = matched ?? 'Diğer Gider'
+      map[key] = (map[key] ?? 0) + e.credit
+    }
+    return map
+  }, [entries, currentMonthISO])
+
   // ─── P&L computation ──────────────────────────────────────────────────────
   const totalGelir = useMemo(() => entries.reduce((s, e) => s + (e.debit || 0), 0), [entries])
   const totalGider = useMemo(() => entries.reduce((s, e) => s + (e.credit || 0), 0), [entries])
@@ -174,7 +208,7 @@ export default function AccountingPage() {
       {/* Tab bar + import button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex gap-1.5 p-1 bg-slate-900/40 border border-border/80 rounded-xl w-fit">
-          {([["accounts", "Hesaplar", CreditCard], ["journal", "Yevmiye", BookOpen], ["rapor", "Kâr-Zarar", TrendingUp]] as const).map(([id, label, Icon]) => (
+          {([["accounts", "Hesaplar", CreditCard], ["journal", "Yevmiye", BookOpen], ["rapor", "Kâr-Zarar", TrendingUp], ["bütçe", "Bütçe Takibi", Target]] as const).map(([id, label, Icon]) => (
             <button
               key={id}
               onClick={() => setTab(id)}
@@ -405,6 +439,138 @@ export default function AccountingPage() {
               </table>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ═══ Bütçe Takibi Tab ═══════════════════════════════════════════════ */}
+      {tab === "bütçe" && (
+        <div className="space-y-5">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-slate-400">
+                {new Date().toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })} — aylık bütçe karşılaştırması
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5 text-xs text-slate-500">
+              <Edit3 className="w-3 h-3" /> Bütçeyi düzenlemek için kaleme tıklayın
+            </div>
+          </div>
+
+          {/* Budget info banner */}
+          <div className="flex items-start gap-3 p-4 rounded-xl bg-primary/5 border border-primary/20 text-primary text-xs">
+            <Target className="w-4 h-4 mt-0.5 shrink-0" />
+            <div>
+              Gider kategorileri için aylık bütçe belirleyin. Gerçek harcamalar yevmiye kayıtlarından otomatik hesaplanır.
+              Bütçeler yerel olarak kaydedilir (bu cihaza özel).
+            </div>
+          </div>
+
+          {/* Category budget rows */}
+          <div className="premium-card overflow-hidden">
+            <div className="px-5 py-3 border-b border-border">
+              <div className="grid grid-cols-5 text-xs text-slate-500 font-medium">
+                <span className="col-span-2">Kategori</span>
+                <span className="text-right">Bu Ay Harcama</span>
+                <span className="text-right">Bütçe</span>
+                <span className="text-right">Durum</span>
+              </div>
+            </div>
+            <div className="divide-y divide-border">
+              {GIDER_KATEGORILER.map(cat => {
+                const spent = spendingByCategory[cat] ?? 0
+                const budget = budgets[cat] ?? 0
+                const pct = budget > 0 ? Math.min(100, (spent / budget) * 100) : 0
+                const isOver = budget > 0 && spent > budget
+                const isWarning = budget > 0 && pct >= 80 && !isOver
+                const barColor = isOver ? 'bg-red-500' : isWarning ? 'bg-amber-400' : 'bg-primary'
+                const isEditing = editingBudget === cat
+
+                return (
+                  <div key={cat} className="px-5 py-3">
+                    <div className="grid grid-cols-5 items-center gap-2 mb-1.5">
+                      <span className="col-span-2 text-sm font-medium text-foreground">{cat}</span>
+                      <span className={`text-right text-sm font-semibold ${spent > 0 ? 'text-red-400' : 'text-slate-500'}`}>
+                        {spent > 0 ? `₺${spent.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}` : '—'}
+                      </span>
+                      <div className="text-right">
+                        {isEditing ? (
+                          <div className="flex items-center justify-end gap-1">
+                            <input
+                              type="number"
+                              value={budgetInput}
+                              onChange={e => setBudgetInput(e.target.value)}
+                              className="w-24 px-2 py-1 rounded-lg bg-background border border-primary/40 text-sm text-foreground text-right focus:outline-none"
+                              autoFocus
+                              onKeyDown={e => {
+                                if (e.key === 'Enter') saveBudget(cat, Number(budgetInput))
+                                if (e.key === 'Escape') setEditingBudget(null)
+                              }}
+                            />
+                            <button onClick={() => saveBudget(cat, Number(budgetInput))} className="p-1 text-emerald-400 hover:bg-emerald-500/10 rounded">
+                              <Check className="w-3 h-3" />
+                            </button>
+                            <button onClick={() => setEditingBudget(null)} className="p-1 text-slate-400 hover:bg-slate-700 rounded">
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => { setEditingBudget(cat); setBudgetInput(String(budget || '')) }}
+                            className="flex items-center justify-end gap-1 text-sm text-slate-400 hover:text-foreground transition-colors group"
+                          >
+                            {budget > 0 ? `₺${budget.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}` : 'Belirle'}
+                            <Edit3 className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </button>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        {budget > 0 ? (
+                          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                            isOver ? 'bg-red-500/15 text-red-400' :
+                            isWarning ? 'bg-amber-500/15 text-amber-400' :
+                            'bg-emerald-500/15 text-emerald-400'
+                          }`}>
+                            {isOver ? `%${Math.round(pct)} AŞİLDI` : `%${Math.round(pct)}`}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-slate-600">—</span>
+                        )}
+                      </div>
+                    </div>
+                    {budget > 0 && (
+                      <div className="w-full bg-slate-800 rounded-full h-1.5">
+                        <div
+                          className={`h-1.5 rounded-full transition-all duration-500 ${barColor}`}
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Month total */}
+          {Object.keys(spendingByCategory).length > 0 && (
+            <div className="premium-card p-5 flex items-center justify-between">
+              <div>
+                <p className="text-xs text-slate-400">Bu Ay Toplam Gider</p>
+                <p className="text-2xl font-black text-red-400">
+                  ₺{Object.values(spendingByCategory).reduce((s, v) => s + v, 0).toLocaleString('tr-TR', { maximumFractionDigits: 0 })}
+                </p>
+              </div>
+              {Object.values(budgets).some(b => b > 0) && (
+                <div className="text-right">
+                  <p className="text-xs text-slate-400">Toplam Bütçe</p>
+                  <p className="text-2xl font-black text-foreground">
+                    ₺{Object.values(budgets).reduce((s, v) => s + (v || 0), 0).toLocaleString('tr-TR', { maximumFractionDigits: 0 })}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
