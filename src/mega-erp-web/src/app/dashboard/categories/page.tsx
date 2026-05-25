@@ -48,7 +48,7 @@ function CategoryRow({
   const hasChildren = node.children.length > 0
   return (
     <>
-      <tr className="border-b border-border hover:bg-slate-800/20 transition-colors">
+      <tr className="hover:bg-primary/5 hover:border-primary/10 transition-colors">
         <td className="px-4 py-3">
           <div className="flex items-center gap-2" style={{ paddingLeft: depth * 20 }}>
             {hasChildren ? (
@@ -60,32 +60,32 @@ function CategoryRow({
                 {depth > 0 && <ChevronRight size={14} className="text-slate-600" />}
               </span>
             )}
-            <span className="font-medium text-sm">{node.name}</span>
+            <span className="font-semibold text-sm text-foreground">{node.name}</span>
             {hasChildren && (
-              <span className="ml-1 px-1.5 py-0.5 text-[10px] bg-primary/15 text-primary rounded-full font-semibold">
+              <span className="ml-1 px-1.5 py-0.5 text-[10px] bg-primary/10 text-primary border border-primary/20 rounded-full font-bold">
                 {node.children.length}
               </span>
             )}
           </div>
         </td>
-        <td className="px-4 py-3 text-slate-500 text-sm hidden md:table-cell">
+        <td className="px-4 py-3 text-slate-400 text-sm hidden md:table-cell">
           {node.description || <span className="text-slate-600 italic text-xs">—</span>}
         </td>
-        <td className="px-4 py-3 text-slate-500 text-xs hidden lg:table-cell font-mono">
+        <td className="px-4 py-3 text-slate-400 text-xs hidden lg:table-cell font-mono font-semibold">
           {allCategories.find(c => c.id === node.parentCategoryId)?.name ?? (node.parentCategoryId ? '...' : <span className="text-slate-600">—</span>)}
         </td>
         <td className="px-4 py-3 text-right">
           <div className="flex items-center justify-end gap-2">
             <button
               onClick={() => onEdit(node)}
-              className="p-1.5 rounded-lg hover:bg-primary/10 text-primary transition-colors"
+              className="p-1.5 rounded-lg border border-transparent hover:border-border hover:bg-primary/10 text-primary transition-colors"
               title="Düzenle"
             >
               <PencilLine size={15} />
             </button>
             <button
               onClick={() => onDelete(node)}
-              className="p-1.5 rounded-lg hover:bg-red-500/10 text-red-500 transition-colors"
+              className="p-1.5 rounded-lg border border-transparent hover:border-border hover:bg-red-500/10 text-red-500 transition-colors"
               title="Sil"
             >
               <Trash2 size={15} />
@@ -244,19 +244,19 @@ export default function CategoriesPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border">
-                <th className="text-left px-4 py-3 text-slate-500 font-medium">Kategori</th>
-                <th className="text-left px-4 py-3 text-slate-500 font-medium hidden md:table-cell">Açıklama</th>
-                <th className="text-left px-4 py-3 text-slate-500 font-medium hidden lg:table-cell">Üst Kategori</th>
-                <th className="text-right px-4 py-3 text-slate-500 font-medium">İşlem</th>
+              <tr className="border-b border-border text-xs text-slate-400">
+                <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Kategori</th>
+                <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden md:table-cell">Açıklama</th>
+                <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden lg:table-cell">Üst Kategori</th>
+                <th className="text-right px-4 py-3 font-semibold uppercase tracking-wider">İşlem</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-border">
               {loading ? (
                 Array.from({ length: 6 }).map((_, i) => (
-                  <tr key={i} className="border-b border-border">
-                    <td colSpan={4} className="px-4 py-3">
-                      <div className="h-4 bg-slate-700/40 rounded animate-pulse" style={{ width: `${60 + i * 5}%` }} />
+                  <tr key={i}>
+                    <td colSpan={4} className="px-4 py-4">
+                      <div className="h-4 bg-slate-800 rounded animate-pulse" style={{ width: `${60 + i * 5}%` }} />
                     </td>
                   </tr>
                 ))
@@ -264,9 +264,9 @@ export default function CategoriesPage() {
                 <tr>
                   <td colSpan={4}>
                     <div className="flex flex-col items-center py-16 gap-3 text-slate-400">
-                      <Folder className="w-10 h-10 text-slate-600" />
+                      <Folder className="w-10 h-10 text-slate-600 animate-pulse" />
                       <p className="font-medium">Henüz kategori yok</p>
-                      <button onClick={openCreate} className="text-primary hover:underline text-sm">
+                      <button onClick={openCreate} className="text-primary hover:underline text-sm font-semibold">
                         İlk kategoriyi oluştur
                       </button>
                     </div>
@@ -291,12 +291,12 @@ export default function CategoriesPage() {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-md bg-background rounded-2xl shadow-2xl border border-border overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+          <div className="w-full max-w-md bg-slate-900 border border-border/80 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.4)] overflow-hidden">
             {/* Modal header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-              <h2 className="text-lg font-bold">{editId ? 'Kategori Düzenle' : 'Yeni Kategori'}</h2>
-              <button onClick={() => setShowModal(false)} className="p-1.5 rounded-lg hover:bg-slate-800 transition-colors">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-slate-950/20">
+              <h2 className="text-base font-bold text-foreground">{editId ? 'Kategori Düzenle' : 'Yeni Kategori'}</h2>
+              <button onClick={() => setShowModal(false)} className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors">
                 <X size={18} />
               </button>
             </div>
@@ -304,7 +304,7 @@ export default function CategoriesPage() {
             {/* Modal body */}
             <div className="px-6 py-5 space-y-4">
               {formError && (
-                <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold">
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   {formError}
                 </div>
@@ -319,7 +319,7 @@ export default function CategoriesPage() {
                   value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                   placeholder="Örn: Elektronik, Giyim..."
-                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-slate-950/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all text-foreground"
                   autoFocus
                   onKeyDown={e => e.key === 'Enter' && handleSave()}
                 />
@@ -332,7 +332,7 @@ export default function CategoriesPage() {
                   onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
                   rows={2}
                   placeholder="Kategori hakkında kısa açıklama (opsiyonel)"
-                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-none"
+                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-slate-950/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all resize-none text-foreground"
                 />
               </div>
 
@@ -341,7 +341,7 @@ export default function CategoriesPage() {
                 <select
                   value={form.parentCategoryId}
                   onChange={e => setForm(f => ({ ...f, parentCategoryId: e.target.value }))}
-                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-slate-950/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all text-foreground font-semibold cursor-pointer"
                 >
                   <option value="">— Ana Kategori (üst yok) —</option>
                   {categories
@@ -356,17 +356,17 @@ export default function CategoriesPage() {
             </div>
 
             {/* Modal footer */}
-            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border">
+            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border bg-slate-950/20">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 text-sm font-medium text-slate-500 hover:text-foreground transition-colors"
+                className="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white transition-colors"
               >
                 İptal
               </button>
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex items-center gap-2 px-5 py-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-colors"
+                className="flex items-center gap-2 px-5 py-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white rounded-xl text-sm font-bold transition-colors shadow-md shadow-primary/20"
               >
                 {saving ? (
                   <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

@@ -11,10 +11,10 @@ import { useToast } from '@/store/ui.store'
 import type { Invoice } from '@/types/api.types'
 
 const STATUS_CONFIG: Record<string, { label: string; cls: string }> = {
-  Draft:     { label: 'Taslak',  cls: 'bg-slate-700 text-slate-300' },
-  Issued:    { label: 'Kesildi', cls: 'bg-primary/15 text-primary' },
-  Paid:      { label: 'Ödendi',  cls: 'bg-emerald-500/15 text-emerald-400' },
-  Cancelled: { label: 'İptal',   cls: 'bg-red-500/15 text-red-400' },
+  Draft:     { label: 'Taslak',  cls: 'bg-slate-800 text-slate-400 border border-border/80' },
+  Issued:    { label: 'Kesildi', cls: 'bg-primary/10 text-primary border border-primary/20' },
+  Paid:      { label: 'Ödendi',  cls: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' },
+  Cancelled: { label: 'İptal',   cls: 'bg-red-500/10 text-red-400 border border-red-500/20' },
 }
 
 type StatusFilter = 'all' | 'Draft' | 'Issued' | 'Paid' | 'Cancelled'
@@ -147,21 +147,23 @@ export default function BillingPage() {
       {/* Table */}
       <div className="premium-card overflow-hidden">
         {/* Filter bar */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-border overflow-x-auto">
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-border overflow-x-auto bg-slate-950/20 dark:bg-slate-900/40 p-1">
           <Filter className="w-4 h-4 text-slate-400 shrink-0" />
-          {(['all', 'Issued', 'Paid', 'Draft', 'Cancelled'] as const).map((s) => (
-            <button
-              key={s}
-              onClick={() => setStatusFilter(s)}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
-                statusFilter === s
-                  ? 'bg-primary/15 text-primary border border-primary/30'
-                  : 'text-slate-400 hover:text-foreground hover:bg-slate-800'
-              }`}
-            >
-              {s === 'all' ? `Tümü (${invoices.length})` : `${STATUS_CONFIG[s]?.label} (${invoices.filter(i => i.status === s).length})`}
-            </button>
-          ))}
+          <div className="flex rounded-lg border border-border/80 p-0.5 bg-background text-xs">
+            {(['all', 'Issued', 'Paid', 'Draft', 'Cancelled'] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => setStatusFilter(s)}
+                className={`px-3 py-1 rounded-md text-xs font-semibold whitespace-nowrap transition-all ${
+                  statusFilter === s
+                    ? 'bg-surface text-primary border border-border/40 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                {s === 'all' ? `Tümü (${invoices.length})` : `${STATUS_CONFIG[s]?.label} (${invoices.filter(i => i.status === s).length})`}
+              </button>
+            ))}
+          </div>
         </div>
 
         {loading ? (
@@ -185,14 +187,14 @@ export default function BillingPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-border text-xs text-slate-500">
-                  <th className="text-left px-4 py-3 font-medium">Fatura No</th>
-                  <th className="text-left px-4 py-3 font-medium hidden sm:table-cell">Tarih</th>
-                  <th className="text-left px-4 py-3 font-medium hidden md:table-cell">Vade</th>
-                  <th className="text-right px-4 py-3 font-medium">Tutar</th>
-                  <th className="text-right px-4 py-3 font-medium hidden lg:table-cell">Vergi</th>
-                  <th className="text-left px-4 py-3 font-medium">Durum</th>
-                  <th className="text-right px-4 py-3 font-medium">İşlem</th>
+                <tr className="border-b border-border text-xs text-slate-400">
+                  <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Fatura No</th>
+                  <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden sm:table-cell">Tarih</th>
+                  <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden md:table-cell">Vade</th>
+                  <th className="text-right px-4 py-3 font-semibold uppercase tracking-wider">Tutar</th>
+                  <th className="text-right px-4 py-3 font-semibold uppercase tracking-wider hidden lg:table-cell">Vergi</th>
+                  <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Durum</th>
+                  <th className="text-right px-4 py-3 font-semibold uppercase tracking-wider">İşlem</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -200,9 +202,9 @@ export default function BillingPage() {
                   const sc = STATUS_CONFIG[inv.status] ?? { label: inv.status, cls: 'bg-slate-700 text-slate-300' }
                   const isPastDue = inv.status === 'Issued' && new Date(inv.dueDate) < new Date()
                   return (
-                    <tr key={inv.id} className="hover:bg-slate-800/20 transition-colors">
+                    <tr key={inv.id} className="hover:bg-primary/5 hover:border-primary/10 transition-colors">
                       <td className="px-4 py-3">
-                        <span className="font-mono text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded">
+                        <span className="font-mono text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">
                           {inv.invoiceNumber}
                         </span>
                       </td>
@@ -232,7 +234,7 @@ export default function BillingPage() {
                             <button
                               onClick={() => markPaid(inv.id)}
                               disabled={marking === inv.id}
-                              className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all disabled:opacity-50"
+                              className="p-1.5 rounded-lg border border-transparent hover:border-border text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all disabled:opacity-50"
                               title="Ödendi Olarak İşaretle"
                             >
                               {marking === inv.id
@@ -242,7 +244,7 @@ export default function BillingPage() {
                           )}
                           <Link
                             href={`/dashboard/billing/${inv.id}`}
-                            className="text-xs text-primary hover:text-primary/80 hover:underline"
+                            className="inline-flex items-center justify-center text-xs text-primary font-semibold hover:text-primary/80 hover:underline bg-primary/5 hover:bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-lg"
                           >
                             Detay
                           </Link>

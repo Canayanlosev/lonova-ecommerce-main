@@ -36,12 +36,12 @@ interface AdminOrdersResponse {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  Pending:    { label: 'Beklemede',     color: 'bg-yellow-500/15 text-yellow-400',  icon: <Clock className="w-3.5 h-3.5" /> },
-  Processing: { label: 'İşleniyor',     color: 'bg-primary/15 text-primary',      icon: <Clock className="w-3.5 h-3.5" /> },
-  Confirmed:  { label: 'Onaylandı',     color: 'bg-secondary/15 text-secondary',  icon: <CheckCircle className="w-3.5 h-3.5" /> },
-  Shipped:    { label: 'Kargoda',       color: 'bg-cyan-500/15 text-cyan-400',      icon: <Truck className="w-3.5 h-3.5" /> },
-  Delivered:  { label: 'Teslim Edildi', color: 'bg-green-500/15 text-green-400',    icon: <CheckCircle className="w-3.5 h-3.5" /> },
-  Cancelled:  { label: 'İptal',         color: 'bg-red-500/15 text-red-400',        icon: <XCircle className="w-3.5 h-3.5" /> },
+  Pending:    { label: 'Beklemede',     color: 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20',  icon: <Clock className="w-3.5 h-3.5" /> },
+  Processing: { label: 'İşleniyor',     color: 'bg-primary/10 text-primary border border-primary/20',      icon: <Clock className="w-3.5 h-3.5" /> },
+  Confirmed:  { label: 'Onaylandı',     color: 'bg-secondary/10 text-secondary border border-secondary/20',  icon: <CheckCircle className="w-3.5 h-3.5" /> },
+  Shipped:    { label: 'Kargoda',       color: 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20',      icon: <Truck className="w-3.5 h-3.5" /> },
+  Delivered:  { label: 'Teslim Edildi', color: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20',    icon: <CheckCircle className="w-3.5 h-3.5" /> },
+  Cancelled:  { label: 'İptal',         color: 'bg-red-500/10 text-red-400 border border-red-500/20',        icon: <XCircle className="w-3.5 h-3.5" /> },
 }
 
 const CARRIERS = ['Yurtiçi Kargo', 'Aras Kargo', 'MNG Kargo', 'PTT Kargo', 'Sürat Kargo', 'DHL', 'UPS', 'FedEx', 'Trendyol Express']
@@ -186,12 +186,12 @@ export default function MarketplaceOrdersPage() {
       <div className="flex gap-3 flex-wrap">
         {/* Search */}
         <div className="relative flex-1 min-w-52">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Sipariş no, alıcı adı, şehir..."
-            className="w-full bg-slate-800 border border-border rounded-xl pl-9 pr-4 py-2.5 text-sm text-foreground placeholder-slate-500 focus:outline-none focus:border-primary"
+            className="w-full bg-slate-950/20 dark:bg-slate-900/40 border border-border rounded-xl pl-9 pr-4 py-2.5 text-sm text-foreground placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
           />
         </div>
         {/* Status filter */}
@@ -199,14 +199,14 @@ export default function MarketplaceOrdersPage() {
           <select
             value={statusFilter}
             onChange={e => { setStatusFilter(e.target.value); setPage(1) }}
-            className="appearance-none bg-slate-800 border border-border rounded-xl pl-3 pr-8 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary cursor-pointer"
+            className="appearance-none bg-slate-950/20 dark:bg-slate-900/40 border border-border rounded-xl pl-3 pr-9 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/25 cursor-pointer font-semibold"
           >
             <option value="">Tüm Durumlar</option>
             {Object.entries(STATUS_CONFIG).map(([k, v]) => (
               <option key={k} value={k}>{v.label}</option>
             ))}
           </select>
-          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
         </div>
       </div>
 
@@ -221,14 +221,14 @@ export default function MarketplaceOrdersPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border text-xs text-slate-500">
-                <th className="text-left px-4 py-3 font-medium">Sipariş</th>
-                <th className="text-left px-4 py-3 font-medium hidden md:table-cell">Tarih</th>
-                <th className="text-left px-4 py-3 font-medium">Alıcı</th>
-                <th className="text-left px-4 py-3 font-medium hidden lg:table-cell">Ürün</th>
-                <th className="text-left px-4 py-3 font-medium">Durum</th>
-                <th className="text-right px-4 py-3 font-medium">Tutar</th>
-                <th className="text-right px-4 py-3 font-medium">İşlem</th>
+              <tr className="border-b border-border text-xs text-slate-400">
+                <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Sipariş</th>
+                <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden md:table-cell">Tarih</th>
+                <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Alıcı</th>
+                <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden lg:table-cell">Ürün</th>
+                <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Durum</th>
+                <th className="text-right px-4 py-3 font-semibold uppercase tracking-wider">Tutar</th>
+                <th className="text-right px-4 py-3 font-semibold uppercase tracking-wider">İşlem</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -236,7 +236,7 @@ export default function MarketplaceOrdersPage() {
                 ? Array.from({ length: 6 }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
                     {Array.from({ length: 7 }).map((__, j) => (
-                      <td key={j} className="px-4 py-3"><div className="h-4 bg-slate-700 rounded w-full" /></td>
+                      <td key={j} className="px-4 py-3"><div className="h-4 bg-slate-800 rounded w-full" /></td>
                     ))}
                   </tr>
                 ))
@@ -255,9 +255,9 @@ export default function MarketplaceOrdersPage() {
                   const hasRefund = o.refundStatus === 'Requested'
 
                   return (
-                    <tr key={o.id} className="hover:bg-slate-800/30 transition-colors">
+                    <tr key={o.id} className="hover:bg-primary/5 hover:border-primary/10 transition-colors">
                       <td className="px-4 py-3">
-                        <span className="font-mono text-xs text-slate-400">{o.id.slice(0, 8).toUpperCase()}</span>
+                        <span className="font-mono text-xs text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">{o.id.slice(0, 8).toUpperCase()}</span>
                         {o.trackingNumber && (
                           <p className="text-xs text-cyan-400 font-mono mt-0.5">{o.carrierName}: {o.trackingNumber}</p>
                         )}
@@ -271,14 +271,14 @@ export default function MarketplaceOrdersPage() {
                         {new Date(o.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                       </td>
                       <td className="px-4 py-3">
-                        <p className="text-sm text-foreground font-medium truncate max-w-32">{o.recipientName}</p>
+                        <p className="text-sm text-foreground font-semibold truncate max-w-32">{o.recipientName}</p>
                         <p className="text-xs text-slate-500">{o.city}</p>
                       </td>
                       <td className="px-4 py-3 text-slate-400 text-xs hidden lg:table-cell">
                         {o.itemCount} ürün
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium ${st.color}`}>
+                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold ${st.color}`}>
                           {st.icon} {st.label}
                         </span>
                       </td>
@@ -289,7 +289,7 @@ export default function MarketplaceOrdersPage() {
                         <div className="flex items-center justify-end gap-1.5">
                           <Link
                             href={`/dashboard/marketplace-orders/${o.id}`}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/10 transition-all"
+                            className="p-1.5 rounded-lg border border-transparent hover:border-border text-slate-400 hover:text-primary hover:bg-primary/10 transition-all"
                             title="Detay"
                           >
                             <ExternalLink className="w-3.5 h-3.5" />
@@ -297,7 +297,7 @@ export default function MarketplaceOrdersPage() {
                           {canShip && (
                             <button
                               onClick={() => { setShipModal(o); setTrackingNo(''); setCarrier(CARRIERS[0]); setShipError('') }}
-                              className="flex items-center gap-1 text-xs px-2.5 py-1.5 bg-primary/20 hover:bg-primary text-primary hover:text-white border border-primary/30 rounded-lg transition-colors whitespace-nowrap"
+                              className="flex items-center gap-1 text-xs px-2.5 py-1.5 bg-primary/10 hover:bg-primary text-primary hover:text-white border border-primary/20 hover:border-primary rounded-lg transition-colors whitespace-nowrap font-semibold"
                             >
                               <Truck className="w-3.5 h-3.5" /> Kargoya Ver
                             </button>
@@ -306,7 +306,7 @@ export default function MarketplaceOrdersPage() {
                             <button
                               onClick={() => handleDeliver(o.id)}
                               disabled={isActioning}
-                              className="flex items-center gap-1 text-xs px-2.5 py-1.5 bg-green-600/20 hover:bg-green-600 text-green-400 hover:text-white border border-green-600/30 rounded-lg transition-colors disabled:opacity-50 whitespace-nowrap"
+                              className="flex items-center gap-1 text-xs px-2.5 py-1.5 bg-green-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-white border border-emerald-500/20 hover:border-emerald-500 rounded-lg transition-all disabled:opacity-50 whitespace-nowrap font-semibold"
                             >
                               {isActioning ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5" />}
                               Teslim Edildi
@@ -316,7 +316,7 @@ export default function MarketplaceOrdersPage() {
                             <button
                               onClick={() => handleRefund(o.id)}
                               disabled={isActioning}
-                              className="flex items-center gap-1 text-xs px-2.5 py-1.5 bg-orange-600/20 hover:bg-orange-600 text-orange-400 hover:text-white border border-orange-600/30 rounded-lg transition-colors disabled:opacity-50 whitespace-nowrap"
+                              className="flex items-center gap-1 text-xs px-2.5 py-1.5 bg-orange-500/10 hover:bg-orange-500 text-orange-400 hover:text-white border border-orange-500/20 hover:border-orange-500 rounded-lg transition-all disabled:opacity-50 whitespace-nowrap font-semibold"
                             >
                               {isActioning ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
                               İadeyi Onayla
@@ -334,17 +334,17 @@ export default function MarketplaceOrdersPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="p-4 border-t border-border flex items-center justify-between text-sm text-slate-400">
-            <span>{total} sipariş</span>
+          <div className="p-4 border-t border-border flex items-center justify-between text-sm text-slate-400 bg-slate-950/20 dark:bg-slate-900/40">
+            <span className="font-semibold">{total} sipariş</span>
             <div className="flex gap-2">
               <button
                 onClick={() => load(page - 1)}
                 disabled={page <= 1 || loading}
-                className="px-3 py-1.5 rounded-lg border border-border hover:bg-slate-800 disabled:opacity-40 transition-colors"
+                className="px-3 py-1.5 rounded-xl border border-border hover:bg-slate-800 disabled:opacity-40 transition-colors font-semibold"
               >
                 Önceki
               </button>
-              <span className="px-3 py-1.5 text-foreground">{page} / {totalPages}</span>
+              <span className="px-3 py-1.5 text-foreground font-semibold">{page} / {totalPages}</span>
               <button
                 onClick={() => load(page + 1)}
                 disabled={page >= totalPages || loading}
@@ -359,26 +359,26 @@ export default function MarketplaceOrdersPage() {
 
       {/* Ship Modal */}
       {shipModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShipModal(null)}>
-          <div className="premium-card p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setShipModal(null)}>
+          <div className="premium-card p-6 w-full max-w-md border border-border/80 shadow-[0_0_50px_rgba(0,0,0,0.3)]" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
               <div>
-                <h3 className="text-base font-semibold text-foreground">Kargoya Ver</h3>
+                <h3 className="text-base font-bold text-foreground">Kargoya Ver</h3>
                 <p className="text-xs text-slate-400 mt-0.5">#{shipModal.id.slice(0, 8).toUpperCase()} — {shipModal.recipientName}</p>
               </div>
-              <button onClick={() => setShipModal(null)}>
-                <X className="w-4 h-4 text-slate-400 hover:text-white" />
+              <button onClick={() => setShipModal(null)} className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all">
+                <X className="w-4 h-4" />
               </button>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="text-xs text-slate-400 block mb-1.5">Kargo Firması</label>
+                <label className="text-xs text-slate-400 block mb-1.5 font-medium">Kargo Firması</label>
                 <div className="relative">
                   <select
                     value={carrier}
                     onChange={e => setCarrier(e.target.value)}
-                    className="w-full appearance-none bg-slate-800 border border-border rounded-xl pl-3 pr-8 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary cursor-pointer"
+                    className="w-full appearance-none bg-slate-900/60 border border-border rounded-xl pl-3 pr-8 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/25 cursor-pointer font-semibold"
                   >
                     {CARRIERS.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
@@ -387,29 +387,29 @@ export default function MarketplaceOrdersPage() {
               </div>
 
               <div>
-                <label className="text-xs text-slate-400 block mb-1.5">Takip Numarası</label>
+                <label className="text-xs text-slate-400 block mb-1.5 font-medium">Takip Numarası</label>
                 <input
                   type="text"
                   value={trackingNo}
                   onChange={e => setTrackingNo(e.target.value)}
                   placeholder="Örn: 123456789"
-                  className="w-full bg-slate-800 border border-border rounded-xl px-3 py-2.5 text-sm text-foreground placeholder-slate-500 focus:outline-none focus:border-primary"
+                  className="w-full bg-slate-900/60 border border-border rounded-xl px-3 py-2.5 text-sm text-foreground placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/25"
                   autoFocus
                   onKeyDown={e => e.key === 'Enter' && handleShip()}
                 />
               </div>
             </div>
 
-            {shipError && <p className="text-xs text-red-400 mt-3">{shipError}</p>}
+            {shipError && <p className="text-xs text-red-400 mt-3 font-semibold">{shipError}</p>}
 
             <div className="flex gap-3 mt-5">
-              <button onClick={() => setShipModal(null)} className="flex-1 px-4 py-2.5 text-sm border border-border rounded-xl hover:bg-slate-800 transition-colors">
+              <button onClick={() => setShipModal(null)} className="flex-1 px-4 py-2.5 text-sm font-semibold border border-border rounded-xl hover:bg-slate-800 transition-colors">
                 İptal
               </button>
               <button
                 onClick={handleShip}
                 disabled={shipping}
-                className="flex-1 px-4 py-2.5 text-sm bg-primary hover:bg-primary/90 text-white rounded-xl transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-2.5 text-sm font-bold bg-primary hover:bg-primary/90 text-white rounded-xl transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
               >
                 {shipping ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Kaydediliyor...</> : <><Truck className="w-3.5 h-3.5" /> Kargoya Ver</>}
               </button>

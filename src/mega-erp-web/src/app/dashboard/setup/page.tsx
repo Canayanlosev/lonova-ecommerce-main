@@ -75,31 +75,33 @@ export default function SetupPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-8 animate-fade-in">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-black tracking-tight">Kurulum Rehberi</h1>
-        <p className="text-slate-500 mt-1">Mağazanızı {STEPS.length} adımda kurun.</p>
+      <div className="text-center sm:text-left">
+        <h1 className="text-3xl font-black tracking-tight text-foreground flex items-center justify-center sm:justify-start gap-2">
+          Kurulum Rehberi
+        </h1>
+        <p className="text-slate-400 text-sm mt-1">Mağazanızı {STEPS.length} adımda kolayca yapılandırın.</p>
       </div>
 
       {/* Progress bar */}
-      <div className="space-y-3">
-        <div className="h-1.5 w-full bg-border rounded-full overflow-hidden">
+      <div className="space-y-4 premium-card p-4">
+        <div className="h-1.5 w-full bg-slate-950/40 dark:bg-slate-900/60 rounded-full overflow-hidden border border-border/40">
           <motion.div
             className="h-full bg-gradient-to-r from-primary to-secondary rounded-full"
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.4 }}
           />
         </div>
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center gap-1">
           {STEPS.map((s) => (
-            <div key={s.id} className={`flex flex-col items-center gap-1 ${s.id <= step ? 'text-primary' : 'text-slate-600'}`}>
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${
-                s.id < step ? 'bg-primary border-primary text-white' :
-                s.id === step ? 'border-primary text-primary' :
-                'border-border text-slate-600'
+            <div key={s.id} className={`flex flex-col items-center gap-1.5 flex-1 ${s.id <= step ? 'text-primary' : 'text-slate-500'}`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all duration-300 ${
+                s.id < step ? 'bg-primary/10 border-primary text-primary' :
+                s.id === step ? 'border-primary bg-background shadow-[0_0_12px_rgba(var(--color-primary-rgb),0.2)] text-primary scale-110' :
+                'border-border/80 text-slate-500'
               }`}>
-                {s.id < step ? <Check className="w-3.5 h-3.5" /> : s.id}
+                {s.id < step ? <Check className="w-4 h-4" /> : s.id}
               </div>
-              <span className="text-[10px] font-medium hidden sm:block">{s.label}</span>
+              <span className="text-[10px] font-semibold hidden sm:block whitespace-nowrap">{s.label}</span>
             </div>
           ))}
         </div>

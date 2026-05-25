@@ -318,7 +318,7 @@ export default function EcommercePage() {
                         </tr>
                       )
                       : filtered.map((p) => (
-                        <tr key={p.id} className={`border-b border-border hover:bg-slate-800/20 transition-colors ${selectedIds.has(p.id) ? 'bg-primary/5' : ''}`}>
+                        <tr key={p.id} className={`border-b border-border hover:bg-primary/5 hover:border-primary/10 transition-colors ${selectedIds.has(p.id) ? 'bg-primary/5 border-l-2 border-l-primary' : ''}`}>
                           <td className="px-3 py-3">
                             <button onClick={() => toggleSelect(p.id)} className="text-slate-400 hover:text-primary transition-colors">
                               {selectedIds.has(p.id)
@@ -328,7 +328,7 @@ export default function EcommercePage() {
                             </button>
                           </td>
                           <td className="px-2 py-2 hidden sm:table-cell">
-                            <div className="w-9 h-9 rounded-lg bg-slate-800/60 overflow-hidden shrink-0 flex items-center justify-center">
+                            <div className="w-9 h-9 rounded-lg bg-slate-950/20 dark:bg-slate-900/60 border border-border/40 overflow-hidden shrink-0 flex items-center justify-center">
                               {p.imageUrl ? (
                                 <Image
                                   src={p.imageUrl}
@@ -342,27 +342,27 @@ export default function EcommercePage() {
                               )}
                             </div>
                           </td>
-                          <td className="px-4 py-3 font-mono text-xs text-slate-500">{p.sku}</td>
+                          <td className="px-4 py-3 font-mono text-xs text-slate-400">{p.sku}</td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-2">
-                              <Link href={`/dashboard/ecommerce/${p.id}`} className="font-semibold hover:text-primary transition-colors">
+                              <Link href={`/dashboard/ecommerce/${p.id}`} className="font-semibold hover:text-primary transition-colors text-foreground">
                                 {p.name}
                               </Link>
                               {p.isPublishedToMarketplace === false && (
-                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-700 text-slate-400 font-medium">Gizli</span>
+                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-border/50 font-semibold">Gizli</span>
                               )}
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-slate-500 hidden md:table-cell">{p.category?.name || "-"}</td>
-                          <td className="px-4 py-3 text-right font-bold">₺{p.basePrice.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}</td>
+                          <td className="px-4 py-3 text-slate-400 hidden md:table-cell font-medium">{p.category?.name || "-"}</td>
+                          <td className="px-4 py-3 text-right font-bold text-foreground">₺{p.basePrice.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}</td>
                           <td className="px-4 py-3 text-right">
                             <div className="flex items-center justify-end gap-2">
                               <button
                                 onClick={() => handleToggleVisibility(p.id)}
                                 title={p.isPublishedToMarketplace !== false ? 'Marketplace\'ten gizle' : 'Marketplace\'te yayınla'}
-                                className={`p-1.5 rounded-lg transition-colors ${
+                                className={`p-1.5 rounded-lg border border-transparent hover:border-border transition-colors ${
                                   p.isPublishedToMarketplace !== false
-                                    ? 'hover:bg-slate-800/20 text-green-500'
+                                    ? 'hover:bg-slate-800/20 text-emerald-500'
                                     : 'hover:bg-slate-800/20 text-slate-400'
                                 }`}
                               >
@@ -373,18 +373,18 @@ export default function EcommercePage() {
                               <button
                                 onClick={() => handleClone(p.id, p.name)}
                                 title="Kopyala"
-                                className="p-1.5 rounded-lg hover:bg-amber-500/10 text-amber-500 transition-colors"
+                                className="p-1.5 rounded-lg border border-transparent hover:border-border hover:bg-amber-500/10 text-amber-500 transition-colors"
                               >
                                 <Copy size={15} />
                               </button>
                               <Link href={`/dashboard/ecommerce/${p.id}/edit`}>
-                                <button className="p-1.5 rounded-lg hover:bg-primary/10 text-primary transition-colors">
+                                <button className="p-1.5 rounded-lg border border-transparent hover:border-border hover:bg-primary/10 text-primary transition-colors">
                                   <PencilLine size={16} />
                                 </button>
                               </Link>
                               <button
                                 onClick={() => handleDelete(p.id, p.name)}
-                                className="p-1.5 rounded-lg hover:bg-red-500/10 text-red-500 transition-colors"
+                                className="p-1.5 rounded-lg border border-transparent hover:border-border hover:bg-red-500/10 text-red-500 transition-colors"
                               >
                                 <Trash2 size={16} />
                               </button>
@@ -403,8 +403,8 @@ export default function EcommercePage() {
 
       {/* Bulk Price Modal */}
       {priceModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-sm bg-background rounded-2xl shadow-2xl border border-border">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+          <div className="w-full max-w-sm bg-surface/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-border/80">
             <div className="flex items-center justify-between px-6 py-4 border-b border-border">
               <h2 className="text-lg font-bold">Toplu Fiyat Güncelle</h2>
               <button onClick={() => setPriceModal(false)} className="p-1.5 rounded-lg hover:bg-slate-800"><X size={18} /></button>
@@ -416,13 +416,13 @@ export default function EcommercePage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setPriceType('Percent')}
-                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-medium transition-colors ${priceType === 'Percent' ? 'border-primary bg-primary/10 text-primary' : 'border-border text-slate-500'}`}
+                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-semibold transition-all duration-200 ${priceType === 'Percent' ? 'border-primary/60 bg-primary/5 text-primary' : 'border-border/60 text-slate-500 hover:bg-slate-950/15'}`}
                   >
                     <Percent size={14} /> Yüzde (%)
                   </button>
                   <button
                     onClick={() => setPriceType('Fixed')}
-                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-medium transition-colors ${priceType === 'Fixed' ? 'border-primary bg-primary/10 text-primary' : 'border-border text-slate-500'}`}
+                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-semibold transition-all duration-200 ${priceType === 'Fixed' ? 'border-primary/60 bg-primary/5 text-primary' : 'border-border/60 text-slate-500 hover:bg-slate-950/15'}`}
                   >
                     <DollarSign size={14} /> Sabit (₺)
                   </button>
@@ -437,7 +437,7 @@ export default function EcommercePage() {
                   value={priceValue}
                   onChange={e => setPriceValue(e.target.value)}
                   placeholder={priceType === 'Percent' ? 'Örn: -10 (%10 indirim), 5 (%5 artış)' : 'Örn: -50 (50₺ indirim), 100 (100₺ artış)'}
-                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-slate-950/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
                   onKeyDown={e => e.key === 'Enter' && handleBulkPrice()}
                 />
               </div>
@@ -447,7 +447,7 @@ export default function EcommercePage() {
               <button
                 onClick={handleBulkPrice}
                 disabled={priceApplying || !priceValue}
-                className="flex items-center gap-2 px-5 py-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-colors"
+                className="flex items-center gap-2 px-5 py-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-all"
               >
                 {priceApplying ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Percent size={14} />}
                 Uygula

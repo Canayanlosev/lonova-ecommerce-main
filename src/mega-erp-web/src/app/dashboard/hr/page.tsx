@@ -66,9 +66,9 @@ interface DeptForm { name: string; description: string }
 const EMPTY_DEPT: DeptForm = { name: '', description: '' }
 
 const LEAVE_STATUS: Record<string, { label: string; cls: string }> = {
-  Pending:  { label: 'Bekliyor',    cls: 'bg-amber-500/15 text-amber-400' },
-  Approved: { label: 'Onaylandı',   cls: 'bg-emerald-500/15 text-emerald-400' },
-  Rejected: { label: 'Reddedildi',  cls: 'bg-red-500/15 text-red-400' },
+  Pending:  { label: 'Bekliyor',    cls: 'bg-amber-500/10 text-amber-400 border border-amber-500/20' },
+  Approved: { label: 'Onaylandı',   cls: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' },
+  Rejected: { label: 'Reddedildi',  cls: 'bg-red-500/10 text-red-400 border border-red-500/20' },
 }
 
 const inputCls = 'w-full px-3 py-2.5 rounded-xl border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all'
@@ -312,20 +312,20 @@ export default function HRPage() {
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-1 p-1 bg-slate-800/60 rounded-xl w-fit flex-wrap">
+      <div className="flex gap-1 p-1 bg-slate-950/20 dark:bg-slate-900/60 border border-border/85 rounded-xl w-fit flex-wrap">
         {TABS.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              tab === t.id ? 'bg-surface text-foreground shadow-sm' : 'text-slate-400 hover:text-foreground'
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+              tab === t.id ? 'bg-surface text-primary border border-border/40 shadow-sm' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             <t.icon className="w-4 h-4" />
             {t.label}
             {t.badge !== undefined && t.badge > 0 && (
-              <span className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-semibold ${
-                tab === t.id ? 'bg-primary/20 text-primary' : 'bg-slate-700 text-slate-400'
+              <span className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-semibold border ${
+                tab === t.id ? 'bg-primary/10 text-primary border-primary/20' : 'bg-slate-800 text-slate-400 border-border/80'
               }`}>
                 {t.badge}
               </span>
@@ -370,36 +370,36 @@ export default function HRPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border text-xs text-slate-500">
-                    <th className="text-left px-4 py-3 font-medium">Çalışan</th>
-                    <th className="text-left px-4 py-3 font-medium hidden md:table-cell">İletişim</th>
-                    <th className="text-left px-4 py-3 font-medium hidden lg:table-cell">Departman</th>
-                    <th className="text-left px-4 py-3 font-medium hidden sm:table-cell">İşe Başlama</th>
-                    <th className="text-right px-4 py-3 font-medium">Maaş</th>
-                    <th className="text-right px-4 py-3 font-medium">İşlem</th>
+                  <tr className="border-b border-border text-xs text-slate-400">
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Çalışan</th>
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden md:table-cell">İletişim</th>
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden lg:table-cell">Departman</th>
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden sm:table-cell">İşe Başlama</th>
+                    <th className="text-right px-4 py-3 font-semibold uppercase tracking-wider">Maaş</th>
+                    <th className="text-right px-4 py-3 font-semibold uppercase tracking-wider">İşlem</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {employees.map((e) => (
-                    <tr key={e.id} className="hover:bg-slate-800/20 transition-colors">
+                    <tr key={e.id} className="hover:bg-primary/5 hover:border-primary/10 transition-colors">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
                             <span className="text-xs font-bold text-primary">
                               {e.firstName[0]}{e.lastName[0]}
                             </span>
                           </div>
-                          <span className="font-medium text-foreground">{e.firstName} {e.lastName}</span>
+                          <span className="font-semibold text-foreground">{e.firstName} {e.lastName}</span>
                         </div>
                       </td>
                       <td className="px-4 py-3 hidden md:table-cell">
                         <div className="flex flex-col gap-0.5">
                           <div className="flex items-center gap-1 text-slate-400 text-xs">
-                            <Mail className="w-3 h-3" />{e.email}
+                            <Mail className="w-3 h-3 text-slate-500" />{e.email}
                           </div>
                           {e.phone && (
                             <div className="flex items-center gap-1 text-slate-400 text-xs">
-                              <Phone className="w-3 h-3" />{e.phone}
+                              <Phone className="w-3 h-3 text-slate-500" />{e.phone}
                             </div>
                           )}
                         </div>
@@ -417,14 +417,14 @@ export default function HRPage() {
                         <div className="flex items-center justify-end gap-1">
                           <button
                             onClick={() => openEditEmployee(e)}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-foreground hover:bg-slate-700 transition-all"
+                            className="p-1.5 rounded-lg border border-transparent hover:border-border text-slate-400 hover:text-foreground hover:bg-slate-800 transition-all"
                             title="Düzenle"
                           >
                             <Edit2 className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => handleDeleteEmployee(e.id, `${e.firstName} ${e.lastName}`)}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                            className="p-1.5 rounded-lg border border-transparent hover:border-border text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
                             title="Sil"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -470,32 +470,32 @@ export default function HRPage() {
               {departments.map((d) => {
                 const empCount = employees.filter(e => e.departmentId === d.id).length
                 return (
-                  <div key={d.id} className="premium-card p-5 hover:border-primary/30 transition-all group">
+                  <div key={d.id} className="premium-card p-5 hover:border-primary/50 transition-all duration-200 group">
                     <div className="flex items-start justify-between mb-3">
-                      <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                      <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
                         <Building2 className="w-5 h-5 text-primary" />
                       </div>
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => openEditDept(d)}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-foreground hover:bg-slate-700 transition-all"
+                          className="p-1.5 rounded-lg border border-transparent hover:border-border text-slate-400 hover:text-foreground hover:bg-slate-800 transition-all"
                           title="Düzenle"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleDeleteDept(d.id, d.name)}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                          className="p-1.5 rounded-lg border border-transparent hover:border-border text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
                           title="Sil"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
-                    <p className="font-semibold text-foreground">{d.name}</p>
+                    <p className="font-bold text-foreground">{d.name}</p>
                     {d.description && <p className="text-xs text-slate-400 mt-1">{d.description}</p>}
                     <p className="text-xs text-slate-500 mt-2">
-                      <span className={`font-semibold ${empCount > 0 ? 'text-primary' : 'text-slate-600'}`}>{empCount}</span>
+                      <span className={`font-bold ${empCount > 0 ? 'text-primary' : 'text-slate-600'}`}>{empCount}</span>
                       {' '}çalışan
                     </p>
                   </div>
@@ -525,20 +525,20 @@ export default function HRPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border text-xs text-slate-500">
-                    <th className="text-left px-4 py-3 font-medium">Çalışan</th>
-                    <th className="text-left px-4 py-3 font-medium hidden sm:table-cell">Tarih Aralığı</th>
-                    <th className="text-left px-4 py-3 font-medium hidden lg:table-cell">Neden</th>
-                    <th className="text-left px-4 py-3 font-medium">Durum</th>
-                    <th className="text-right px-4 py-3 font-medium">İşlem</th>
+                  <tr className="border-b border-border text-xs text-slate-400">
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Çalışan</th>
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden sm:table-cell">Tarih Aralığı</th>
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden lg:table-cell">Neden</th>
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Durum</th>
+                    <th className="text-right px-4 py-3 font-semibold uppercase tracking-wider">İşlem</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {leaveRequests.map((r) => {
                     const sc = LEAVE_STATUS[r.status] ?? { label: r.status, cls: 'bg-slate-700 text-slate-300' }
                     return (
-                      <tr key={r.id} className="hover:bg-slate-800/20 transition-colors">
-                        <td className="px-4 py-3 font-medium text-foreground">{r.employeeName}</td>
+                      <tr key={r.id} className="hover:bg-primary/5 hover:border-primary/10 transition-colors">
+                        <td className="px-4 py-3 font-semibold text-foreground">{r.employeeName}</td>
                         <td className="px-4 py-3 text-slate-400 text-xs hidden sm:table-cell">
                           {new Date(r.startDate).toLocaleDateString('tr-TR')} —{' '}
                           {new Date(r.endDate).toLocaleDateString('tr-TR')}
@@ -556,14 +556,14 @@ export default function HRPage() {
                             <div className="flex items-center justify-end gap-1">
                               <button
                                 onClick={() => updateLeave(r.id, 'Approved')}
-                                className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all"
+                                className="p-1.5 rounded-lg border border-transparent hover:border-border text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all"
                                 title="Onayla"
                               >
                                 <Check className="w-3.5 h-3.5" />
                               </button>
                               <button
                                 onClick={() => updateLeave(r.id, 'Rejected')}
-                                className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                                className="p-1.5 rounded-lg border border-transparent hover:border-border text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
                                 title="Reddet"
                               >
                                 <X className="w-3.5 h-3.5" />
@@ -638,20 +638,20 @@ export default function HRPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
                   <thead>
-                    <tr className="border-b border-border text-slate-500">
-                      <th className="text-left px-4 py-3 font-medium">Çalışan</th>
-                      <th className="text-right px-4 py-3 font-medium">Brüt Maaş</th>
-                      <th className="text-right px-4 py-3 font-medium hidden md:table-cell">SGK İşçi (%15)</th>
-                      <th className="text-right px-4 py-3 font-medium hidden lg:table-cell">Gelir Vergisi</th>
-                      <th className="text-right px-4 py-3 font-medium hidden lg:table-cell">Damga Vergisi</th>
-                      <th className="text-right px-4 py-3 font-medium">Net Maaş</th>
-                      <th className="text-right px-4 py-3 font-medium hidden md:table-cell">SGK İşveren (%18)</th>
-                      <th className="text-right px-4 py-3 font-medium">Toplam Maliyet</th>
+                    <tr className="border-b border-border text-slate-400 font-semibold text-[10px] uppercase tracking-wider">
+                      <th className="text-left px-4 py-3 font-semibold">Çalışan</th>
+                      <th className="text-right px-4 py-3 font-semibold">Brüt Maaş</th>
+                      <th className="text-right px-4 py-3 font-semibold hidden md:table-cell">SGK İşçi (%15)</th>
+                      <th className="text-right px-4 py-3 font-semibold hidden lg:table-cell">Gelir Vergisi</th>
+                      <th className="text-right px-4 py-3 font-semibold hidden lg:table-cell">Damga Vergisi</th>
+                      <th className="text-right px-4 py-3 font-semibold">Net Maaş</th>
+                      <th className="text-right px-4 py-3 font-semibold hidden md:table-cell">SGK İşveren (%18)</th>
+                      <th className="text-right px-4 py-3 font-semibold">Toplam Maliyet</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
                     {bordroRows.map((r) => (
-                      <tr key={r.id} className="hover:bg-slate-800/20 transition-colors">
+                      <tr key={r.id} className="hover:bg-primary/5 hover:border-primary/10 transition-colors">
                         <td className="px-4 py-3">
                           <div>
                             <p className="font-semibold text-foreground text-sm">{r.ad}</p>
@@ -661,19 +661,19 @@ export default function HRPage() {
                         <td className="px-4 py-3 text-right font-bold text-foreground">
                           ₺{r.brut.toLocaleString('tr-TR')}
                         </td>
-                        <td className="px-4 py-3 text-right text-amber-400 hidden md:table-cell">
+                        <td className="px-4 py-3 text-right text-amber-400 font-medium hidden md:table-cell">
                           −₺{r.sgkIscii.toLocaleString('tr-TR')}
                         </td>
-                        <td className="px-4 py-3 text-right text-amber-400 hidden lg:table-cell">
+                        <td className="px-4 py-3 text-right text-amber-400 font-medium hidden lg:table-cell">
                           −₺{r.gelirVergisi.toLocaleString('tr-TR')}
                         </td>
-                        <td className="px-4 py-3 text-right text-amber-400 hidden lg:table-cell">
+                        <td className="px-4 py-3 text-right text-amber-400 font-medium hidden lg:table-cell">
                           −₺{r.damgaVergisi.toLocaleString('tr-TR')}
                         </td>
                         <td className="px-4 py-3 text-right font-black text-emerald-400">
                           ₺{r.net.toLocaleString('tr-TR')}
                         </td>
-                        <td className="px-4 py-3 text-right text-violet-400 hidden md:table-cell">
+                        <td className="px-4 py-3 text-right text-violet-400 font-medium hidden md:table-cell">
                           +₺{r.sgkIsveren.toLocaleString('tr-TR')}
                         </td>
                         <td className="px-4 py-3 text-right font-semibold text-foreground">

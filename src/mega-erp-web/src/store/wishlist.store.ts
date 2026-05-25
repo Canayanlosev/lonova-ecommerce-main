@@ -8,6 +8,7 @@ interface WishlistStore {
   toggle: (id: string) => void
   has: (id: string) => boolean
   count: () => number
+  clear: () => void
 }
 
 export const useWishlistStore = create<WishlistStore>()(
@@ -26,6 +27,7 @@ export const useWishlistStore = create<WishlistStore>()(
       },
       has: (id) => get().items.includes(id),
       count: () => get().items.length,
+      clear: () => set({ items: [] }),
     }),
     { name: 'wishlist' }
   )

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Heart, Package, Trash2, ShoppingCart } from 'lucide-react'
+import { Heart, Package, Trash2, ShoppingCart, ShoppingBag } from 'lucide-react'
 import Link from 'next/link'
 import { useWishlistStore } from '@/store/wishlist.store'
 import { marketplaceService, MarketplaceProduct } from '@/lib/services/marketplace.service'
@@ -11,12 +11,14 @@ import Image from 'next/image'
 import { AccountTabs } from '@/components/marketplace/AccountTabs'
 
 export default function FavorilerPage() {
-  const { items, remove } = useWishlistStore()
+  const { items, remove, clear } = useWishlistStore()
   const setCart = useBuyerCartStore((s) => s.setCart)
   const router = useRouter()
   const [products, setProducts] = useState<MarketplaceProduct[]>([])
   const [loading, setLoading] = useState(true)
   const [addingId, setAddingId] = useState<string | null>(null)
+  const [addingAll, setAddingAll] = useState(false)
+  const [addedAllCount, setAddedAllCount] = useState(0)
 
   useEffect(() => {
     if (items.length === 0) {
@@ -49,15 +51,59 @@ export default function FavorilerPage() {
     }
   }
 
+  const handleAddAllToCart = async () => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('buyer-token') : null
+    if (!token) { router.push('/alici-auth/giris'); return }
+    setAddingAll(true)
+    let count = 0
+    let lastCart = null
+    for (const product of products) {
+      const allStocks = product.variants.map(v => v.stockQuantity)
+      const isOutOfStock = allStocks.length > 0 && allStocks.every(q => q === 0)
+      if (isOutOfStock) continue
+      try {
+        lastCart = await marketplaceService.addToCart(product.id)
+        count++
+      } catch { /* continue */ }
+    }
+    if (lastCart) setCart(lastCart)
+    setAddedAllCount(count)
+    setAddingAll(false)
+    setTimeout(() => setAddedAllCount(0), 3000)
+  }
+
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <AccountTabs
         header={
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Hesabım</h1>
-            <p className="text-slate-400 text-sm mt-1">
-              {items.length > 0 ? `${items.length} ürün favorilendi` : 'Favori listesi'}
-            </p>
+          <div className="flex items-start sm:items-center justify-between gap-4 flex-wrap">
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">Hesabım</h1>
+              <p className="text-slate-400 text-sm mt-1">
+                {items.length > 0 ? `${items.length} ürün favorilendi` : 'Favori listesi'}
+              </p>
+            </div>
+            {products.length > 0 && (
+              <div className="flex items-center gap-2">
+                {addedAllCount > 0 && (
+                  <span className="text-xs text-emerald-400 font-medium">{addedAllCount} ürün sepete eklendi!</span>
+                )}
+                <button
+                  onClick={handleAddAllToCart}
+                  disabled={addingAll}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary/10 text-primary text-xs font-bold hover:bg-primary hover:text-white transition-colors disabled:opacity-60"
+                >
+                  <ShoppingBag className={`w-3.5 h-3.5 ${addingAll ? 'animate-bounce' : ''}`} />
+                  {addingAll ? 'Ekleniyor...' : 'Tümünü Sepete Ekle'}
+                </button>
+                <button
+                  onClick={() => { if (confirm('Tüm favoriler silinecek. Emin misiniz?')) clear() }}
+                  className="px-3 py-2 rounded-xl border border-border text-xs text-red-400 hover:bg-red-500/10 transition-colors"
+                >
+                  Tümünü Temizle
+                </button>
+              </div>
+            )}
           </div>
         }
       />

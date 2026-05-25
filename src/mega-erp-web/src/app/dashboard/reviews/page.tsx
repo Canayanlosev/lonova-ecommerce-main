@@ -119,13 +119,13 @@ export default function ReviewsDashboardPage() {
             placeholder="Ürün, kullanıcı veya yorum ara..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 rounded-xl border border-border bg-transparent text-sm outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+            className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-border bg-slate-950/20 dark:bg-slate-900/40 text-sm outline-none focus:ring-2 focus:ring-primary/25 transition-all"
           />
         </div>
         <select
           value={minRating}
           onChange={e => setMinRating(e.target.value ? Number(e.target.value) : '')}
-          className="px-3 py-2 rounded-xl border border-border bg-transparent text-sm outline-none focus:ring-2 focus:ring-primary/50"
+          className="px-3 py-2 rounded-xl border border-border bg-slate-950/20 dark:bg-slate-900/40 text-sm outline-none focus:ring-2 focus:ring-primary/25 cursor-pointer font-semibold"
         >
           <option value="">Tüm Puanlar</option>
           <option value="5">★★★★★ (5)</option>
@@ -137,10 +137,10 @@ export default function ReviewsDashboardPage() {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
-          <AlertCircle className="w-4 h-4" />
+        <div className="flex items-center gap-2 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-semibold">
+          <AlertCircle className="w-4 h-4 shrink-0" />
           {error}
-          <button onClick={() => load(page)} className="ml-auto underline text-xs">Tekrar Dene</button>
+          <button onClick={() => load(page)} className="ml-auto underline text-xs font-bold hover:text-white transition-all">Tekrar Dene</button>
         </div>
       )}
 
@@ -149,21 +149,21 @@ export default function ReviewsDashboardPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border">
-                <th className="text-left px-4 py-3 text-slate-500 font-medium">Ürün</th>
-                <th className="text-left px-4 py-3 text-slate-500 font-medium hidden md:table-cell">Kullanıcı</th>
-                <th className="text-left px-4 py-3 text-slate-500 font-medium">Puan</th>
-                <th className="text-left px-4 py-3 text-slate-500 font-medium hidden lg:table-cell">Yorum</th>
-                <th className="text-left px-4 py-3 text-slate-500 font-medium hidden sm:table-cell">Tarih</th>
-                <th className="text-right px-4 py-3 text-slate-500 font-medium">İşlem</th>
+              <tr className="border-b border-border text-xs text-slate-400">
+                <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Ürün</th>
+                <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden md:table-cell">Kullanıcı</th>
+                <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Puan</th>
+                <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden lg:table-cell">Yorum</th>
+                <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden sm:table-cell">Tarih</th>
+                <th className="text-right px-4 py-3 font-semibold uppercase tracking-wider">İşlem</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-border">
               {loading
                 ? Array.from({ length: 8 }).map((_, i) => (
                     <tr key={i} className="border-b border-border">
                       <td colSpan={6} className="px-4 py-3">
-                        <div className="h-4 bg-slate-700/40 rounded animate-pulse w-full" />
+                        <div className="h-4 bg-slate-800 rounded animate-pulse w-full" />
                       </td>
                     </tr>
                   ))
@@ -180,20 +180,20 @@ export default function ReviewsDashboardPage() {
                 )
                 : filtered.map(r => (
                   <>
-                    <tr key={r.id} className="border-b border-border hover:bg-slate-800/20 transition-colors">
+                    <tr key={r.id} className="hover:bg-primary/5 hover:border-primary/10 transition-colors">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
-                          <Package className="w-4 h-4 text-slate-400 shrink-0" />
-                          <span className="font-medium text-foreground truncate max-w-[120px] lg:max-w-[200px]">
+                          <Package className="w-4 h-4 text-primary shrink-0" />
+                          <span className="font-semibold text-foreground truncate max-w-[120px] lg:max-w-[200px]">
                             {r.productName}
                           </span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-slate-400 hidden md:table-cell">
+                      <td className="px-4 py-3 text-slate-400 hidden md:table-cell font-semibold">
                         <div className="flex items-center gap-1.5">
                           {r.buyerName}
                           {r.isVerifiedPurchase && (
-                            <span title="Doğrulanmış Alıcı">
+                            <span title="Doğrulanmış Alıcı" className="px-1 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
                               <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
                             </span>
                           )}
@@ -208,28 +208,28 @@ export default function ReviewsDashboardPage() {
                             {r.comment ?? <span className="italic text-slate-600">Yorum yok</span>}
                           </span>
                           {r.sellerReply && (
-                            <div className="mt-1 flex items-start gap-1 text-[10px] text-primary/80">
+                            <div className="mt-1.5 flex items-start gap-1 text-[10px] text-primary/80 bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-lg w-fit">
                               <Reply className="w-2.5 h-2.5 mt-0.5 shrink-0" />
-                              <span className="italic truncate max-w-[180px]">{r.sellerReply}</span>
+                              <span className="italic truncate max-w-[180px] font-semibold">{r.sellerReply}</span>
                             </div>
                           )}
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-slate-500 text-xs hidden sm:table-cell">
+                      <td className="px-4 py-3 text-slate-400 text-xs hidden sm:table-cell font-semibold">
                         {new Date(r.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </td>
                       <td className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end gap-1">
                           <button
                             onClick={() => { setReplyingTo(replyingTo === r.id ? null : r.id); setReplyText(r.sellerReply ?? '') }}
-                            className={`p-1.5 rounded-lg transition-colors ${r.sellerReply ? 'text-primary' : 'text-slate-400 hover:text-primary'} hover:bg-primary/10`}
+                            className={`p-1.5 rounded-lg border border-transparent hover:border-border transition-colors ${r.sellerReply ? 'text-primary' : 'text-slate-400 hover:text-primary'} hover:bg-primary/10`}
                             title={r.sellerReply ? 'Yanıtı düzenle' : 'Yanıtla'}
                           >
                             <Reply size={15} />
                           </button>
                           <button
                             onClick={() => handleDelete(r.id)}
-                            className="p-1.5 rounded-lg hover:bg-red-500/10 text-red-500 transition-colors"
+                            className="p-1.5 rounded-lg border border-transparent hover:border-border hover:bg-red-500/10 text-red-500 transition-colors"
                             title="Yorumu sil"
                           >
                             <Trash2 size={15} />
@@ -238,7 +238,7 @@ export default function ReviewsDashboardPage() {
                       </td>
                     </tr>
                     {replyingTo === r.id && (
-                      <tr key={`${r.id}-reply`} className="border-b border-border bg-primary/5">
+                      <tr key={`${r.id}-reply`} className="bg-primary/5">
                         <td colSpan={6} className="px-4 py-3">
                           <div className="flex items-start gap-3">
                             <Reply className="w-4 h-4 text-primary mt-2 shrink-0" />
@@ -248,20 +248,20 @@ export default function ReviewsDashboardPage() {
                                 onChange={e => setReplyText(e.target.value)}
                                 placeholder="Müşteriye yanıtınızı yazın..."
                                 rows={2}
-                                className="w-full px-3 py-2 rounded-lg bg-background border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/25 resize-none"
+                                className="w-full px-3 py-2 rounded-xl bg-slate-950/40 border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/25 resize-none font-semibold placeholder-slate-500"
                               />
                               <div className="flex gap-2">
                                 <button
                                   onClick={() => handleReply(r.id)}
                                   disabled={replySaving || !replyText.trim()}
-                                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-bold transition-opacity disabled:opacity-60"
+                                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-white text-xs font-bold transition-opacity disabled:opacity-60"
                                 >
                                   {replySaving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Reply className="w-3 h-3" />}
                                   Yanıtı Kaydet
                                 </button>
                                 <button
                                   onClick={() => { setReplyingTo(null); setReplyText('') }}
-                                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border text-xs text-slate-400 hover:text-foreground transition-colors"
+                                  className="flex items-center gap-1 px-3 py-1.5 rounded-xl border border-border text-xs text-slate-400 hover:text-foreground transition-colors font-semibold"
                                 >
                                   <X className="w-3 h-3" /> İptal
                                 </button>
@@ -280,20 +280,20 @@ export default function ReviewsDashboardPage() {
 
         {/* Pagination */}
         {!loading && totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-border">
-            <p className="text-xs text-slate-400">{totalCount} yorum, sayfa {page}/{totalPages}</p>
+          <div className="flex items-center justify-between px-4 py-3 border-t border-border bg-slate-950/20 dark:bg-slate-900/40">
+            <p className="text-xs text-slate-400 font-semibold">{totalCount} yorum, sayfa {page}/{totalPages}</p>
             <div className="flex gap-2">
               <button
                 onClick={() => load(page - 1)}
                 disabled={page === 1}
-                className="px-3 py-1.5 text-xs rounded-lg border border-border disabled:opacity-40 hover:bg-surface transition-colors"
+                className="px-3 py-1.5 text-xs rounded-xl border border-border disabled:opacity-40 hover:bg-slate-800 transition-colors font-semibold"
               >
                 ← Önceki
               </button>
               <button
                 onClick={() => load(page + 1)}
                 disabled={page >= totalPages}
-                className="px-3 py-1.5 text-xs rounded-lg border border-border disabled:opacity-40 hover:bg-surface transition-colors"
+                className="px-3 py-1.5 text-xs rounded-xl border border-border disabled:opacity-40 hover:bg-slate-800 transition-colors font-semibold"
               >
                 Sonraki →
               </button>

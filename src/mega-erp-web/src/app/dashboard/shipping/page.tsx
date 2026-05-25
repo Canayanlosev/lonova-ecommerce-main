@@ -11,11 +11,11 @@ import { useToast } from "@/store/ui.store";
 import type { Shipment, ShippingMethod } from "@/types/api.types";
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  Pending:   { label: "Beklemede",       color: "bg-amber-500/15 text-amber-400" },
-  Shipped:   { label: "Gönderildi",      color: "bg-primary/15 text-primary" },
-  InTransit: { label: "Yolda",           color: "bg-secondary/15 text-secondary" },
-  Delivered: { label: "Teslim Edildi",   color: "bg-emerald-500/15 text-emerald-400" },
-  Returned:  { label: "İade",            color: "bg-red-500/15 text-red-400" },
+  Pending:   { label: "Beklemede",       color: "bg-amber-500/10 text-amber-400 border border-amber-500/20" },
+  Shipped:   { label: "Gönderildi",      color: "bg-primary/10 text-primary border border-primary/20" },
+  InTransit: { label: "Yolda",           color: "bg-secondary/10 text-secondary border border-secondary/20" },
+  Delivered: { label: "Teslim Edildi",   color: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" },
+  Returned:  { label: "İade",            color: "bg-red-500/10 text-red-400 border border-red-500/20" },
 };
 
 const EMPTY_METHOD = { name: '', carrier: '', baseCost: 0 }
@@ -193,24 +193,24 @@ export default function ShippingPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 p-1 bg-slate-800/60 rounded-xl w-fit">
+      <div className="flex gap-1 p-1 bg-slate-950/20 dark:bg-slate-900/60 border border-border/85 rounded-xl w-fit">
         <button
           onClick={() => setTab('shipments')}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-            tab === 'shipments' ? 'bg-surface text-foreground shadow-sm' : 'text-slate-400 hover:text-foreground'
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+            tab === 'shipments' ? 'bg-surface text-primary border border-border/40 shadow-sm' : 'text-slate-400 hover:text-slate-200'
           }`}
         >
           <Truck className="w-4 h-4" /> Kargolar
           {stats.pending > 0 && (
-            <span className="ml-1 px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-[10px] font-semibold">
+            <span className="ml-1 px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-semibold">
               {stats.pending}
             </span>
           )}
         </button>
         <button
           onClick={() => setTab('methods')}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-            tab === 'methods' ? 'bg-surface text-foreground shadow-sm' : 'text-slate-400 hover:text-foreground'
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+            tab === 'methods' ? 'bg-surface text-primary border border-border/40 shadow-sm' : 'text-slate-400 hover:text-slate-200'
           }`}
         >
           <Settings className="w-4 h-4" /> Kargo Yöntemleri
@@ -220,7 +220,7 @@ export default function ShippingPage() {
       {tab === 'shipments' && (
         <div className="premium-card overflow-hidden">
           {/* Search bar */}
-          <div className="p-4 border-b border-border">
+          <div className="p-4 border-b border-border bg-slate-950/20 dark:bg-slate-900/40">
             <div className="relative max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
@@ -228,7 +228,7 @@ export default function ShippingPage() {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Takip no veya sipariş ID ara..."
-                className="w-full pl-9 pr-4 py-2 rounded-lg bg-background border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/25"
+                className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-950/30 border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
               />
             </div>
           </div>
@@ -236,16 +236,16 @@ export default function ShippingPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-border text-xs text-slate-500">
-                  <th className="text-left px-4 py-3 font-medium">Takip No</th>
-                  <th className="text-left px-4 py-3 font-medium hidden md:table-cell">Sipariş</th>
-                  <th className="text-left px-4 py-3 font-medium hidden lg:table-cell">Gönderim</th>
-                  <th className="text-left px-4 py-3 font-medium hidden md:table-cell">Tahmini Teslimat</th>
-                  <th className="text-left px-4 py-3 font-medium">Durum</th>
-                  <th className="text-right px-4 py-3 font-medium">Güncelle</th>
+                <tr className="border-b border-border text-xs text-slate-400">
+                  <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Takip No</th>
+                  <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden md:table-cell">Sipariş</th>
+                  <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden lg:table-cell">Gönderim</th>
+                  <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden md:table-cell">Tahmini Teslimat</th>
+                  <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Durum</th>
+                  <th className="text-right px-4 py-3 font-semibold uppercase tracking-wider">Güncelle</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-border">
                 {loading ? (
                   Array.from({ length: 5 }).map((_, i) => (
                     <tr key={i} className="border-b border-border/50">
@@ -269,9 +269,9 @@ export default function ShippingPage() {
                   filtered.map((s) => {
                     const sc = STATUS_CONFIG[s.status] ?? { label: s.status, color: 'bg-slate-700 text-slate-300' }
                     return (
-                      <tr key={s.id} className="border-b border-border/50 hover:bg-slate-800/20 transition-colors">
+                      <tr key={s.id} className="hover:bg-primary/5 hover:border-primary/10 transition-colors">
                         <td className="px-4 py-3">
-                          <span className="font-mono text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">
+                          <span className="font-mono text-xs text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">
                             {s.trackingNumber || '—'}
                           </span>
                         </td>
@@ -294,7 +294,7 @@ export default function ShippingPage() {
                             value={s.status}
                             disabled={updating === s.id}
                             onChange={(e) => updateStatus(s.id, e.target.value)}
-                            className="text-xs px-2 py-1.5 rounded-lg border border-border bg-background text-foreground outline-none focus:ring-1 focus:ring-primary/25 transition-all disabled:opacity-50"
+                            className="text-xs px-2 py-1.5 rounded-lg border border-border bg-slate-900/40 text-foreground outline-none focus:ring-1 focus:ring-primary/25 transition-all disabled:opacity-50 font-semibold"
                           >
                             {Object.entries(STATUS_CONFIG).map(([k, v]) => (
                               <option key={k} value={k}>{v.label}</option>
@@ -404,27 +404,27 @@ export default function ShippingPage() {
             <div className="premium-card overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border text-xs text-slate-500">
-                    <th className="text-left px-4 py-3 font-medium">Yöntem</th>
-                    <th className="text-left px-4 py-3 font-medium">Kargo Firması</th>
-                    <th className="text-left px-4 py-3 font-medium">Ücret</th>
-                    <th className="text-left px-4 py-3 font-medium">Durum</th>
-                    <th className="text-right px-4 py-3 font-medium">İşlem</th>
+                  <tr className="border-b border-border text-xs text-slate-400">
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Yöntem</th>
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Kargo Firması</th>
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Ücret</th>
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Durum</th>
+                    <th className="text-right px-4 py-3 font-semibold uppercase tracking-wider">İşlem</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {methods.map((m) => (
-                    <tr key={m.id} className="hover:bg-slate-800/20 transition-colors">
-                      <td className="px-4 py-3 font-medium text-foreground">{m.name}</td>
+                    <tr key={m.id} className="hover:bg-primary/5 hover:border-primary/10 transition-colors">
+                      <td className="px-4 py-3 font-semibold text-foreground">{m.name}</td>
                       <td className="px-4 py-3 text-slate-400">{m.carrier}</td>
-                      <td className="px-4 py-3 text-foreground">
+                      <td className="px-4 py-3 text-foreground font-semibold">
                         {m.baseCost > 0
                           ? m.baseCost.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })
-                          : <span className="text-emerald-400 text-xs font-semibold">Ücretsiz</span>}
+                          : <span className="text-emerald-400 text-xs font-semibold px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">Ücretsiz</span>}
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
-                          m.isActive ? 'bg-emerald-500/15 text-emerald-400' : 'bg-slate-700 text-slate-400'
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-semibold border ${
+                          m.isActive ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-slate-800 text-slate-400 border-border/80'
                         }`}>
                           {m.isActive ? 'Aktif' : 'Pasif'}
                         </span>
@@ -433,13 +433,13 @@ export default function ShippingPage() {
                         <div className="flex items-center justify-end gap-1">
                           <button
                             onClick={() => { setEditMethodId(m.id); setMethodForm({ name: m.name, carrier: m.carrier, baseCost: m.baseCost }); setShowMethodForm(true) }}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-foreground hover:bg-slate-700 transition-all"
+                            className="p-1.5 rounded-lg border border-transparent hover:border-border text-slate-400 hover:text-foreground hover:bg-slate-800 transition-all"
                           >
                             <Edit2 className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => handleDeleteMethod(m.id)}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                            className="p-1.5 rounded-lg border border-transparent hover:border-border text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
