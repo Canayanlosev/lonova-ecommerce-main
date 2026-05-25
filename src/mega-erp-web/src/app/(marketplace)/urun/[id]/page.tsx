@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronRight, ShoppingCart, Star, Package, Check, Send, Trash2, ZoomIn, X } from 'lucide-react'
+import { ChevronRight, ShoppingCart, Star, Package, Check, Send, Trash2, ZoomIn, X, Share2, Copy, Heart } from 'lucide-react'
 import {
   marketplaceService,
   type MarketplaceProduct,
@@ -14,6 +14,7 @@ import {
 } from '@/lib/services/marketplace.service'
 import { useBuyerCartStore } from '@/store/buyerCart.store'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
+import { useWishlistStore } from '@/store/wishlist.store'
 import { ProductCard } from '@/components/marketplace/ProductCard'
 
 function groupVariants(variants: MarketplaceVariant[]) {
@@ -148,6 +149,7 @@ export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
   const { buyer } = useBuyerAuthStore()
+  const { toggle: toggleWish, has: hasWish } = useWishlistStore()
 
   const [product, setProduct] = useState<MarketplaceProduct | null>(null)
   const [loading, setLoading] = useState(true)
@@ -155,6 +157,7 @@ export default function ProductDetailPage() {
   const [activeTab, setActiveTab] = useState<'description' | 'specs' | 'reviews'>('description')
   const [adding, setAdding] = useState(false)
   const [addedFeedback, setAddedFeedback] = useState(false)
+  const [shareCopied, setShareCopied] = useState(false)
   const [selected, setSelected] = useState<Record<string, string>>({})
   const setCart = useBuyerCartStore((s) => s.setCart)
 
@@ -407,7 +410,41 @@ export default function ProductDetailPage() {
                 : !inStock ? (<><ShoppingCart className="w-4 h-4" /> Stokta Yok</>)
                 : (<><ShoppingCart className="w-4 h-4" /> Sepete Ekle</>)}
             </button>
+
+            {/* Wishlist */}
+            <button
+              onClick={() => toggleWish(product.id)}
+              title={hasWish(product.id) ? 'Favorilerden çıkar' : 'Favorilere ekle'}
+              className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all border ${
+                hasWish(product.id)
+                  ? 'bg-red-500 border-red-400 text-white shadow-lg shadow-red-500/30'
+                  : 'border-border bg-background text-slate-400 hover:border-red-400/50 hover:text-red-400'
+              }`}
+            >
+              <Heart className={`w-5 h-5 ${hasWish(product.id) ? 'fill-white' : ''}`} />
+            </button>
+
+            {/* Share */}
+            <button
+              onClick={async () => {
+                const url = window.location.href
+                if (typeof navigator !== 'undefined' && navigator.share) {
+                  try { await navigator.share({ title: product.name, url }) } catch { /* user cancelled */ }
+                } else {
+                  try { await navigator.clipboard.writeText(url); setShareCopied(true); setTimeout(() => setShareCopied(false), 2000) } catch { /* */ }
+                }
+              }}
+              title="Paylaş"
+              className="w-11 h-11 rounded-xl flex items-center justify-center border border-border bg-background text-slate-400 hover:border-primary/50 hover:text-primary transition-all"
+            >
+              {shareCopied ? <Copy className="w-5 h-5 text-emerald-400" /> : <Share2 className="w-5 h-5" />}
+            </button>
           </div>
+          {shareCopied && (
+            <p className="text-xs text-emerald-400 flex items-center gap-1">
+              <Check className="w-3 h-3" /> Bağlantı kopyalandı!
+            </p>
+          )}
         </div>
       </div>
 

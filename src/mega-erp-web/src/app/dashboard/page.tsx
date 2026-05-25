@@ -21,21 +21,21 @@ interface StockDto { productId: string; binId: string; quantity: number; minStoc
 interface MktOrder { id: string; totalAmount: number; status: string; paymentStatus: string; createdAt: string; itemCount: number; recipientName: string }
 
 const MKT_STATUS: Record<string, { label: string; cls: string }> = {
-  Pending:    { label: 'Beklemede',     cls: 'bg-amber-500/15 text-amber-400' },
-  Processing: { label: 'İşleniyor',     cls: 'bg-violet-500/15 text-violet-400' },
-  Confirmed:  { label: 'Onaylandı',     cls: 'bg-cyan-500/15 text-cyan-400' },
-  Shipped:    { label: 'Kargoda',       cls: 'bg-primary/15 text-primary' },
-  Delivered:  { label: 'Teslim Edildi', cls: 'bg-emerald-500/15 text-emerald-400' },
-  Cancelled:  { label: 'İptal',         cls: 'bg-red-500/15 text-red-400' },
+  Pending:    { label: 'Beklemede',     cls: 'bg-amber-500/10 text-amber-400 border border-amber-500/20' },
+  Processing: { label: 'İşleniyor',     cls: 'bg-violet-500/10 text-violet-400 border border-violet-500/20' },
+  Confirmed:  { label: 'Onaylandı',     cls: 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' },
+  Shipped:    { label: 'Kargoda',       cls: 'bg-primary/10 text-primary border border-primary/20' },
+  Delivered:  { label: 'Teslim Edildi', cls: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' },
+  Cancelled:  { label: 'İptal',         cls: 'bg-red-500/10 text-red-400 border border-red-500/20' },
 }
 
 const ORDER_STATUS: Record<string, { label: string; cls: string }> = {
-  Delivered:  { label: 'Teslim Edildi', cls: 'bg-emerald-500/15 text-emerald-400' },
-  Shipped:    { label: 'Kargoda',       cls: 'bg-primary/15 text-primary' },
-  Paid:       { label: 'Ödendi',        cls: 'bg-purple-500/15 text-purple-400' },
-  Cancelled:  { label: 'İptal',         cls: 'bg-red-500/15 text-red-400' },
-  Pending:    { label: 'Beklemede',     cls: 'bg-amber-500/15 text-amber-400' },
-  Processing: { label: 'İşleniyor',     cls: 'bg-violet-500/15 text-violet-400' },
+  Delivered:  { label: 'Teslim Edildi', cls: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' },
+  Shipped:    { label: 'Kargoda',       cls: 'bg-primary/10 text-primary border border-primary/20' },
+  Paid:       { label: 'Ödendi',        cls: 'bg-purple-500/10 text-purple-400 border border-purple-500/20' },
+  Cancelled:  { label: 'İptal',         cls: 'bg-red-500/10 text-red-400 border border-red-500/20' },
+  Pending:    { label: 'Beklemede',     cls: 'bg-amber-500/10 text-amber-400 border border-amber-500/20' },
+  Processing: { label: 'İşleniyor',     cls: 'bg-violet-500/10 text-violet-400 border border-violet-500/20' },
 }
 
 function buildLast7Days(orders: Order[]): DayStats[] {
@@ -412,27 +412,27 @@ export default function DashboardPage() {
                 <AreaChart data={chartData} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorOrders" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                      <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.25} />
+                      <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0} />
                     </linearGradient>
                     <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--secondary))" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="hsl(var(--secondary))" stopOpacity={0} />
+                      <stop offset="5%" stopColor="var(--color-secondary)" stopOpacity={0.25} />
+                      <stop offset="95%" stopColor="var(--color-secondary)" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                  <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#64748b' }} />
-                  <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.4)" />
+                  <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={{ stroke: 'hsl(var(--border) / 0.4)' }} />
+                  <YAxis tick={{ fontSize: 11, fill: '#64748b' }} axisLine={{ stroke: 'hsl(var(--border) / 0.4)' }} />
                   <Tooltip
-                    contentStyle={{ borderRadius: 12, border: '1px solid rgba(255,255,255,0.1)', background: '#0f172a' }}
+                    contentStyle={{ borderRadius: 12, border: '1px solid hsl(var(--border) / 0.8)', background: 'hsl(var(--surface) / 0.9)', backdropFilter: 'blur(12px)' }}
                     formatter={(val, name) =>
                       name === 'revenue'
                         ? [`₺${Number(val).toLocaleString('tr-TR')}`, 'Gelir']
                         : [String(val), 'Sipariş']
                     }
                   />
-                  <Area type="monotone" dataKey="orders" stroke="hsl(var(--primary))" strokeWidth={2} fill="url(#colorOrders)" name="orders" />
-                  <Area type="monotone" dataKey="revenue" stroke="hsl(var(--secondary))" strokeWidth={2} fill="url(#colorRevenue)" name="revenue" />
+                  <Area type="monotone" dataKey="orders" stroke="var(--color-primary)" strokeWidth={2.5} fill="url(#colorOrders)" name="orders" />
+                  <Area type="monotone" dataKey="revenue" stroke="var(--color-secondary)" strokeWidth={2.5} fill="url(#colorRevenue)" name="revenue" />
                 </AreaChart>
               </ResponsiveContainer>
             )}
@@ -709,19 +709,17 @@ function StatCard({
   title: string; value: string; sub: string; icon: React.ReactNode; color: string; loading: boolean;
 }) {
   return (
-    <div className="premium-card p-6 hover:scale-[1.02] transition-transform">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-sm font-medium text-slate-500 mb-1">{title}</p>
-          {loading
-            ? <div className="h-8 w-24 bg-slate-800/60 rounded-lg animate-pulse mt-1" />
-            : <h4 className="text-2xl font-black text-foreground">{value}</h4>
-          }
-          <p className="text-xs mt-1 text-slate-400">{sub}</p>
-        </div>
-        <div className={`p-3 rounded-xl bg-slate-800/60 ${color}`}>
-          {icon}
-        </div>
+    <div className="premium-card p-6 flex items-start justify-between">
+      <div className="min-w-0">
+        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{title}</p>
+        {loading
+          ? <div className="h-8 w-24 bg-slate-900/60 rounded-lg animate-pulse mt-2" />
+          : <h4 className="text-3xl font-black text-foreground mt-1.5">{value}</h4>
+        }
+        <p className="text-xs mt-1 text-slate-500">{sub}</p>
+      </div>
+      <div className={`w-10 h-10 rounded-xl bg-slate-950/20 dark:bg-slate-900/40 border border-border/20 flex items-center justify-center shrink-0 ${color}`}>
+        {icon}
       </div>
     </div>
   );

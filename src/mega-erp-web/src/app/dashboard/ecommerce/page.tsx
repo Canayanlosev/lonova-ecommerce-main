@@ -202,7 +202,7 @@ export default function EcommercePage() {
               <select
                 value={categoryFilter}
                 onChange={e => { setCategoryFilter(e.target.value); setSelectedIds(new Set()); }}
-                className="px-3 py-1.5 rounded-lg border border-border bg-transparent text-xs outline-none focus:ring-2 focus:ring-primary/50 text-slate-400"
+                className="px-3 py-1.5 rounded-lg border border-border bg-slate-900/40 text-xs outline-none focus:ring-2 focus:ring-primary/50 text-slate-400 font-semibold"
               >
                 <option value="">Tüm Kategoriler</option>
                 {categories.map(c => (
@@ -210,15 +210,15 @@ export default function EcommercePage() {
                 ))}
               </select>
               {/* Visibility filter */}
-              <div className="flex rounded-lg border border-border overflow-hidden text-xs">
+              <div className="flex rounded-lg border border-border/80 bg-slate-950/20 dark:bg-slate-900/60 p-0.5 text-xs">
                 {(['all', 'published', 'hidden'] as const).map(v => (
                   <button
                     key={v}
                     onClick={() => { setVisibilityFilter(v); setSelectedIds(new Set()); }}
-                    className={`px-3 py-1.5 font-medium transition-colors ${
+                    className={`px-3 py-1 rounded-md font-semibold transition-all duration-200 ${
                       visibilityFilter === v
-                        ? 'bg-primary/15 text-primary'
-                        : 'text-slate-400 hover:bg-slate-800'
+                        ? 'bg-surface text-primary border border-border/40 shadow-sm'
+                        : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
                     {v === 'all' ? 'Tümü' : v === 'published' ? '● Yayında' : '○ Gizli'}
@@ -248,34 +248,34 @@ export default function EcommercePage() {
             <>
               {/* Bulk Action Bar */}
               {selectedIds.size > 0 && (
-                <div className="flex items-center gap-3 px-4 py-3 mb-2 bg-primary/10 border border-primary/20 rounded-xl">
+                <div className="flex items-center gap-3 px-4 py-3 mb-4 bg-primary/5 border border-primary/20 rounded-xl">
                   <span className="text-sm font-semibold text-primary">{selectedIds.size} ürün seçili</span>
                   <div className="flex gap-2 ml-auto">
                     <button
                       onClick={() => handleBulkVisibility(true)}
                       disabled={bulkLoading}
-                      className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors disabled:opacity-50"
+                      className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500/20 transition-colors disabled:opacity-50 font-semibold"
                     >
                       <Eye size={13} /> Yayınla
                     </button>
                     <button
                       onClick={() => handleBulkVisibility(false)}
                       disabled={bulkLoading}
-                      className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-slate-500/10 text-slate-400 hover:bg-slate-500/20 transition-colors disabled:opacity-50"
+                      className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-slate-500/10 text-slate-400 border border-slate-500/20 hover:bg-slate-500/20 transition-colors disabled:opacity-50 font-semibold"
                     >
                       <EyeOff size={13} /> Gizle
                     </button>
                     <button
                       onClick={handleBulkDelete}
                       disabled={bulkLoading}
-                      className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors disabled:opacity-50"
+                      className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-colors disabled:opacity-50 font-semibold"
                     >
                       <Trash2 size={13} /> {bulkLoading ? 'Siliniyor...' : 'Sil'}
                     </button>
                     <button
                       onClick={() => setPriceModal(true)}
                       disabled={bulkLoading}
-                      className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 transition-colors disabled:opacity-50"
+                      className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-colors disabled:opacity-50 font-semibold"
                     >
                       <Percent size={13} /> Fiyat Güncelle
                     </button>
@@ -299,11 +299,11 @@ export default function EcommercePage() {
                         </button>
                       </th>
                       <th className="w-10 px-2 py-3 hidden sm:table-cell" />
-                      <th className="text-left px-4 py-3 text-slate-500 font-medium">SKU</th>
-                      <th className="text-left px-4 py-3 text-slate-500 font-medium">Ürün Adı</th>
-                      <th className="text-left px-4 py-3 text-slate-500 font-medium hidden md:table-cell">Kategori</th>
-                      <th className="text-right px-4 py-3 text-slate-500 font-medium">Fiyat</th>
-                      <th className="text-right px-4 py-3 text-slate-500 font-medium">İşlemler</th>
+                      <th className="text-left px-4 py-3 text-slate-400 font-semibold text-xs uppercase tracking-wider">SKU</th>
+                      <th className="text-left px-4 py-3 text-slate-400 font-semibold text-xs uppercase tracking-wider">Ürün Adı</th>
+                      <th className="text-left px-4 py-3 text-slate-400 font-semibold text-xs uppercase tracking-wider hidden md:table-cell">Kategori</th>
+                      <th className="text-right px-4 py-3 text-slate-400 font-semibold text-xs uppercase tracking-wider">Fiyat</th>
+                      <th className="text-right px-4 py-3 text-slate-400 font-semibold text-xs uppercase tracking-wider">İşlemler</th>
                     </tr>
                   </thead>
                   <tbody>
