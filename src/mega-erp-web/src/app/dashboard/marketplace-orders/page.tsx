@@ -55,6 +55,7 @@ export default function MarketplaceOrdersPage() {
   const [error, setError] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [search, setSearch] = useState('')
+  const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'month'>('all')
 
   // Detail side panel
   const [detailOrder, setDetailOrder] = useState<AdminOrder | null>(null)
@@ -126,13 +127,31 @@ export default function MarketplaceOrdersPage() {
     finally { setActionId(null) }
   }
 
+  const dateFilteredOrders = orders.filter(o => {
+    if (dateFilter === 'all') return true
+    const d = new Date(o.createdAt)
+    const now = new Date()
+    if (dateFilter === 'today') {
+      return d.toISOString().slice(0, 10) === now.toISOString().slice(0, 10)
+    }
+    if (dateFilter === 'week') {
+      const weekAgo = new Date(now); weekAgo.setDate(weekAgo.getDate() - 7)
+      return d >= weekAgo
+    }
+    if (dateFilter === 'month') {
+      const monthAgo = new Date(now); monthAgo.setMonth(monthAgo.getMonth() - 1)
+      return d >= monthAgo
+    }
+    return true
+  })
+
   const filtered = search
-    ? orders.filter(o =>
+    ? dateFilteredOrders.filter(o =>
         o.id.startsWith(search.toLowerCase()) ||
         o.recipientName.toLowerCase().includes(search.toLowerCase()) ||
         o.city.toLowerCase().includes(search.toLowerCase())
       )
-    : orders
+    : dateFilteredOrders
 
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
@@ -210,6 +229,20 @@ export default function MarketplaceOrdersPage() {
             ))}
           </select>
           <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+        </div>
+        {/* Date filter */}
+        <div className="flex items-center gap-1 p-0.5 rounded-xl border border-border bg-background/40">
+          {(['all', 'today', 'week', 'month'] as const).map(f => (
+            <button
+              key={f}
+              onClick={() => setDateFilter(f)}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
+                dateFilter === f ? 'bg-surface text-primary border border-border/40 shadow-sm' : 'text-slate-400 hover:text-foreground'
+              }`}
+            >
+              {f === 'all' ? 'Tümü' : f === 'today' ? 'Bugün' : f === 'week' ? 'Bu Hafta' : 'Bu Ay'}
+            </button>
+          ))}
         </div>
       </div>
 

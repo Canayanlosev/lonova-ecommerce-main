@@ -255,6 +255,21 @@ export default function AnalyticsPage() {
     return Object.values(map).sort((a, b) => b.revenue - a.revenue).slice(0, 5)
   }, [paidOrders])
 
+  // ── Hourly order distribution ───────────────────────────────────────────────
+  const hourlyData = useMemo(() => {
+    const hours = Array.from({ length: 24 }, (_, h) => ({ hour: `${h.toString().padStart(2, '0')}:00`, count: 0 }))
+    for (const o of periodOrders) {
+      const h = new Date(o.createdAt).getHours()
+      hours[h].count += 1
+    }
+    return hours
+  }, [periodOrders])
+
+  const peakHour = useMemo(() => {
+    if (hourlyData.every(h => h.count === 0)) return null
+    return hourlyData.reduce((max, h) => h.count > max.count ? h : max)
+  }, [hourlyData])
+
   const fmt = (n: number) => n.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 })
 
   const handleExportCsv = () => {
@@ -561,6 +576,62 @@ export default function AnalyticsPage() {
           </ResponsiveContainer>
         )}
       </div>
+
+      {/* Hourly order distribution */}
+      {!loading && periodOrders.length > 0 && (
+        <div className="premium-card p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
+              Saatlik Sipariş Yoğunluğu
+            </h2>
+            {peakHour && (
+              <span className="text-xs text-slate-400 font-medium">
+                En yoğun saat: <span className="text-primary font-bold">{peakHour.hour}</span>
+                <span className="ml-1">({peakHour.count} sipariş)</span>
+              </span>
+            )}
+          </div>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={hourlyData} margin={{ top: 0, right: 0, left: -10, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} vertical={false} />
+              <XAxis
+                dataKey="hour"
+                tick={{ fill: '#64748b', fontSize: 9 }}
+                tickLine={false}
+                axisLine={false}
+                interval={3}
+                tickFormatter={(v: string) => v.replace(':00', '')}
+              />
+              <YAxis hide />
+              <Tooltip
+                contentStyle={{ background: 'hsl(var(--surface))', border: '1px solid hsl(var(--border))', borderRadius: 10, fontSize: 11 }}
+                formatter={(v: unknown) => [String(v), 'Sipariş']}
+                labelFormatter={(label) => `Saat ${label}`}
+              />
+              <Bar
+                dataKey="count"
+                radius={[3, 3, 0, 0]}
+                fill="hsl(var(--primary))"
+                maxBarSize={20}
+                label={false}
+              >
+                {hourlyData.map((entry, i) => (
+                  <Cell
+                    key={i}
+                    fill={peakHour && entry.hour === peakHour.hour
+                      ? 'hsl(var(--primary))'
+                      : `hsla(var(--primary), ${Math.max(0.2, entry.count / (peakHour?.count || 1))})`
+                    }
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+          <p className="text-xs text-slate-500 mt-2 text-center">
+            Müşterileriniz en çok hangi saatlerde sipariş veriyor? Kampanyalarınızı buna göre planlayın.
+          </p>
+        </div>
+      )}
 
       {/* Orders table */}
       <div className="premium-card p-6">

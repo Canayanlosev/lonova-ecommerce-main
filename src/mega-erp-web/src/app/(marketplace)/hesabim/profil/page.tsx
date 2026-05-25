@@ -7,6 +7,18 @@ import { marketplaceService } from '@/lib/services/marketplace.service'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
 import { AccountTabs } from '@/components/marketplace/AccountTabs'
 
+const AVATAR_COLORS = [
+  { id: 'violet', bg: 'bg-violet-600', hex: '#7c3aed' },
+  { id: 'blue', bg: 'bg-blue-600', hex: '#2563eb' },
+  { id: 'emerald', bg: 'bg-emerald-600', hex: '#059669' },
+  { id: 'amber', bg: 'bg-amber-500', hex: '#f59e0b' },
+  { id: 'rose', bg: 'bg-rose-600', hex: '#e11d48' },
+  { id: 'cyan', bg: 'bg-cyan-600', hex: '#0891b2' },
+  { id: 'orange', bg: 'bg-orange-500', hex: '#f97316' },
+  { id: 'pink', bg: 'bg-pink-600', hex: '#db2777' },
+]
+const AVATAR_COLOR_KEY = 'buyer-avatar-color'
+
 export default function ProfilPage() {
   const router = useRouter()
   const { isAuthenticated, buyer } = useBuyerAuthStore()
@@ -15,6 +27,19 @@ export default function ProfilPage() {
   const [saving, setSaving] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
+  const [avatarColorId, setAvatarColorId] = useState('violet')
+
+  useEffect(() => {
+    const saved = localStorage.getItem(AVATAR_COLOR_KEY)
+    if (saved && AVATAR_COLORS.find(c => c.id === saved)) setAvatarColorId(saved)
+  }, [])
+
+  const handleAvatarColor = (id: string) => {
+    setAvatarColorId(id)
+    localStorage.setItem(AVATAR_COLOR_KEY, id)
+  }
+
+  const selectedColor = AVATAR_COLORS.find(c => c.id === avatarColorId) ?? AVATAR_COLORS[0]
 
   useEffect(() => {
     if (!isAuthenticated) { router.push('/alici-auth/giris'); return }
@@ -67,14 +92,39 @@ export default function ProfilPage() {
 
       <div className="max-w-md">
         <div className="premium-card p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-black text-lg">
+          {/* Avatar */}
+          <div className="flex flex-col items-center gap-3 mb-6 pb-6 border-b border-border">
+            <div
+              className="w-20 h-20 rounded-2xl flex items-center justify-center font-black text-2xl text-white shadow-lg transition-all duration-300"
+              style={{ backgroundColor: selectedColor.hex }}
+            >
               {form.firstName?.[0]?.toUpperCase() ?? '?'}{form.lastName?.[0]?.toUpperCase() ?? ''}
             </div>
-            <div>
-              <h2 className="font-semibold text-foreground">Profil Bilgilerini Güncelle</h2>
-              <p className="text-xs text-slate-400">Ad, soyad, e-posta ve telefon</p>
+            <div className="text-center">
+              <p className="font-semibold text-foreground">{form.firstName} {form.lastName}</p>
+              <p className="text-xs text-slate-400">{form.email}</p>
             </div>
+            {/* Color picker */}
+            <div>
+              <p className="text-xs text-slate-400 text-center mb-2">Avatar Rengi</p>
+              <div className="flex gap-2">
+                {AVATAR_COLORS.map(c => (
+                  <button
+                    key={c.id}
+                    onClick={() => handleAvatarColor(c.id)}
+                    className={`w-7 h-7 rounded-full transition-all ${c.bg} ${
+                      avatarColorId === c.id ? 'ring-2 ring-white ring-offset-2 ring-offset-background scale-110' : 'hover:scale-105'
+                    }`}
+                    title={c.id}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <h2 className="font-semibold text-foreground">Profil Bilgilerini Güncelle</h2>
+            <p className="text-xs text-slate-400">Ad, soyad, e-posta ve telefon</p>
           </div>
 
           {loading ? (

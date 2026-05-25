@@ -7,7 +7,7 @@ import { motion } from 'framer-motion'
 import {
   ArrowRight, Zap, ShieldCheck, Truck, TrendingUp,
   Users, Package, BarChart3, CheckCircle2,
-  Coffee, AlertTriangle, BookOpen, Clock, History
+  Coffee, AlertTriangle, BookOpen, Clock, History, X as CloseIcon
 } from 'lucide-react'
 import { marketplaceService, type MarketplaceProduct, type CatalogCategory } from '@/lib/services/marketplace.service'
 import { ProductCard } from '@/components/marketplace/ProductCard'
@@ -75,11 +75,14 @@ const FALLBACK_CATEGORIES = [
 
 const fadeUp = { initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 } }
 
+const PROMO_KEY = 'promo-bar-dismissed-v1'
+
 export default function HomePage() {
   const [products, setProducts] = useState<MarketplaceProduct[]>([])
   const [categories, setCategories] = useState<CatalogCategory[]>([])
   const [loading, setLoading] = useState(true)
   const [recentlyViewed, setRecentlyViewed] = useState<RecentItem[]>([])
+  const [showPromo, setShowPromo] = useState(false)
 
   useEffect(() => {
     Promise.all([
@@ -99,10 +102,34 @@ export default function HomePage() {
     } catch {
       // ignore
     }
+
+    // Show promo bar if not dismissed
+    if (!localStorage.getItem(PROMO_KEY)) setShowPromo(true)
   }, [])
+
+  const dismissPromo = () => {
+    setShowPromo(false)
+    localStorage.setItem(PROMO_KEY, '1')
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      {/* Promo / Announcement Bar */}
+      {showPromo && (
+        <div className="relative bg-gradient-to-r from-primary/90 to-secondary/90 text-white text-center py-2 px-4 text-xs font-semibold">
+          <span>🎉 Mayıs kampanyası: İlk 3 ay komisyonsuz satış! </span>
+          <Link href="/auth/register" className="underline font-bold hover:no-underline ml-1">
+            Ücretsiz mağaza aç →
+          </Link>
+          <button
+            onClick={dismissPromo}
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-white/20 transition-colors"
+            aria-label="Kapat"
+          >
+            <CloseIcon className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
       <MarketplaceNavbar />
 
       <main className="flex-1">
