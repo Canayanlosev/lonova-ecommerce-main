@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {
   TrendingUp, ShoppingBag, DollarSign, Package,
   AlertTriangle, BookOpen, Plus, ArrowRight, CheckCircle2,
-  Clock, Warehouse, Store
+  Clock, Warehouse, Store, Target, Edit3, Check, X
 } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
@@ -79,6 +79,16 @@ export default function DashboardPage() {
   const [mktOrders, setMktOrders] = useState<MktOrder[]>([]);
   const [mktLoading, setMktLoading] = useState(true);
 
+  // Monthly target (persisted in localStorage)
+  const [monthlyTarget, setMonthlyTarget] = useState<number>(0)
+  const [targetInput, setTargetInput] = useState('')
+  const [editingTarget, setEditingTarget] = useState(false)
+
+  useEffect(() => {
+    const saved = typeof window !== 'undefined' ? Number(localStorage.getItem('monthly-target')) || 0 : 0
+    setMonthlyTarget(saved)
+  }, [])
+
   useEffect(() => {
     Promise.all([
       ordersService.getAll().catch(() => [] as Order[]),
@@ -121,6 +131,30 @@ export default function DashboardPage() {
     o.status === 'Paid' || o.status === 'Delivered' || o.status === 'Shipped'
   ).length;
   const unbookedCount = bookedCount; // conservative: show all completed as "may need booking"
+
+  // Monthly target progress
+  const currentMonthISO = new Date().toISOString().slice(0, 7)
+  const currentMonthRevenue = useMemo(() => {
+    const b2b = orders
+      .filter(o => o.orderDate?.slice(0, 7) === currentMonthISO)
+      .reduce((s, o) => s + (o.totalAmount ?? 0), 0)
+    const b2c = mktOrders
+      .filter(o => o.createdAt?.slice(0, 7) === currentMonthISO)
+      .reduce((s, o) => s + (o.totalAmount ?? 0), 0)
+    return b2b + b2c
+  }, [orders, mktOrders, currentMonthISO])
+
+  const targetProgress = monthlyTarget > 0 ? Math.min(100, Math.round((currentMonthRevenue / monthlyTarget) * 100)) : 0
+  const ayAdi = new Date().toLocaleDateString('tr-TR', { month: 'long' })
+
+  const handleSaveTarget = () => {
+    const val = Number(targetInput.replace(/[.\s]/g, '').replace(',', '.'))
+    if (val > 0) {
+      localStorage.setItem('monthly-target', String(val))
+      setMonthlyTarget(val)
+    }
+    setEditingTarget(false)
+  }
 
   const firstName = user?.firstName ?? 'İyi';
 
@@ -458,6 +492,92 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Aylık Satış Hedefi */}
+      <div className="premium-card p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Target className="w-4 h-4 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-foreground">{ayAdi} Satış Hedefi</h3>
+              <p className="text-xs text-slate-500">Cari ay toplam gelir (B2B + B2C)</p>
+            </div>
+          </div>
+          {!editingTarget ? (
+            <button
+              onClick={() => { setTargetInput(monthlyTarget > 0 ? String(monthlyTarget) : ''); setEditingTarget(true) }}
+              className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-foreground px-2.5 py-1.5 rounded-lg hover:bg-slate-800/50 transition-all"
+            >
+              <Edit3 className="w-3 h-3" />
+              {monthlyTarget > 0 ? 'Hedefi Değiştir' : 'Hedef Belirle'}
+            </button>
+          ) : (
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400">₺</span>
+                <input
+                  type="number"
+                  value={targetInput}
+                  onChange={e => setTargetInput(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') handleSaveTarget(); if (e.key === 'Escape') setEditingTarget(false) }}
+                  autoFocus
+                  placeholder="100000"
+                  className="pl-6 pr-2 py-1.5 rounded-lg border border-border bg-background text-foreground text-xs w-28 focus:outline-none focus:ring-2 focus:ring-primary/30"
+                />
+              </div>
+              <button onClick={handleSaveTarget} className="p-1.5 rounded-lg text-emerald-400 hover:bg-emerald-500/10 transition-all">
+                <Check className="w-3.5 h-3.5" />
+              </button>
+              <button onClick={() => setEditingTarget(false)} className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-700 transition-all">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-end justify-between mb-2.5">
+          <div>
+            <span className="text-2xl font-black text-foreground">
+              ₺{currentMonthRevenue.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}
+            </span>
+            {monthlyTarget > 0 && (
+              <span className="text-slate-500 text-sm ml-2">/ ₺{monthlyTarget.toLocaleString('tr-TR')}</span>
+            )}
+          </div>
+          {monthlyTarget > 0 && (
+            <span className={`text-lg font-black ${targetProgress >= 100 ? 'text-emerald-400' : targetProgress >= 70 ? 'text-primary' : targetProgress >= 40 ? 'text-amber-400' : 'text-red-400'}`}>
+              %{targetProgress}
+            </span>
+          )}
+        </div>
+
+        {monthlyTarget > 0 ? (
+          <>
+            <div className="h-2.5 bg-slate-800 rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all duration-700 ${
+                  targetProgress >= 100 ? 'bg-emerald-500' :
+                  targetProgress >= 70 ? 'bg-primary' :
+                  targetProgress >= 40 ? 'bg-amber-500' : 'bg-red-500'
+                }`}
+                style={{ width: `${targetProgress}%` }}
+              />
+            </div>
+            <p className="text-xs text-slate-500 mt-2">
+              {targetProgress >= 100
+                ? '🎉 Hedef aşıldı!'
+                : `₺${(monthlyTarget - currentMonthRevenue).toLocaleString('tr-TR', { maximumFractionDigits: 0 })} daha gerekiyor`
+              }
+            </p>
+          </>
+        ) : (
+          <div className="h-2.5 bg-slate-800 rounded-full overflow-hidden">
+            <div className="h-full bg-slate-700 rounded-full w-0" />
+          </div>
+        )}
       </div>
 
       {/* Son Siparişler */}
