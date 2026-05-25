@@ -54,12 +54,12 @@ export function ThemeSwitcher() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 mt-2 w-56 rounded-2xl border border-border bg-background p-3 shadow-xl z-[100] space-y-4"
+            className="absolute right-0 mt-2 w-56 rounded-2xl border border-border/80 bg-surface/90 backdrop-blur-xl p-3 shadow-2xl shadow-black/25 z-[100] space-y-4"
           >
             {/* Theme Mode Selector */}
             <div className="space-y-1.5">
               <h4 className="text-xs font-semibold text-slate-400 pl-1">Görünüm</h4>
-              <div className="grid grid-cols-3 gap-1 bg-slate-900 p-1 rounded-xl">
+              <div className="grid grid-cols-3 gap-1 bg-slate-950/20 dark:bg-slate-900/60 p-1 rounded-xl border border-border/20">
                 {modes.map((mode) => {
                   const Icon = mode.icon
                   const active = themeMode === mode.value
@@ -67,10 +67,10 @@ export function ThemeSwitcher() {
                     <button
                       key={mode.value}
                       onClick={() => setThemeMode(mode.value)}
-                      className={`flex flex-col items-center gap-1 py-1.5 rounded-lg text-[10px] font-medium transition-all ${
+                      className={`flex flex-col items-center gap-1 py-1.5 rounded-lg text-[10px] font-semibold transition-all duration-200 ${
                         active
-                          ? 'bg-slate-800 text-foreground shadow-sm'
-                          : 'text-slate-500 hover:text-slate-300'
+                          ? 'bg-surface text-primary border border-border/40 shadow-sm'
+                          : 'text-slate-400 hover:text-foreground'
                       }`}
                       title={mode.label}
                     >
@@ -95,10 +95,10 @@ export function ThemeSwitcher() {
                     <button
                       key={accent.value}
                       onClick={() => setAccentColor(accent.value)}
-                      className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-[10px] font-medium border transition-all ${
+                      className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-[10px] font-semibold border transition-all duration-200 ${
                         active
-                          ? 'border-primary bg-primary/5 text-primary'
-                          : 'border-border text-slate-500 hover:text-slate-300'
+                          ? 'border-primary/60 bg-primary/5 text-primary shadow-sm'
+                          : 'border-border/60 text-slate-400 hover:text-foreground hover:bg-slate-950/5 dark:hover:bg-slate-900/20'
                       }`}
                     >
                       <span className={`w-2.5 h-2.5 rounded-full ${accent.colorClass} shrink-0`} />

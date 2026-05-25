@@ -2,16 +2,19 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import {
   ArrowRight, Zap, ShieldCheck, Truck, TrendingUp,
   Users, Package, BarChart3, CheckCircle2,
-  Coffee, AlertTriangle, BookOpen, Clock
+  Coffee, AlertTriangle, BookOpen, Clock, History
 } from 'lucide-react'
 import { marketplaceService, type MarketplaceProduct, type CatalogCategory } from '@/lib/services/marketplace.service'
 import { ProductCard } from '@/components/marketplace/ProductCard'
 import { MarketplaceNavbar } from '@/components/marketplace/MarketplaceNavbar'
 import { MarketplaceFooter } from '@/components/marketplace/MarketplaceFooter'
+
+type RecentItem = { id: string; name: string; imageUrl?: string; basePrice: number }
 
 function ProductSkeleton() {
   return (
@@ -76,6 +79,7 @@ export default function HomePage() {
   const [products, setProducts] = useState<MarketplaceProduct[]>([])
   const [categories, setCategories] = useState<CatalogCategory[]>([])
   const [loading, setLoading] = useState(true)
+  const [recentlyViewed, setRecentlyViewed] = useState<RecentItem[]>([])
 
   useEffect(() => {
     Promise.all([
@@ -88,6 +92,13 @@ export default function HomePage() {
       })
       .catch(() => {})
       .finally(() => setLoading(false))
+
+    try {
+      const saved: RecentItem[] = JSON.parse(localStorage.getItem('recently-viewed') ?? '[]')
+      setRecentlyViewed(saved.slice(0, 6))
+    } catch {
+      // ignore
+    }
   }, [])
 
   return (
@@ -345,6 +356,55 @@ export default function HomePage() {
               </div>
             )}
           </section>
+
+          {/* ── SON BAKTIKLARIN ── */}
+          {recentlyViewed.length > 0 && (
+            <section>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <History className="w-4 h-4 text-primary" />
+                  <h2 className="text-base font-bold text-foreground">Son Baktıklarınız</h2>
+                </div>
+                <button
+                  onClick={() => { try { localStorage.removeItem('recently-viewed') } catch { /* */ } setRecentlyViewed([]) }}
+                  className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
+                >
+                  Temizle
+                </button>
+              </div>
+              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                {recentlyViewed.map((item) => (
+                  <Link
+                    key={item.id}
+                    href={`/urun/${item.id}`}
+                    className="flex-shrink-0 w-36 premium-card overflow-hidden group"
+                  >
+                    <div className="relative w-full aspect-square bg-slate-800/60">
+                      {item.imageUrl ? (
+                        <Image
+                          src={item.imageUrl}
+                          alt={item.name}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          sizes="144px"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Package className="w-8 h-8 text-slate-600" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-2">
+                      <p className="text-xs text-foreground font-medium leading-tight line-clamp-2">{item.name}</p>
+                      <p className="text-xs font-bold text-primary mt-1">
+                        ₺{item.basePrice.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* ── CTA BANNER ── */}
           <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-primary/90 to-secondary p-8 sm:p-12">
