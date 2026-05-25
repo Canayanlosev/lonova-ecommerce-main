@@ -79,6 +79,9 @@ export default function DashboardPage() {
   const [mktOrders, setMktOrders] = useState<MktOrder[]>([]);
   const [mktLoading, setMktLoading] = useState(true);
 
+  // Product name map for resolving IDs → names
+  const [productNameMap, setProductNameMap] = useState<Record<string, string>>({})
+
   // Monthly target (persisted in localStorage)
   const [monthlyTarget, setMonthlyTarget] = useState<number>(0)
   const [targetInput, setTargetInput] = useState('')
@@ -99,6 +102,10 @@ export default function DashboardPage() {
       setProductCount(prods.length);
       setChartData(buildLast7Days(ord));
       setLowStock(stock.filter(s => s.isLowStock));
+      // Build product name map
+      const map: Record<string, string> = {}
+      for (const p of prods) { if (p.id) map[p.id] = p.name }
+      setProductNameMap(map)
     }).finally(() => setLoading(false));
 
     // Marketplace orders (separate, non-blocking)
@@ -456,7 +463,9 @@ export default function DashboardPage() {
                     <Link key={i} href="/dashboard/wms" className="flex items-center gap-3 p-3 rounded-xl bg-amber-500/5 border border-amber-500/20 hover:bg-amber-500/10 transition-colors group">
                       <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs font-semibold text-foreground truncate">Ürün #{s.productId.slice(0, 8)}</p>
+                        <p className="text-xs font-semibold text-foreground truncate">
+                          {productNameMap[s.productId] ?? `Ürün #${s.productId.slice(0, 8)}`}
+                        </p>
                         <p className="text-xs text-amber-400">{s.quantity} / min {s.minStockLevel} adet</p>
                       </div>
                       <ArrowRight className="w-3.5 h-3.5 text-slate-500 shrink-0 group-hover:text-amber-400 transition-colors" />
