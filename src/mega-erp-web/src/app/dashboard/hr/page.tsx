@@ -3,13 +3,58 @@
 import { useEffect, useState } from 'react'
 import {
   Users, Building2, CalendarDays, Check, X, Plus, Trash2, Edit2,
-  AlertCircle, DollarSign, Mail, Phone, RefreshCw
+  AlertCircle, DollarSign, Mail, Phone, RefreshCw, FileSpreadsheet, Download, Info
 } from 'lucide-react'
 import { hrService } from '@/lib/services/hr.service'
 import { useToast } from '@/store/ui.store'
 import type { Employee, Department, LeaveRequest } from '@/types/api.types'
 
-type Tab = 'employees' | 'departments' | 'leave'
+type Tab = 'employees' | 'departments' | 'leave' | 'bordro'
+
+// ─── Turkish Payroll Calculation (2024 approximate rates) ──────────────────
+// SGK İşçi: %14 SSK + %1 İşsizlik = %15
+// Gelir Vergisi: Cumulative progressive brackets (monthly matrah)
+// Damga Vergisi: %0.759 of gross
+// SGK İşveren: %15.5 SSK + %2.5 İşsizlik = %18
+
+const SGK_ISCII = 0.15
+const SGK_ISVEREN = 0.18
+const DAMGA = 0.00759
+
+const GV_BRACKETS: { limit: number; rate: number }[] = [
+  { limit: 110_000 / 12, rate: 0.15 },   // ~9,167 ₺/ay
+  { limit: 230_000 / 12, rate: 0.20 },   // ~19,167 ₺/ay
+  { limit: 870_000 / 12, rate: 0.27 },   // ~72,500 ₺/ay
+  { limit: 3_000_000 / 12, rate: 0.35 }, // ~250,000 ₺/ay
+  { limit: Infinity, rate: 0.40 },
+]
+
+function hesaplaGelirVergisi(matrah: number): number {
+  let vergi = 0
+  let prev = 0
+  for (const b of GV_BRACKETS) {
+    if (matrah <= prev) break
+    const dilim = Math.min(matrah, b.limit) - prev
+    vergi += dilim * b.rate
+    prev = b.limit
+    if (matrah <= b.limit) break
+  }
+  return vergi
+}
+
+interface BordroRow {
+  id: string
+  ad: string
+  departman: string
+  brut: number
+  sgkIscii: number
+  gelirVergisi: number
+  damgaVergisi: number
+  toplamKesinti: number
+  net: number
+  sgkIsveren: number
+  toplamMaliyet: number
+}
 
 interface EmployeeForm {
   firstName: string; lastName: string; email: string; phone: string
@@ -177,10 +222,54 @@ export default function HRPage() {
   const totalPayroll = employees.reduce((s, e) => s + e.salary, 0)
   const pendingLeaveCount = leaveRequests.filter(r => r.status === 'Pending').length
 
+  // ─── Payroll computation ───────────────────────────────────────────────────
+  const bordroRows: BordroRow[] = employees.map(e => {
+    const brut = e.salary
+    const sgkIscii = Math.round(brut * SGK_ISCII)
+    const matrah = brut - sgkIscii
+    const gelirVergisi = Math.round(hesaplaGelirVergisi(matrah))
+    const damgaVergisi = Math.round(brut * DAMGA)
+    const toplamKesinti = sgkIscii + gelirVergisi + damgaVergisi
+    const net = brut - toplamKesinti
+    const sgkIsveren = Math.round(brut * SGK_ISVEREN)
+    const toplamMaliyet = brut + sgkIsveren
+    return {
+      id: e.id,
+      ad: `${e.firstName} ${e.lastName}`,
+      departman: e.departmentName ?? '—',
+      brut, sgkIscii, gelirVergisi, damgaVergisi, toplamKesinti, net, sgkIsveren, toplamMaliyet,
+    }
+  })
+
+  const bordroToplam = bordroRows.reduce(
+    (acc, r) => ({
+      brut: acc.brut + r.brut,
+      net: acc.net + r.net,
+      sgkIscii: acc.sgkIscii + r.sgkIscii,
+      toplamMaliyet: acc.toplamMaliyet + r.toplamMaliyet,
+    }),
+    { brut: 0, net: 0, sgkIscii: 0, toplamMaliyet: 0 }
+  )
+
+  const handleExportBordro = () => {
+    const ay = new Date().toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })
+    const header = ['Ad Soyad', 'Departman', 'Brüt Maaş', 'SGK İşçi (%15)', 'Gelir Vergisi', 'Damga Vergisi', 'Toplam Kesinti', 'Net Maaş', 'SGK İşveren (%18)', 'Toplam İşveren Maliyeti']
+    const rows = bordroRows.map(r => [
+      r.ad, r.departman, r.brut, r.sgkIscii, r.gelirVergisi, r.damgaVergisi, r.toplamKesinti, r.net, r.sgkIsveren, r.toplamMaliyet
+    ])
+    const csv = [header, ...rows].map(row => row.join(';')).join('\n')
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url; a.download = `Bordro-${ay}.csv`; a.click()
+    URL.revokeObjectURL(url)
+  }
+
   const TABS: { id: Tab; label: string; icon: React.ElementType; badge?: number }[] = [
-    { id: 'employees',   label: 'Çalışanlar',      icon: Users,        badge: employees.length },
-    { id: 'departments', label: 'Departmanlar',     icon: Building2,    badge: departments.length },
-    { id: 'leave',       label: 'İzin Talepleri',   icon: CalendarDays, badge: pendingLeaveCount },
+    { id: 'employees',   label: 'Çalışanlar',      icon: Users,            badge: employees.length },
+    { id: 'departments', label: 'Departmanlar',     icon: Building2,        badge: departments.length },
+    { id: 'leave',       label: 'İzin Talepleri',   icon: CalendarDays,     badge: pendingLeaveCount },
+    { id: 'bordro',      label: 'Bordro',            icon: FileSpreadsheet },
   ]
 
   return (
@@ -489,6 +578,141 @@ export default function HRPage() {
               </table>
             </div>
           )}
+        </div>
+      )}
+
+      {/* ═══ Bordro Tab ═════════════════════════════════════════════════════ */}
+      {tab === 'bordro' && (
+        <div className="space-y-5">
+          {/* Info notice */}
+          <div className="flex items-start gap-3 p-4 rounded-xl border border-amber-500/20 bg-amber-500/5 text-amber-400 text-xs">
+            <Info className="w-4 h-4 mt-0.5 shrink-0" />
+            <span>
+              Bu hesaplamalar <strong>2024 SGK/vergi oranlarına göre yaklaşık</strong> değerlerdir.
+              SGK İşçi %15 · SGK İşveren %18 · Gelir Vergisi kademeli · Damga Vergisi %0.759.
+              Kesin tutarlar için mali müşavirinize danışın.
+            </span>
+          </div>
+
+          {/* Summary cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { label: 'Toplam Brüt', value: bordroToplam.brut, color: 'text-primary bg-primary/10' },
+              { label: 'Toplam Net',  value: bordroToplam.net,  color: 'text-emerald-400 bg-emerald-500/10' },
+              { label: 'SGK İşçi Kesintisi', value: bordroToplam.sgkIscii, color: 'text-amber-400 bg-amber-500/10' },
+              { label: 'Toplam İşveren Maliyeti', value: bordroToplam.toplamMaliyet, color: 'text-violet-400 bg-violet-500/10' },
+            ].map(({ label, value, color }) => (
+              <div key={label} className="premium-card p-4">
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 text-xs font-bold ${color}`}>
+                  ₺
+                </div>
+                <p className="text-xs text-slate-500 mb-0.5">{label}</p>
+                <p className="font-black text-foreground text-lg">
+                  {value.toLocaleString('tr-TR')}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Table */}
+          <div className="premium-card overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+              <p className="text-sm font-semibold text-foreground">
+                {new Date().toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })} — {employees.length} çalışan
+              </p>
+              <button
+                onClick={handleExportBordro}
+                disabled={employees.length === 0}
+                className="flex items-center gap-2 px-3 py-2 rounded-xl border border-border text-slate-400 hover:text-foreground hover:border-primary/40 transition-all text-xs font-medium disabled:opacity-40"
+              >
+                <Download className="w-3.5 h-3.5" /> CSV İndir
+              </button>
+            </div>
+
+            {employees.length === 0 ? (
+              <div className="p-12 text-center">
+                <FileSpreadsheet className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                <p className="text-slate-400">Bordro hesaplamak için çalışan ekleyin.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-border text-slate-500">
+                      <th className="text-left px-4 py-3 font-medium">Çalışan</th>
+                      <th className="text-right px-4 py-3 font-medium">Brüt Maaş</th>
+                      <th className="text-right px-4 py-3 font-medium hidden md:table-cell">SGK İşçi (%15)</th>
+                      <th className="text-right px-4 py-3 font-medium hidden lg:table-cell">Gelir Vergisi</th>
+                      <th className="text-right px-4 py-3 font-medium hidden lg:table-cell">Damga Vergisi</th>
+                      <th className="text-right px-4 py-3 font-medium">Net Maaş</th>
+                      <th className="text-right px-4 py-3 font-medium hidden md:table-cell">SGK İşveren (%18)</th>
+                      <th className="text-right px-4 py-3 font-medium">Toplam Maliyet</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {bordroRows.map((r) => (
+                      <tr key={r.id} className="hover:bg-slate-800/20 transition-colors">
+                        <td className="px-4 py-3">
+                          <div>
+                            <p className="font-semibold text-foreground text-sm">{r.ad}</p>
+                            <p className="text-slate-500">{r.departman}</p>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-right font-bold text-foreground">
+                          ₺{r.brut.toLocaleString('tr-TR')}
+                        </td>
+                        <td className="px-4 py-3 text-right text-amber-400 hidden md:table-cell">
+                          −₺{r.sgkIscii.toLocaleString('tr-TR')}
+                        </td>
+                        <td className="px-4 py-3 text-right text-amber-400 hidden lg:table-cell">
+                          −₺{r.gelirVergisi.toLocaleString('tr-TR')}
+                        </td>
+                        <td className="px-4 py-3 text-right text-amber-400 hidden lg:table-cell">
+                          −₺{r.damgaVergisi.toLocaleString('tr-TR')}
+                        </td>
+                        <td className="px-4 py-3 text-right font-black text-emerald-400">
+                          ₺{r.net.toLocaleString('tr-TR')}
+                        </td>
+                        <td className="px-4 py-3 text-right text-violet-400 hidden md:table-cell">
+                          +₺{r.sgkIsveren.toLocaleString('tr-TR')}
+                        </td>
+                        <td className="px-4 py-3 text-right font-semibold text-foreground">
+                          ₺{r.toplamMaliyet.toLocaleString('tr-TR')}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  {/* Totals row */}
+                  <tfoot>
+                    <tr className="border-t-2 border-border bg-slate-800/30">
+                      <td className="px-4 py-3 font-bold text-foreground text-sm">TOPLAM</td>
+                      <td className="px-4 py-3 text-right font-bold text-foreground">
+                        ₺{bordroToplam.brut.toLocaleString('tr-TR')}
+                      </td>
+                      <td className="px-4 py-3 text-right text-amber-400 font-semibold hidden md:table-cell">
+                        −₺{bordroRows.reduce((s, r) => s + r.sgkIscii, 0).toLocaleString('tr-TR')}
+                      </td>
+                      <td className="px-4 py-3 text-right text-amber-400 font-semibold hidden lg:table-cell">
+                        −₺{bordroRows.reduce((s, r) => s + r.gelirVergisi, 0).toLocaleString('tr-TR')}
+                      </td>
+                      <td className="px-4 py-3 text-right text-amber-400 font-semibold hidden lg:table-cell">
+                        −₺{bordroRows.reduce((s, r) => s + r.damgaVergisi, 0).toLocaleString('tr-TR')}
+                      </td>
+                      <td className="px-4 py-3 text-right font-black text-emerald-400">
+                        ₺{bordroToplam.net.toLocaleString('tr-TR')}
+                      </td>
+                      <td className="px-4 py-3 text-right text-violet-400 font-semibold hidden md:table-cell">
+                        +₺{bordroRows.reduce((s, r) => s + r.sgkIsveren, 0).toLocaleString('tr-TR')}
+                      </td>
+                      <td className="px-4 py-3 text-right font-black text-foreground">
+                        ₺{bordroToplam.toplamMaliyet.toLocaleString('tr-TR')}
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
