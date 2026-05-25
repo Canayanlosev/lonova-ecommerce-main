@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 
 import { SkeletonRow } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { Package, AlertCircle, Search, Download } from "lucide-react";
+import { Package, AlertCircle, Search, Download, CheckSquare, Square, Layers, Loader2 } from "lucide-react";
 import { ordersService } from "@/lib/services/orders.service";
 import type { Order } from "@/types/api.types";
 import Link from "next/link";
@@ -24,6 +24,10 @@ export default function OrdersPage() {
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkStatus, setBulkStatus] = useState("Shipped");
+  const [bulkUpdating, setBulkUpdating] = useState(false);
+  const [bulkMsg, setBulkMsg] = useState("");
 
   useEffect(() => {
     ordersService.getAll()
@@ -32,17 +36,47 @@ export default function OrdersPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const filtered = orders
+  const filtered = useMemo(() => orders
     .filter((o) => filter === "all" || o.status === filter)
     .filter((o) =>
       !search ||
       o.id.toLowerCase().includes(search.toLowerCase()) ||
       (o.orderNumber ?? "").toLowerCase().includes(search.toLowerCase())
-    );
+    ), [orders, filter, search]);
 
   const totalRevenue = orders.filter(o => o.status !== 'Cancelled').reduce((s, o) => s + o.totalAmount, 0);
   const pendingCount = orders.filter(o => o.status === 'Pending').length;
   const paidCount = orders.filter(o => o.status === 'Paid').length;
+
+  const allFilteredSelected = filtered.length > 0 && filtered.every(o => selected.has(o.id));
+
+  const toggleSelectAll = () => {
+    if (allFilteredSelected) {
+      setSelected(prev => { const s = new Set(prev); filtered.forEach(o => s.delete(o.id)); return s; });
+    } else {
+      setSelected(prev => { const s = new Set(prev); filtered.forEach(o => s.add(o.id)); return s; });
+    }
+  };
+
+  const toggleOne = (id: string) => {
+    setSelected(prev => { const s = new Set(prev); if (s.has(id)) s.delete(id); else s.add(id); return s; });
+  };
+
+  const handleBulkUpdate = async () => {
+    if (selected.size === 0) return;
+    setBulkUpdating(true);
+    setBulkMsg("");
+    let ok = 0; let fail = 0;
+    for (const id of selected) {
+      try { await ordersService.updateStatus(id, bulkStatus); ok++; }
+      catch { fail++; }
+    }
+    setOrders(prev => prev.map(o => selected.has(o.id) ? { ...o, status: bulkStatus } : o));
+    setSelected(new Set());
+    setBulkMsg(fail === 0 ? `${ok} sipariş güncellendi ✓` : `${ok} güncellendi, ${fail} başarısız`);
+    setBulkUpdating(false);
+    setTimeout(() => setBulkMsg(""), 4000);
+  };
 
   const handleExportCsv = () => {
     const rows = [
@@ -103,6 +137,39 @@ export default function OrdersPage() {
       </div>
 
       <div className="premium-card p-6">
+        {/* Bulk action bar */}
+        {selected.size > 0 && (
+          <div className="mb-4 flex flex-wrap items-center gap-3 p-3 rounded-xl bg-primary/10 border border-primary/25">
+            <Layers className="w-4 h-4 text-primary shrink-0" />
+            <span className="text-sm font-semibold text-primary">{selected.size} sipariş seçildi</span>
+            <select
+              value={bulkStatus}
+              onChange={e => setBulkStatus(e.target.value)}
+              className="px-2 py-1 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none"
+            >
+              {Object.entries(statusConfig).map(([k, v]) => (
+                <option key={k} value={k}>{v.label}</option>
+              ))}
+            </select>
+            <button
+              onClick={handleBulkUpdate}
+              disabled={bulkUpdating}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-bold transition-opacity disabled:opacity-60"
+            >
+              {bulkUpdating ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckSquare className="w-3 h-3" />}
+              Durumu Güncelle
+            </button>
+            <button onClick={() => setSelected(new Set())} className="text-xs text-slate-400 hover:text-slate-200 ml-auto">
+              Seçimi Temizle
+            </button>
+          </div>
+        )}
+        {bulkMsg && (
+          <div className="mb-4 px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+            {bulkMsg}
+          </div>
+        )}
+
         <div className="mb-6">
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
             <h3 className="text-base font-bold text-foreground">Sipariş Listesi</h3>
@@ -140,6 +207,11 @@ export default function OrdersPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border">
+                    <th className="px-3 py-3 w-8">
+                      <button onClick={toggleSelectAll} className="text-slate-400 hover:text-primary transition-colors">
+                        {allFilteredSelected ? <CheckSquare className="w-4 h-4 text-primary" /> : <Square className="w-4 h-4" />}
+                      </button>
+                    </th>
                     <th className="text-left px-4 py-3 text-slate-500 font-medium">Sipariş</th>
                     <th className="text-left px-4 py-3 text-slate-500 font-medium hidden sm:table-cell">Tarih</th>
                     <th className="text-left px-4 py-3 text-slate-500 font-medium">Durum</th>
@@ -149,17 +221,23 @@ export default function OrdersPage() {
                 </thead>
                 <tbody>
                   {loading
-                    ? Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} cols={5} />)
+                    ? Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} cols={6} />)
                     : filtered.length === 0
                     ? (
-                      <tr><td colSpan={5}>
+                      <tr><td colSpan={6}>
                         <EmptyState icon={<Package />} title="Sipariş bulunamadı" description="Filtrelerinize uyan sipariş yok." />
                       </td></tr>
                     )
                     : filtered.map((o) => {
                       const status = statusConfig[o.status] ?? { label: o.status, className: "bg-slate-700/40 text-slate-300" };
+                      const isSelected = selected.has(o.id);
                       return (
-                        <tr key={o.id} className="border-b border-border hover:bg-surface/50 transition-colors">
+                        <tr key={o.id} className={`border-b border-border hover:bg-surface/50 transition-colors ${isSelected ? 'bg-primary/5' : ''}`}>
+                          <td className="px-3 py-3 w-8">
+                            <button onClick={() => toggleOne(o.id)} className="text-slate-400 hover:text-primary transition-colors">
+                              {isSelected ? <CheckSquare className="w-4 h-4 text-primary" /> : <Square className="w-4 h-4" />}
+                            </button>
+                          </td>
                           <td className="px-4 py-3">
                             <div>
                               <p className="font-mono text-xs text-slate-400">{o.id.slice(0, 8).toUpperCase()}</p>

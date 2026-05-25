@@ -5,4 +5,5 @@ export const ordersService = {
   getAll: () => api.get<Order[]>('/api/sales/orders').then((r) => r.data),
   getById: (id: string) => api.get<Order>(`/api/sales/orders/${id}`).then((r) => r.data),
   cancel: (id: string) => api.post(`/api/sales/orders/${id}/cancel`),
+  updateStatus: (id: string, status: string) => api.patch(`/api/sales/orders/${id}/status`, { status }),
 }

@@ -18,6 +18,16 @@ interface WarehouseDto { id: string; name: string; address?: string; isActive: b
 interface BinDto { id: string; warehouseId: string; code: string }
 interface StockDto { productId: string; binId: string; quantity: number; minStockLevel: number; isLowStock: boolean }
 interface StockMovementForm { movementType: string; productId: string; fromBinId: string; toBinId: string; quantity: number; note: string }
+interface StockMovementDto {
+  id: string
+  productId: string
+  movementType: string
+  quantity: number
+  note?: string
+  createdAt: string
+  fromBinId?: string
+  toBinId?: string
+}
 
 interface SupplierDto {
   id: string; name: string
@@ -75,6 +85,9 @@ export default function WMSPage() {
   const [showMoveForm, setShowMoveForm] = useState(false)
   const [moveForm, setMoveForm] = useState<StockMovementForm>(EMPTY_MOVE)
   const [saving, setSaving] = useState(false)
+  const [movements, setMovements] = useState<StockMovementDto[]>([])
+  const [movementsLoaded, setMovementsLoaded] = useState(false)
+  const [movementsLoading, setMovementsLoading] = useState(false)
 
   // ─ Suppliers ──
   const [suppliers, setSuppliers] = useState<SupplierDto[]>([])
@@ -122,6 +135,17 @@ export default function WMSPage() {
       }).catch(() => setSuppliersLoaded(true))
     }
   }, [tab, suppliersLoaded])
+
+  // ─ Lazy-load movements when tab opened ──────────────────────────────────
+  useEffect(() => {
+    if (tab === 'movements' && !movementsLoaded) {
+      setMovementsLoading(true)
+      api.get('/api/wms/stock-movements').then(r => {
+        setMovements(r.data as StockMovementDto[])
+        setMovementsLoaded(true)
+      }).catch(() => setMovementsLoaded(true)).finally(() => setMovementsLoading(false))
+    }
+  }, [tab, movementsLoaded])
 
   // ─ Lazy-load POs when tab opened ────────────────────────────────────────
   const loadPOs = async () => {
@@ -172,8 +196,13 @@ export default function WMSPage() {
     try {
       await api.post('/api/wms/stock-movements', { ...moveForm, quantity: Number(moveForm.quantity) })
       setShowMoveForm(false)
-      const r = await api.get('/api/wms/stock')
-      setStock(r.data)
+      setMoveForm(EMPTY_MOVE)
+      const [stockRes, movRes] = await Promise.allSettled([
+        api.get('/api/wms/stock'),
+        api.get('/api/wms/stock-movements'),
+      ])
+      if (stockRes.status === 'fulfilled') setStock(stockRes.value.data)
+      if (movRes.status === 'fulfilled') setMovements(movRes.value.data as StockMovementDto[])
     } catch { } finally { setSaving(false) }
   }
 
@@ -539,6 +568,73 @@ export default function WMSPage() {
               </div>
             </motion.div>
           )}
+
+          {/* Movement History */}
+          <div className="premium-card p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-foreground">Hareket Geçmişi</h3>
+              {movementsLoaded && (
+                <button
+                  onClick={() => { setMovementsLoaded(false) }}
+                  className="p-1.5 rounded-lg border border-border hover:bg-slate-800 transition-colors"
+                >
+                  <RefreshCw className="w-3.5 h-3.5 text-slate-400" />
+                </button>
+              )}
+            </div>
+            {movementsLoading ? (
+              <div className="flex justify-center py-8"><Loader2 className="w-5 h-5 animate-spin text-primary" /></div>
+            ) : movements.length === 0 ? (
+              <EmptyState icon={<RefreshCw />} title="Henüz hareket yok" description="Stok hareketi eklendiğinde burada görünecek." />
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border text-xs text-slate-500">
+                      <th className="text-left pb-2 font-medium">Tarih</th>
+                      <th className="text-left pb-2 font-medium">Ürün</th>
+                      <th className="text-left pb-2 font-medium">Tip</th>
+                      <th className="text-right pb-2 font-medium">Miktar</th>
+                      <th className="text-left pb-2 font-medium hidden sm:table-cell">Not</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {movements.slice(0, 50).map(m => {
+                      const typeConfig: Record<string, { label: string; cls: string; sign: string }> = {
+                        In:       { label: 'Giriş',    cls: 'bg-emerald-500/15 text-emerald-400', sign: '+' },
+                        Out:      { label: 'Çıkış',    cls: 'bg-red-500/15 text-red-400',         sign: '−' },
+                        Transfer: { label: 'Transfer', cls: 'bg-blue-500/15 text-blue-400',        sign: '↔' },
+                        Loss:     { label: 'Kayıp',    cls: 'bg-amber-500/15 text-amber-400',      sign: '!' },
+                      }
+                      const tc = typeConfig[m.movementType] ?? { label: m.movementType, cls: 'bg-slate-500/15 text-slate-400', sign: '' }
+                      return (
+                        <tr key={m.id} className="hover:bg-slate-800/20 transition-colors">
+                          <td className="py-2.5 text-xs text-slate-400">
+                            {new Date(m.createdAt).toLocaleString('tr-TR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                          </td>
+                          <td className="py-2.5 text-xs font-medium text-foreground">
+                            {resolveProductName(m.productId)}
+                          </td>
+                          <td className="py-2.5">
+                            <span className={`text-xs px-2 py-0.5 rounded-lg font-semibold ${tc.cls}`}>{tc.label}</span>
+                          </td>
+                          <td className={`py-2.5 text-right font-bold text-sm ${
+                            m.movementType === 'In' ? 'text-emerald-400' : m.movementType === 'Out' || m.movementType === 'Loss' ? 'text-red-400' : 'text-foreground'
+                          }`}>
+                            {tc.sign}{m.quantity}
+                          </td>
+                          <td className="py-2.5 text-xs text-slate-500 hidden sm:table-cell max-w-xs truncate">{m.note ?? '—'}</td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+                {movements.length > 50 && (
+                  <p className="text-xs text-slate-500 text-center mt-3">Son 50 hareket gösteriliyor</p>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
       ) : tab === 'suppliers' ? (
