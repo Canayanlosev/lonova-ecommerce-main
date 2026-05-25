@@ -189,7 +189,7 @@ export default function CatalogPage() {
           </button>
           <button
             onClick={() => openCreate()}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors"
+            className="premium-button flex items-center gap-2"
           >
             <Plus className="w-4 h-4" /> Yeni Kök Kategori
           </button>
@@ -204,9 +204,9 @@ export default function CatalogPage() {
           { label: 'Aktif', value: stats.active, color: 'text-emerald-400' },
           { label: 'Maks. Derinlik', value: stats.maxDepth, color: 'text-amber-400' },
         ].map(s => (
-          <div key={s.label} className="premium-card p-4">
+          <div key={s.label} className="premium-card p-5">
             <p className="text-xs text-slate-500">{s.label}</p>
-            <p className={`text-2xl font-bold ${s.color} mt-0.5`}>{s.value}</p>
+            <p className={`text-2xl font-black ${s.color} mt-0.5`}>{s.value}</p>
           </div>
         ))}
       </div>
@@ -305,7 +305,7 @@ export default function CatalogPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex items-center gap-2 px-5 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors"
+                  className="premium-button flex items-center gap-2 disabled:opacity-60"
                 >
                   {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                   {editId ? 'Güncelle' : 'Oluştur'}
@@ -313,7 +313,7 @@ export default function CatalogPage() {
                 <button
                   type="button"
                   onClick={() => { setShowForm(false); setEditId(null) }}
-                  className="px-5 py-2 rounded-xl border border-border text-slate-400 hover:text-foreground text-sm transition-colors"
+                  className="px-5 py-2 rounded-xl border border-border text-slate-400 hover:text-foreground hover:bg-surface text-sm transition-all"
                 >
                   İptal
                 </button>

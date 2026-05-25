@@ -127,7 +127,7 @@ export default function CouponsPage() {
           </button>
           <button
             onClick={() => { setShowForm(true); setEditId(null); setForm(EMPTY_FORM); setError('') }}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors"
+            className="premium-button flex items-center gap-2"
           >
             <Plus className="w-4 h-4" /> Yeni Kupon
           </button>
@@ -217,7 +217,7 @@ export default function CouponsPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex items-center gap-2 px-5 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50"
+                  className="premium-button flex items-center gap-2 disabled:opacity-60"
                 >
                   {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                   {editId ? 'Güncelle' : 'Oluştur'}
@@ -225,7 +225,7 @@ export default function CouponsPage() {
                 <button
                   type="button"
                   onClick={() => { setShowForm(false); setEditId(null) }}
-                  className="px-5 py-2 rounded-xl border border-border text-slate-400 hover:text-foreground text-sm transition-colors"
+                  className="px-5 py-2 rounded-xl border border-border text-slate-400 hover:text-foreground hover:bg-surface text-sm transition-all"
                 >
                   İptal
                 </button>

@@ -9,14 +9,14 @@ const icons = {
   success: <CheckCircle className="w-5 h-5 text-emerald-400" />,
   error: <XCircle className="w-5 h-5 text-red-400" />,
   warning: <AlertTriangle className="w-5 h-5 text-yellow-400" />,
-  info: <Info className="w-5 h-5 text-indigo-400" />,
+  info: <Info className="w-5 h-5 text-primary" />,
 };
 
 const borders = {
   success: "border-emerald-500/30",
   error: "border-red-500/30",
   warning: "border-yellow-500/30",
-  info: "border-indigo-500/30",
+  info: "border-primary/30",
 };
 
 export function Toast({ toast }: { toast: ToastType }) {

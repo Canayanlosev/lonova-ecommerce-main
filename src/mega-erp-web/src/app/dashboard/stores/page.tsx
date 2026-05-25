@@ -116,20 +116,24 @@ export default function StoresPage() {
           {stores.map((s) => (
             <motion.div key={s.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="premium-card p-5">
               <div className="flex items-start justify-between mb-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-primary/5 border border-primary/20 flex items-center justify-center">
                   <Store className="w-5 h-5 text-primary" />
                 </div>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${s.isActive ? 'bg-green-400/10 text-green-400' : 'bg-slate-400/10 text-slate-400'}`}>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${
+                  s.isActive 
+                    ? 'bg-green-500/10 text-green-400 border-green-500/20' 
+                    : 'bg-slate-500/10 text-slate-400 border-slate-500/20'
+                }`}>
                   {s.isActive ? 'Aktif' : 'Pasif'}
                 </span>
               </div>
               <h3 className="font-semibold text-foreground">{s.name}</h3>
-              <p className="text-sm text-slate-400 mb-4">/{s.slug}</p>
+              <p className="text-xs font-mono text-slate-400 mb-4">/{s.slug}</p>
               <div className="flex gap-2">
-                <button onClick={() => openEdit(s)} className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg border border-border text-foreground hover:border-primary transition-all">
+                <button onClick={() => openEdit(s)} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-border text-foreground hover:border-primary hover:text-primary transition-all font-semibold">
                   <Pencil className="w-3 h-3" /> Düzenle
                 </button>
-                <button onClick={() => handleDelete(s.id)} className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg border border-border text-red-400 hover:border-red-400 transition-all">
+                <button onClick={() => handleDelete(s.id)} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-border text-slate-400 hover:text-red-400 hover:border-red-500/20 hover:bg-red-500/5 transition-all flex items-center justify-center font-semibold">
                   <Trash2 className="w-3 h-3" /> Sil
                 </button>
               </div>

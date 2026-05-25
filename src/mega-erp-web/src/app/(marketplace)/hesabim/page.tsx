@@ -109,7 +109,7 @@ export default function HesabimPage() {
       {/* Quick nav cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
         {[
-          { href: '/hesabim/profil', icon: Settings, color: 'text-indigo-400 bg-indigo-500/10', title: 'Profil Bilgileri', desc: 'Ad, e-posta, telefon güncelle' },
+          { href: '/hesabim/profil', icon: Settings, color: 'text-primary bg-primary/10', title: 'Profil Bilgileri', desc: 'Ad, e-posta, telefon güncelle' },
           { href: '/hesabim/adresler', icon: MapPin, color: 'text-cyan-400 bg-cyan-500/10', title: 'Adres Defteri', desc: 'Teslimat adreslerini yönet' },
           { href: '/hesabim/favoriler', icon: Heart, color: 'text-pink-400 bg-pink-500/10', title: 'Favoriler', desc: `${wishlistCount} kaydedilmiş ürün` },
           { href: '/hesabim/sifre', icon: Lock, color: 'text-amber-400 bg-amber-500/10', title: 'Şifre Değiştir', desc: 'Hesap güvenliğini güncelle' },

@@ -123,22 +123,33 @@ export default function SiteBuilderPage() {
             pages.map((page) => (
               <div key={page.id}
                 onClick={() => setSelectedPage(page)}
-                className={`premium-card p-4 cursor-pointer transition-all ${selectedPage?.id === page.id ? 'border-primary' : ''}`}>
+                className={`premium-card p-4 cursor-pointer transition-all ${
+                  selectedPage?.id === page.id 
+                    ? 'border-primary ring-2 ring-primary/20 shadow-md shadow-primary/5 bg-slate-900/30' 
+                    : ''
+                }`}
+              >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="font-medium text-foreground text-sm">{page.title}</span>
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${page.isPublished ? 'bg-green-400/10 text-green-400' : 'bg-slate-400/10 text-slate-400'}`}>
+                  <span className="font-semibold text-foreground text-sm">{page.title}</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${
+                    page.isPublished 
+                      ? 'bg-green-500/10 text-green-400 border-green-500/20' 
+                      : 'bg-slate-500/10 text-slate-400 border-slate-500/20'
+                  }`}>
                     {page.isPublished ? 'Yayında' : 'Taslak'}
                   </span>
                 </div>
-                <p className="text-xs text-slate-400">/{page.slug}</p>
+                <p className="text-xs font-mono text-slate-400">/{page.slug}</p>
                 <p className="text-xs text-slate-500 mt-1">{page.blocks.length} blok</p>
                 <div className="flex gap-2 mt-3">
                   <button onClick={(e) => { e.stopPropagation(); handlePublish(page) }}
-                    className="text-xs px-2 py-1 rounded border border-border hover:border-primary transition-all flex items-center gap-1">
+                    className="text-xs px-2.5 py-1 rounded-lg border border-border hover:border-primary hover:text-primary transition-all flex items-center gap-1.5 font-medium"
+                  >
                     <Globe className="w-3 h-3" /> {page.isPublished ? 'Yayından Al' : 'Yayınla'}
                   </button>
                   <button onClick={(e) => { e.stopPropagation(); handleDeletePage(page.id) }}
-                    className="text-xs px-2 py-1 rounded border border-border text-red-400 hover:border-red-400 transition-all flex items-center gap-1">
+                    className="text-xs px-2.5 py-1 rounded-lg border border-border text-slate-400 hover:text-red-400 hover:border-red-500/20 hover:bg-red-500/5 transition-all flex items-center justify-center"
+                  >
                     <Trash2 className="w-3 h-3" />
                   </button>
                 </div>

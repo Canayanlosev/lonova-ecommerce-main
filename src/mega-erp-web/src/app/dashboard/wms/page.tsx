@@ -319,32 +319,31 @@ export default function WMSPage() {
       {/* Summary cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: 'Toplam Depo', value: warehouses.length, icon: Warehouse, color: 'text-primary', bg: 'bg-primary/10' },
-          { label: 'Toplam SKU', value: stock.length, icon: Package, color: 'text-secondary', bg: 'bg-secondary/10' },
-          { label: 'Düşük Stok', value: lowStockItems.length, icon: TrendingDown, color: 'text-amber-400', bg: 'bg-amber-500/10' },
-          { label: 'Tedarikçi', value: suppliersLoaded ? suppliers.length : '—', icon: Truck, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
-        ].map(({ label, value, icon: Icon, color, bg }) => (
-          <div key={label} className="premium-card p-4 flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-xl ${bg} flex items-center justify-center shrink-0`}>
+          { label: 'Toplam Depo', value: warehouses.length, icon: Warehouse, color: 'text-primary', border: 'border-primary/20', bg: 'bg-primary/5' },
+          { label: 'Toplam SKU', value: stock.length, icon: Package, color: 'text-secondary', border: 'border-secondary/20', bg: 'bg-secondary/5' },
+          { label: 'Düşük Stok', value: lowStockItems.length, icon: TrendingDown, color: 'text-amber-400', border: 'border-amber-500/20', bg: 'bg-amber-500/5' },
+          { label: 'Tedarikçi', value: suppliersLoaded ? suppliers.length : '—', icon: Truck, color: 'text-cyan-400', border: 'border-cyan-500/20', bg: 'bg-cyan-500/5' },
+        ].map(({ label, value, icon: Icon, color, border, bg }) => (
+          <div key={label} className="premium-card p-5 flex items-center gap-4">
+            <div className={`w-10 h-10 rounded-xl ${bg} ${border} border flex items-center justify-center shrink-0`}>
               <Icon className={`w-5 h-5 ${color}`} />
             </div>
             <div>
-              <p className="text-xl font-bold text-foreground">{value}</p>
-              <p className="text-xs text-slate-400">{label}</p>
+              <p className="text-2xl font-black text-foreground">{value}</p>
+              <p className="text-xs text-slate-400 mt-0.5">{label}</p>
             </div>
           </div>
         ))}
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-1 bg-surface rounded-xl p-1 w-fit border border-border flex-wrap">
+      <div className="flex gap-1.5 p-1 bg-slate-900/40 border border-border/80 rounded-xl w-fit flex-wrap">
         {TABS.map(({ key, label, icon: Icon }) => (
           <button
             key={key}
             onClick={() => setTab(key)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              tab === key ? 'bg-primary text-white shadow-sm shadow-primary/30' : 'text-slate-400 hover:text-foreground'
-            }`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200
+              ${tab === key ? 'bg-surface text-primary border border-border/40 shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
           >
             <Icon className="w-4 h-4" />
             {label}

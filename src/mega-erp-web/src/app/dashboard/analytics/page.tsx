@@ -50,9 +50,9 @@ interface StatusCount {
 
 const STATUS_MAP: Record<string, { label: string; color: string }> = {
   Pending:    { label: 'Bekleyen',   color: '#f59e0b' },
-  Confirmed:  { label: 'Onaylandı', color: '#8b5cf6' },
-  Processing: { label: 'İşlemde',   color: '#6366f1' },
-  Shipped:    { label: 'Kargoda',   color: '#0ea5e9' },
+  Confirmed:  { label: 'Onaylandı', color: 'var(--color-secondary)' },
+  Processing: { label: 'İşlemde',   color: 'var(--color-secondary)' },
+  Shipped:    { label: 'Kargoda',   color: 'var(--color-primary)' },
   Delivered:  { label: 'Teslim',    color: '#22c55e' },
   Cancelled:  { label: 'İptal',     color: '#ef4444' },
   Refunded:   { label: 'İade',      color: '#ec4899' },
@@ -111,7 +111,7 @@ function CustomPieTooltip({ active, payload }: { active?: boolean; payload?: Arr
   if (!active || !payload || !payload.length) return null
   const d = payload[0]
   return (
-    <div className="bg-[#0f172a] border border-[#1e293b] rounded-lg px-3 py-2 text-xs shadow-lg">
+    <div className="bg-surface border border-border rounded-xl px-3 py-2 text-xs shadow-lg backdrop-blur-md">
       <p className="font-semibold" style={{ color: d.payload.color }}>{d.name}</p>
       <p className="text-slate-300">{d.value} sipariş</p>
     </div>
@@ -360,7 +360,7 @@ export default function AnalyticsPage() {
                     <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.4} />
                 <XAxis
                   dataKey="date"
                   tick={{ fill: '#64748b', fontSize: 10 }}
@@ -375,7 +375,7 @@ export default function AnalyticsPage() {
                   tickFormatter={(v) => v === 0 ? '0' : `${(v / 1000).toFixed(0)}K`}
                 />
                 <Tooltip
-                  contentStyle={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: 8, fontSize: 12 }}
+                  contentStyle={{ background: 'hsl(var(--surface))', border: '1px solid hsl(var(--border))', borderRadius: 12, fontSize: 12 }}
                   labelStyle={{ color: '#94a3b8' }}
                   formatter={(v) => [fmt(v as number), 'Gelir']}
                 />
@@ -472,7 +472,7 @@ export default function AnalyticsPage() {
         ) : (
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={topProducts} layout="vertical" margin={{ top: 0, right: 60, left: 8, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" horizontal={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.4} horizontal={false} />
               <XAxis
                 type="number"
                 tick={{ fill: '#64748b', fontSize: 10 }}
@@ -490,7 +490,7 @@ export default function AnalyticsPage() {
                 tickFormatter={(v: string) => v.length > 18 ? `${v.slice(0, 18)}…` : v}
               />
               <Tooltip
-                contentStyle={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: 8, fontSize: 12 }}
+                contentStyle={{ background: 'hsl(var(--surface))', border: '1px solid hsl(var(--border))', borderRadius: 12, fontSize: 12 }}
                 labelStyle={{ color: '#94a3b8' }}
                 formatter={(v, name) => [
                   name === 'revenue' ? fmt(v as number) : `${v} adet`,

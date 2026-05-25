@@ -10,12 +10,12 @@ import type { Order } from "@/types/api.types";
 import Link from "next/link";
 
 const statusConfig: Record<string, { label: string; className: string }> = {
-  Pending:   { label: "Beklemede",     className: "bg-amber-500/15 text-amber-400" },
-  Placed:    { label: "Alındı",        className: "bg-cyan-500/15 text-cyan-400" },
-  Paid:      { label: "Ödendi",        className: "bg-emerald-500/15 text-emerald-400" },
-  Shipped:   { label: "Kargoda",       className: "bg-primary/15 text-primary" },
-  Delivered: { label: "Teslim Edildi", className: "bg-green-500/15 text-green-400" },
-  Cancelled: { label: "İptal",         className: "bg-red-500/15 text-red-400" },
+  Pending:   { label: "Beklemede",     className: "bg-amber-500/10 text-amber-400 border border-amber-500/20" },
+  Placed:    { label: "Alındı",        className: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20" },
+  Paid:      { label: "Ödendi",        className: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" },
+  Shipped:   { label: "Kargoda",       className: "bg-primary/10 text-primary border border-primary/20" },
+  Delivered: { label: "Teslim Edildi", className: "bg-green-500/10 text-green-400 border border-green-500/20" },
+  Cancelled: { label: "İptal",         className: "bg-red-500/10 text-red-400 border border-red-500/20" },
 };
 
 export default function OrdersPage() {
@@ -63,6 +63,7 @@ export default function OrdersPage() {
     a.download = `siparisler-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+    const aElement = a;
   };
 
   return (
@@ -75,7 +76,7 @@ export default function OrdersPage() {
         <button
           onClick={handleExportCsv}
           disabled={filtered.length === 0}
-          className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-500 hover:text-emerald-400 border border-border hover:border-emerald-600 rounded-xl transition-colors disabled:opacity-40"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-semibold border border-border rounded-xl transition-all hover:bg-emerald-500/10 hover:text-emerald-400 hover:border-emerald-500/20 disabled:opacity-40"
         >
           <Download className="w-4 h-4" /> CSV İndir
         </button>
@@ -83,43 +84,43 @@ export default function OrdersPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="premium-card p-4">
+        <div className="premium-card p-5">
           <p className="text-xs text-slate-500 mb-1">Toplam Sipariş</p>
-          <p className="text-2xl font-black">{orders.length}</p>
+          <p className="text-2xl font-black text-foreground">{orders.length}</p>
         </div>
-        <div className="premium-card p-4">
+        <div className="premium-card p-5">
           <p className="text-xs text-slate-500 mb-1">Beklemede</p>
           <p className={`text-2xl font-black ${pendingCount > 0 ? 'text-amber-400' : 'text-slate-400'}`}>{pendingCount}</p>
         </div>
-        <div className="premium-card p-4">
+        <div className="premium-card p-5">
           <p className="text-xs text-slate-500 mb-1">Ödendi</p>
           <p className="text-2xl font-black text-emerald-400">{paidCount}</p>
         </div>
-        <div className="premium-card p-4">
+        <div className="premium-card p-5">
           <p className="text-xs text-slate-500 mb-1">Toplam Gelir</p>
-          <p className="text-lg font-black text-primary">₺{totalRevenue.toLocaleString('tr-TR', { minimumFractionDigits: 0 })}</p>
+          <p className="text-2xl font-black text-primary">₺{totalRevenue.toLocaleString('tr-TR', { minimumFractionDigits: 0 })}</p>
         </div>
       </div>
 
       <div className="premium-card p-6">
-        <div className="mb-4">
+        <div className="mb-6">
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
             <h3 className="text-base font-bold text-foreground">Sipariş Listesi</h3>
             <div className="flex gap-3 w-full sm:w-auto">
               <div className="relative flex-1 sm:w-52">
-                <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
+                <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-500" />
                 <input
                   type="text"
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                   placeholder="Sipariş no ara..."
-                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-border bg-transparent text-sm outline-none focus:ring-2 focus:ring-primary/50"
+                  className="w-full pl-9 pr-4 py-2 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25"
                 />
               </div>
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="px-3 py-2 rounded-xl border border-border bg-transparent text-sm outline-none focus:ring-2 focus:ring-primary/50"
+                className="px-3 py-2 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25"
               >
                 <option value="all">Tümü</option>
                 {Object.entries(statusConfig).map(([k, v]) => (
@@ -158,7 +159,7 @@ export default function OrdersPage() {
                     : filtered.map((o) => {
                       const status = statusConfig[o.status] ?? { label: o.status, className: "bg-slate-700/40 text-slate-300" };
                       return (
-                        <tr key={o.id} className="border-b border-border hover:bg-slate-800/20 transition-colors">
+                        <tr key={o.id} className="border-b border-border hover:bg-surface/50 transition-colors">
                           <td className="px-4 py-3">
                             <div>
                               <p className="font-mono text-xs text-slate-400">{o.id.slice(0, 8).toUpperCase()}</p>
@@ -169,13 +170,13 @@ export default function OrdersPage() {
                             {new Date(o.orderDate).toLocaleDateString("tr-TR", { day: 'numeric', month: 'short', year: 'numeric' })}
                           </td>
                           <td className="px-4 py-3">
-                            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${status.className}`}>
+                            <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${status.className}`}>
                               {status.label}
                             </span>
                           </td>
                           <td className="px-4 py-3 text-right font-bold">₺{o.totalAmount.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}</td>
                           <td className="px-4 py-3 text-right">
-                            <Link href={`/dashboard/orders/${o.id}`} className="text-primary hover:underline text-xs">Görüntüle</Link>
+                            <Link href={`/dashboard/orders/${o.id}`} className="text-primary hover:underline text-xs font-semibold">Görüntüle</Link>
                           </td>
                         </tr>
                       );

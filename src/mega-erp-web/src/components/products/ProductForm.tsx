@@ -225,7 +225,7 @@ export function ProductForm({ product, isEdit }: Props) {
                 onDrop={handleDrop}
                 className={`relative flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-6 transition-all ${
                   dragActive
-                    ? 'border-indigo-500 bg-indigo-500/5'
+                    ? 'border-primary bg-primary/5'
                     : 'border-border hover:border-slate-600'
                 }`}
               >
@@ -251,7 +251,7 @@ export function ProductForm({ product, isEdit }: Props) {
                       <Upload className="w-5 h-5 text-slate-500" />
                     </div>
                     <p className="text-sm font-medium mb-1">
-                      Dosyayı sürükleyin veya <label className="text-indigo-500 cursor-pointer hover:underline">seçin<input type="file" onChange={handleFileChange} accept="image/jpeg,image/png,image/webp" className="hidden" /></label>
+                      Dosyayı sürükleyin veya <label className="text-primary cursor-pointer hover:underline">seçin<input type="file" onChange={handleFileChange} accept="image/jpeg,image/png,image/webp" className="hidden" /></label>
                     </p>
                     <p className="text-xs text-slate-400">JPG, PNG veya WEBP (maks. 5MB)</p>
                   </div>

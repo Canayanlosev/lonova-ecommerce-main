@@ -102,15 +102,15 @@ export default function AccountingPage() {
 
       {/* Tab bar + import button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex gap-1 p-1 bg-slate-800/30 rounded-xl w-fit">
+        <div className="flex gap-1.5 p-1 bg-slate-900/40 border border-border/80 rounded-xl w-fit">
           {([["accounts", "Hesaplar", CreditCard], ["journal", "Yevmiye", BookOpen]] as const).map(([id, label, Icon]) => (
             <button
               key={id}
               onClick={() => setTab(id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
-                ${tab === id ? "bg-slate-900 text-primary shadow-sm" : "text-slate-500 hover:text-slate-300"}`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200
+                ${tab === id ? "bg-surface text-primary border border-border/40 shadow-sm" : "text-slate-400 hover:text-slate-200"}`}
             >
-              <Icon size={16} />{label}
+              <Icon size={15} />{label}
             </button>
           ))}
         </div>
@@ -119,7 +119,7 @@ export default function AccountingPage() {
           <button
             onClick={handleImportSalesOrders}
             disabled={importing || loading}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white transition-all shadow-sm shadow-primary/20"
+            className="premium-button inline-flex items-center gap-2"
           >
             <RefreshCw className={`w-4 h-4 ${importing ? 'animate-spin' : ''}`} />
             {importing ? 'Aktarılıyor…' : 'Satış Siparişlerini Aktar'}
@@ -155,10 +155,10 @@ export default function AccountingPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="text-left px-4 py-3 text-slate-500 font-medium">Kod</th>
-                    <th className="text-left px-4 py-3 text-slate-500 font-medium">Hesap Adı</th>
-                    <th className="text-left px-4 py-3 text-slate-500 font-medium hidden sm:table-cell">Tür</th>
-                    <th className="text-right px-4 py-3 text-slate-500 font-medium">Bakiye</th>
+                    <th className="text-left px-4 py-3 text-slate-500 font-semibold text-xs uppercase tracking-wider">Kod</th>
+                    <th className="text-left px-4 py-3 text-slate-500 font-semibold text-xs uppercase tracking-wider">Hesap Adı</th>
+                    <th className="text-left px-4 py-3 text-slate-500 font-semibold text-xs uppercase tracking-wider hidden sm:table-cell">Tür</th>
+                    <th className="text-right px-4 py-3 text-slate-500 font-semibold text-xs uppercase tracking-wider">Bakiye</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -168,7 +168,7 @@ export default function AccountingPage() {
                     ? <tr><td colSpan={4}><EmptyState icon={<CreditCard />} title="Hesap bulunamadı" /></td></tr>
                     : accounts.map((a) => (
                       <tr key={a.id} className="border-b border-border hover:bg-surface/50 transition-colors">
-                        <td className="px-4 py-3 font-mono text-xs text-primary">{a.code}</td>
+                        <td className="px-4 py-3 font-mono text-xs text-primary font-semibold">{a.code}</td>
                         <td className="px-4 py-3 font-medium">{a.name}</td>
                         <td className="px-4 py-3 text-slate-500 hidden sm:table-cell">{a.type}</td>
                         <td className={`px-4 py-3 text-right font-bold ${a.balance >= 0 ? "text-emerald-500" : "text-red-500"}`}>
@@ -194,10 +194,10 @@ export default function AccountingPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="text-left px-4 py-3 text-slate-500 font-medium">Tarih</th>
-                    <th className="text-left px-4 py-3 text-slate-500 font-medium">Açıklama</th>
-                    <th className="text-right px-4 py-3 text-slate-500 font-medium">Borç</th>
-                    <th className="text-right px-4 py-3 text-slate-500 font-medium">Alacak</th>
+                    <th className="text-left px-4 py-3 text-slate-500 font-semibold text-xs uppercase tracking-wider">Tarih</th>
+                    <th className="text-left px-4 py-3 text-slate-500 font-semibold text-xs uppercase tracking-wider">Açıklama</th>
+                    <th className="text-right px-4 py-3 text-slate-500 font-semibold text-xs uppercase tracking-wider">Borç</th>
+                    <th className="text-right px-4 py-3 text-slate-500 font-semibold text-xs uppercase tracking-wider">Alacak</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -211,11 +211,11 @@ export default function AccountingPage() {
                           {new Date(e.date).toLocaleDateString("tr-TR")}
                         </td>
                         <td className="px-4 py-3 max-w-xs">
-                          <p className="truncate">
+                          <p className="truncate font-medium">
                             {e.description.replace(/\[ORDER:[^\]]+\]\s*/, '')}
                           </p>
                           {e.description.includes('[ORDER:') && (
-                            <span className="text-xs text-primary/70">otomatik aktarım</span>
+                            <span className="text-[10px] font-semibold text-primary/80 bg-primary/5 px-2 py-0.5 rounded-full border border-primary/10">otomatik aktarım</span>
                           )}
                         </td>
                         <td className="px-4 py-3 text-right text-emerald-500 font-medium whitespace-nowrap">
