@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState, useMemo, Suspense } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ChevronRight, SlidersHorizontal, Layers } from 'lucide-react'
+import { ChevronRight, SlidersHorizontal, Layers, Star } from 'lucide-react'
 import { marketplaceService, type MarketplaceProduct, type CatalogCategory } from '@/lib/services/marketplace.service'
 import { ProductCard } from '@/components/marketplace/ProductCard'
 
@@ -50,12 +50,23 @@ function CategoryPageContent() {
   const [loading, setLoading] = useState(true)
   const [categoryName, setCategoryName] = useState<string | null>(null)
   const [subCategories, setSubCategories] = useState<CatalogCategory[]>([])
+  const [minRating, setMinRating] = useState(0)
+  const [inStockOnly, setInStockOnly] = useState(false)
 
   const sort = (searchParams.get('sort') as 'newest' | 'price_asc' | 'price_desc' | 'name') ?? 'newest'
   const minPrice = searchParams.get('minPrice') ? Number(searchParams.get('minPrice')) : undefined
   const maxPrice = searchParams.get('maxPrice') ? Number(searchParams.get('maxPrice')) : undefined
   const page = Number(searchParams.get('page') ?? '1')
   const pageSize = 20
+
+  const displayedProducts = useMemo(() => {
+    let list = [...products]
+    if (minRating > 0) list = list.filter(p => (p.averageRating ?? 0) >= minRating)
+    if (inStockOnly) list = list.filter(p =>
+      p.variants.length === 0 || p.variants.some(v => v.stockQuantity > 0)
+    )
+    return list
+  }, [products, minRating, inStockOnly])
 
   // Resolve slug → category name, then load products
   useEffect(() => {
@@ -189,17 +200,59 @@ function CategoryPageContent() {
               </div>
             </div>
 
+            {/* Rating filter */}
+            <div>
+              <p className="text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">Minimum Puan</p>
+              <div className="space-y-1">
+                {[0, 4, 3, 2, 1].map(r => (
+                  <button
+                    key={r}
+                    onClick={() => setMinRating(r)}
+                    className={`w-full text-left px-2 py-1.5 rounded-lg text-sm flex items-center gap-1.5 transition-colors ${
+                      minRating === r ? 'bg-primary/10 text-primary font-medium' : 'text-slate-400 hover:bg-surface'
+                    }`}
+                  >
+                    {r === 0 ? (
+                      'Tümü'
+                    ) : (
+                      <>
+                        {Array.from({ length: r }).map((_, i) => (
+                          <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
+                        ))}
+                        <span className="text-xs">ve üzeri</span>
+                      </>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* In Stock filter */}
+            <div>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={inStockOnly}
+                  onChange={e => setInStockOnly(e.target.checked)}
+                  className="w-4 h-4 rounded border-border accent-primary"
+                />
+                <span className="text-sm text-foreground">Sadece Stokta Olanlar</span>
+              </label>
+            </div>
+
             {/* Clear filters */}
-            {(minPrice !== undefined || maxPrice !== undefined) && (
+            {(minPrice !== undefined || maxPrice !== undefined || minRating > 0 || inStockOnly) && (
               <button
                 onClick={() => {
                   const p = new URLSearchParams()
                   if (sort !== 'newest') p.set('sort', sort)
                   router.push(`?${p.toString()}`)
+                  setMinRating(0)
+                  setInStockOnly(false)
                 }}
                 className="w-full text-xs text-red-400 hover:underline text-left"
               >
-                Filtreleri temizle
+                Tüm filtreleri temizle
               </button>
             )}
           </div>
@@ -211,18 +264,34 @@ function CategoryPageContent() {
             <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
               {Array.from({ length: 12 }).map((_, i) => <ProductSkeleton key={i} />)}
             </div>
-          ) : products.length === 0 ? (
+          ) : displayedProducts.length === 0 ? (
             <div className="text-center py-20 text-slate-400">
               <Layers className="w-12 h-12 mx-auto mb-3 text-slate-600" />
-              <p className="text-lg font-medium">Bu kategoride ürün bulunamadı.</p>
-              <Link href="/ara" className="text-primary hover:underline text-sm mt-2 block">
-                Tüm ürünleri ara →
-              </Link>
+              <p className="text-lg font-medium">
+                {products.length > 0 ? 'Filtrelerinize uyan ürün bulunamadı.' : 'Bu kategoride ürün bulunamadı.'}
+              </p>
+              {products.length > 0 ? (
+                <button onClick={() => { setMinRating(0); setInStockOnly(false) }} className="text-primary hover:underline text-sm mt-2">
+                  Filtreleri temizle
+                </button>
+              ) : (
+                <Link href="/ara" className="text-primary hover:underline text-sm mt-2 block">
+                  Tüm ürünleri ara →
+                </Link>
+              )}
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
-              {products.map((p) => <ProductCard key={p.id} product={p} />)}
-            </div>
+            <>
+              {(minRating > 0 || inStockOnly) && (
+                <p className="text-xs text-slate-400 mb-3">
+                  {displayedProducts.length} ürün gösteriliyor
+                  {products.length !== displayedProducts.length && ` (${products.length} toplam, ${products.length - displayedProducts.length} filtrelendi)`}
+                </p>
+              )}
+              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
+                {displayedProducts.map((p) => <ProductCard key={p.id} product={p} />)}
+              </div>
+            </>
           )}
 
           {/* Pagination */}

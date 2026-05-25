@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Star, Trash2, Search, AlertCircle, MessageSquare, Package, CheckCircle } from 'lucide-react'
+import { Star, Trash2, Search, AlertCircle, MessageSquare, Package, CheckCircle, Reply, Loader2, X } from 'lucide-react'
 import api from '@/lib/api'
 
 interface AdminReview {
@@ -14,6 +14,7 @@ interface AdminReview {
   comment?: string
   createdAt: string
   isVerifiedPurchase: boolean
+  sellerReply?: string
 }
 
 function StarDisplay({ rating }: { rating: number }) {
@@ -38,6 +39,9 @@ export default function ReviewsDashboardPage() {
   const [totalCount, setTotalCount] = useState(0)
   const [page, setPage] = useState(1)
   const pageSize = 20
+  const [replyingTo, setReplyingTo] = useState<string | null>(null)
+  const [replyText, setReplyText] = useState('')
+  const [replySaving, setReplySaving] = useState(false)
 
   const load = async (p = 1) => {
     setLoading(true)
@@ -66,6 +70,21 @@ export default function ReviewsDashboardPage() {
       setTotalCount(prev => prev - 1)
     } catch {
       alert('Yorum silinemedi.')
+    }
+  }
+
+  const handleReply = async (id: string) => {
+    if (!replyText.trim()) return
+    setReplySaving(true)
+    try {
+      await api.post(`/api/marketplace/admin/reviews/${id}/reply`, { reply: replyText.trim() })
+      setReviews(prev => prev.map(r => r.id === id ? { ...r, sellerReply: replyText.trim() } : r))
+      setReplyingTo(null)
+      setReplyText('')
+    } catch {
+      alert('Yanıt gönderilemedi.')
+    } finally {
+      setReplySaving(false)
     }
   }
 
@@ -160,46 +179,99 @@ export default function ReviewsDashboardPage() {
                   </tr>
                 )
                 : filtered.map(r => (
-                  <tr key={r.id} className="border-b border-border hover:bg-slate-800/20 transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <Package className="w-4 h-4 text-slate-400 shrink-0" />
-                        <span className="font-medium text-foreground truncate max-w-[120px] lg:max-w-[200px]">
-                          {r.productName}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-slate-400 hidden md:table-cell">
-                      <div className="flex items-center gap-1.5">
-                        {r.buyerName}
-                        {r.isVerifiedPurchase && (
-                          <span title="Doğrulanmış Alıcı">
-                            <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+                  <>
+                    <tr key={r.id} className="border-b border-border hover:bg-slate-800/20 transition-colors">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <Package className="w-4 h-4 text-slate-400 shrink-0" />
+                          <span className="font-medium text-foreground truncate max-w-[120px] lg:max-w-[200px]">
+                            {r.productName}
                           </span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <StarDisplay rating={r.rating} />
-                    </td>
-                    <td className="px-4 py-3 text-slate-400 hidden lg:table-cell">
-                      <span className="text-xs truncate max-w-[200px] block">
-                        {r.comment ?? <span className="italic text-slate-600">Yorum yok</span>}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-slate-500 text-xs hidden sm:table-cell">
-                      {new Date(r.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' })}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <button
-                        onClick={() => handleDelete(r.id)}
-                        className="p-1.5 rounded-lg hover:bg-red-500/10 text-red-500 transition-colors"
-                        title="Yorumu sil"
-                      >
-                        <Trash2 size={15} />
-                      </button>
-                    </td>
-                  </tr>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-slate-400 hidden md:table-cell">
+                        <div className="flex items-center gap-1.5">
+                          {r.buyerName}
+                          {r.isVerifiedPurchase && (
+                            <span title="Doğrulanmış Alıcı">
+                              <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <StarDisplay rating={r.rating} />
+                      </td>
+                      <td className="px-4 py-3 text-slate-400 hidden lg:table-cell">
+                        <div>
+                          <span className="text-xs truncate max-w-[200px] block">
+                            {r.comment ?? <span className="italic text-slate-600">Yorum yok</span>}
+                          </span>
+                          {r.sellerReply && (
+                            <div className="mt-1 flex items-start gap-1 text-[10px] text-primary/80">
+                              <Reply className="w-2.5 h-2.5 mt-0.5 shrink-0" />
+                              <span className="italic truncate max-w-[180px]">{r.sellerReply}</span>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-slate-500 text-xs hidden sm:table-cell">
+                        {new Date(r.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            onClick={() => { setReplyingTo(replyingTo === r.id ? null : r.id); setReplyText(r.sellerReply ?? '') }}
+                            className={`p-1.5 rounded-lg transition-colors ${r.sellerReply ? 'text-primary' : 'text-slate-400 hover:text-primary'} hover:bg-primary/10`}
+                            title={r.sellerReply ? 'Yanıtı düzenle' : 'Yanıtla'}
+                          >
+                            <Reply size={15} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(r.id)}
+                            className="p-1.5 rounded-lg hover:bg-red-500/10 text-red-500 transition-colors"
+                            title="Yorumu sil"
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    {replyingTo === r.id && (
+                      <tr key={`${r.id}-reply`} className="border-b border-border bg-primary/5">
+                        <td colSpan={6} className="px-4 py-3">
+                          <div className="flex items-start gap-3">
+                            <Reply className="w-4 h-4 text-primary mt-2 shrink-0" />
+                            <div className="flex-1 space-y-2">
+                              <textarea
+                                value={replyText}
+                                onChange={e => setReplyText(e.target.value)}
+                                placeholder="Müşteriye yanıtınızı yazın..."
+                                rows={2}
+                                className="w-full px-3 py-2 rounded-lg bg-background border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/25 resize-none"
+                              />
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => handleReply(r.id)}
+                                  disabled={replySaving || !replyText.trim()}
+                                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-bold transition-opacity disabled:opacity-60"
+                                >
+                                  {replySaving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Reply className="w-3 h-3" />}
+                                  Yanıtı Kaydet
+                                </button>
+                                <button
+                                  onClick={() => { setReplyingTo(null); setReplyText('') }}
+                                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border text-xs text-slate-400 hover:text-foreground transition-colors"
+                                >
+                                  <X className="w-3 h-3" /> İptal
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </>
                 ))
               }
             </tbody>
