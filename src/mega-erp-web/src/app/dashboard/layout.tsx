@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import {
   LayoutDashboard, ShoppingCart, Users, CreditCard,
   Package, Truck, Settings, LogOut, Bell, Menu, X, Receipt,
   Store, Warehouse, Layout, CheckSquare, BarChart2, ShoppingBag, Tag, Star, Layers, Globe,
-  AlertTriangle, ShoppingBag as OrderIcon
+  AlertTriangle, ShoppingBag as OrderIcon, Search, Zap, ArrowRight, Command
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -118,6 +118,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const { notifications, unreadCount, markAllRead } = useNotifications();
   const [bellOpen, setBellOpen] = useState(false);
   const bellRef = useRef<HTMLDivElement>(null);
+  const [cmdOpen, setCmdOpen] = useState(false);
+  const [cmdSearch, setCmdSearch] = useState('');
+  const cmdInputRef = useRef<HTMLInputElement>(null);
 
   // Close bell panel on outside click
   useEffect(() => {
@@ -129,6 +132,64 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
+
+  // Cmd+K / Ctrl+K opens command palette
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault()
+        setCmdOpen(prev => !prev)
+        setCmdSearch('')
+      }
+      if (e.key === 'Escape') setCmdOpen(false)
+    }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [])
+
+  useEffect(() => {
+    if (cmdOpen) setTimeout(() => cmdInputRef.current?.focus(), 50)
+  }, [cmdOpen])
+
+  // Command palette items
+  const CMD_ITEMS = useMemo(() => [
+    { label: 'Dashboard', desc: 'Komuta Merkezi', href: '/dashboard', icon: LayoutDashboard, group: 'Sayfalar' },
+    { label: 'Ürünler', desc: 'E-commerce ürün listesi', href: '/dashboard/ecommerce', icon: Package, group: 'Sayfalar' },
+    { label: 'Yeni Ürün', desc: 'Hızlıca ürün ekle', href: '/dashboard/ecommerce/new', icon: Zap, group: 'Hızlı Aksiyon' },
+    { label: 'Siparişler', desc: 'B2B sipariş yönetimi', href: '/dashboard/orders', icon: ShoppingCart, group: 'Sayfalar' },
+    { label: 'Mağaza Siparişleri', desc: 'Marketplace sipariş yönetimi', href: '/dashboard/marketplace-orders', icon: Store, group: 'Sayfalar' },
+    { label: 'Muhasebe', desc: 'Yevmiye ve hesap planı', href: '/dashboard/accounting', icon: CreditCard, group: 'Sayfalar' },
+    { label: 'WMS / Depo', desc: 'Stok ve depo yönetimi', href: '/dashboard/wms', icon: Warehouse, group: 'Sayfalar' },
+    { label: 'İK Yönetimi', desc: 'Çalışanlar ve izinler', href: '/dashboard/hr', icon: Users, group: 'Sayfalar' },
+    { label: 'Kargo', desc: 'Sevkiyat takibi', href: '/dashboard/shipping', icon: Truck, group: 'Sayfalar' },
+    { label: 'Faturalar', desc: 'Fatura yönetimi', href: '/dashboard/billing', icon: Receipt, group: 'Sayfalar' },
+    { label: 'Analitik', desc: 'Satış ve gelir raporları', href: '/dashboard/analytics', icon: BarChart2, group: 'Sayfalar' },
+    { label: 'Kuponlar', desc: 'İndirim kodu yönetimi', href: '/dashboard/coupons', icon: Tag, group: 'Sayfalar' },
+    { label: 'Yorumlar', desc: 'Müşteri yorumları', href: '/dashboard/reviews', icon: Star, group: 'Sayfalar' },
+    { label: 'Site Builder', desc: 'Mağaza sayfaları', href: '/dashboard/site-builder', icon: Layout, group: 'Sayfalar' },
+    { label: 'Kategoriler', desc: 'Ürün kategorileri', href: '/dashboard/categories', icon: Layers, group: 'Sayfalar' },
+    { label: 'Kurulum Rehberi', desc: '5 adımlı kurulum sihirbazı', href: '/dashboard/setup', icon: CheckSquare, group: 'Sayfalar' },
+    { label: 'Marketplace\'e Git', desc: 'Alışveriş sayfasını aç', href: '/', icon: Globe, group: 'Dış Bağlantılar' },
+  ], [])
+
+  const filteredCmdItems = useMemo(() => {
+    if (!cmdSearch.trim()) return CMD_ITEMS
+    const q = cmdSearch.toLowerCase()
+    return CMD_ITEMS.filter(item =>
+      item.label.toLowerCase().includes(q) ||
+      item.desc.toLowerCase().includes(q) ||
+      item.group.toLowerCase().includes(q)
+    )
+  }, [cmdSearch, CMD_ITEMS])
+
+  const cmdGroups = useMemo(() => {
+    const groups: Record<string, typeof CMD_ITEMS> = {}
+    for (const item of filteredCmdItems) {
+      if (!groups[item.group]) groups[item.group] = []
+      groups[item.group].push(item)
+    }
+    return groups
+  }, [filteredCmdItems])
 
   const handleLogout = () => {
     logout();
@@ -248,6 +309,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <Menu className="w-5 h-5" />
             </button>
             <h3 className="font-semibold text-slate-500 hidden sm:block">Yönetim Paneli</h3>
+            {/* Cmd+K trigger */}
+            <button
+              onClick={() => { setCmdOpen(true); setCmdSearch('') }}
+              className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border/60 bg-background/60 text-slate-400 text-xs hover:border-primary/40 hover:text-foreground transition-all group"
+            >
+              <Search className="w-3.5 h-3.5" />
+              <span>Ara veya git...</span>
+              <span className="ml-1 px-1.5 py-0.5 rounded bg-slate-800 text-[10px] font-mono border border-border/60 group-hover:border-primary/30 transition-colors">
+                ⌘K
+              </span>
+            </button>
           </div>
           <div className="flex items-center gap-2 lg:gap-4">
             <Link
@@ -348,6 +420,86 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {children}
         </div>
       </main>
+
+      {/* ── Command Palette (Cmd+K) ─────────────────────────────────────────── */}
+      <AnimatePresence>
+        {cmdOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
+              onClick={() => setCmdOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96, y: -12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: -12 }}
+              transition={{ duration: 0.15, type: 'spring', stiffness: 400, damping: 30 }}
+              className="fixed top-[15%] left-1/2 -translate-x-1/2 z-[61] w-full max-w-lg bg-background/95 backdrop-blur-xl border border-border/80 rounded-2xl shadow-2xl shadow-black/50 overflow-hidden"
+              onClick={e => e.stopPropagation()}
+            >
+              {/* Search input */}
+              <div className="flex items-center gap-3 px-4 py-3.5 border-b border-border">
+                <Search className="w-4 h-4 text-primary shrink-0" />
+                <input
+                  ref={cmdInputRef}
+                  type="text"
+                  value={cmdSearch}
+                  onChange={e => setCmdSearch(e.target.value)}
+                  placeholder="Ara veya sayfaya git..."
+                  className="flex-1 bg-transparent text-foreground text-sm placeholder:text-slate-500 focus:outline-none"
+                />
+                <kbd className="text-[10px] text-slate-500 border border-border/60 rounded px-1.5 py-0.5 font-mono">Esc</kbd>
+              </div>
+
+              {/* Results */}
+              <div className="max-h-[360px] overflow-y-auto py-2">
+                {filteredCmdItems.length === 0 ? (
+                  <div className="text-center py-10 text-slate-500 text-sm">
+                    Sonuç bulunamadı
+                  </div>
+                ) : (
+                  Object.entries(cmdGroups).map(([group, items]) => (
+                    <div key={group}>
+                      <p className="px-4 py-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-widest">{group}</p>
+                      {items.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setCmdOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 hover:bg-primary/8 transition-colors group"
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-slate-800/60 border border-border/40 flex items-center justify-center shrink-0 group-hover:bg-primary/10 group-hover:border-primary/20 transition-colors">
+                            <item.icon className="w-4 h-4 text-slate-400 group-hover:text-primary transition-colors" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{item.label}</p>
+                            <p className="text-xs text-slate-500 truncate">{item.desc}</p>
+                          </div>
+                          <ArrowRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-primary opacity-0 group-hover:opacity-100 transition-all" />
+                        </Link>
+                      ))}
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="px-4 py-2.5 border-t border-border/60 flex items-center gap-3 text-[10px] text-slate-500">
+                <span className="flex items-center gap-1"><kbd className="font-mono border border-border/60 rounded px-1 py-0.5">↑↓</kbd> Gezin</span>
+                <span className="flex items-center gap-1"><kbd className="font-mono border border-border/60 rounded px-1 py-0.5">↵</kbd> Seç</span>
+                <span className="flex items-center gap-1"><kbd className="font-mono border border-border/60 rounded px-1 py-0.5">Esc</kbd> Kapat</span>
+                <span className="ml-auto flex items-center gap-1">
+                  <Command className="w-2.5 h-2.5" /><span>K ile aç</span>
+                </span>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
