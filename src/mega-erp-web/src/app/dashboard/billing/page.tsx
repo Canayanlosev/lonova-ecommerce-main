@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link'
 import {
   Receipt, CheckCircle, RefreshCw, FileText, Clock, XCircle,
-  Download, Filter, Printer, X as CloseIcon
+  Download, Filter, Printer, X as CloseIcon, Calculator, ChevronDown, ChevronUp
 } from 'lucide-react'
 import { billingService } from '@/lib/services/billing.service'
 import { useToast } from '@/store/ui.store'
@@ -26,6 +26,7 @@ export default function BillingPage() {
   const [marking, setMarking] = useState<string | null>(null)
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [printInv, setPrintInv] = useState<Invoice | null>(null)
+  const [kdvExpanded, setKdvExpanded] = useState(false)
 
   const load = () => {
     setLoading(true)
@@ -58,6 +59,43 @@ export default function BillingPage() {
     totalPaid: invoices.filter(i => i.status === 'Paid').reduce((s, i) => s + i.totalAmount, 0),
     pending:   invoices.filter(i => i.status === 'Issued').reduce((s, i) => s + i.totalAmount, 0),
   }), [invoices])
+
+  // KDV Summary
+  const kdvStats = useMemo(() => {
+    const now = new Date()
+    const thisMonthISO = now.toISOString().slice(0, 7)
+    const lm = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+    const lastMonthISO = lm.toISOString().slice(0, 7)
+
+    const paid = invoices.filter(i => i.status === 'Paid')
+    const issued = invoices.filter(i => i.status === 'Issued')
+
+    const thisMonthTax = paid.filter(i => i.invoiceDate.slice(0, 7) === thisMonthISO)
+      .reduce((s, i) => s + i.totalTax, 0)
+    const lastMonthTax = paid.filter(i => i.invoiceDate.slice(0, 7) === lastMonthISO)
+      .reduce((s, i) => s + i.totalTax, 0)
+    const pendingTax = issued.reduce((s, i) => s + i.totalTax, 0)
+    const totalTax = paid.reduce((s, i) => s + i.totalTax, 0)
+    const totalNet = paid.reduce((s, i) => s + (i.totalAmount - i.totalTax), 0)
+
+    // Monthly breakdown (last 6 months)
+    const monthlyMap: Record<string, { net: number; tax: number }> = {}
+    for (let m = 5; m >= 0; m--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - m, 1)
+      const key = d.toISOString().slice(0, 7)
+      monthlyMap[key] = { net: 0, tax: 0 }
+    }
+    for (const inv of paid) {
+      const key = inv.invoiceDate.slice(0, 7)
+      if (monthlyMap[key]) {
+        monthlyMap[key].net += inv.totalAmount - inv.totalTax
+        monthlyMap[key].tax += inv.totalTax
+      }
+    }
+    const monthly = Object.entries(monthlyMap).map(([month, v]) => ({ month, ...v }))
+
+    return { thisMonthTax, lastMonthTax, pendingTax, totalTax, totalNet, monthly }
+  }, [invoices])
 
   const filtered = useMemo(() =>
     statusFilter === 'all' ? invoices : invoices.filter(i => i.status === statusFilter),
@@ -143,6 +181,83 @@ export default function BillingPage() {
               <p className="text-xs text-slate-400">{stats.paid} fatura ödendi</p>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* KDV Özeti */}
+      {!loading && invoices.some(i => i.totalTax > 0) && (
+        <div className="premium-card overflow-hidden">
+          <button
+            onClick={() => setKdvExpanded(o => !o)}
+            className="w-full flex items-center justify-between px-5 py-4 bg-slate-900/40 border-b border-border/80 hover:bg-slate-800/30 transition-colors"
+          >
+            <div className="flex items-center gap-2.5">
+              <Calculator className="w-4.5 h-4.5 text-amber-400" />
+              <span className="text-sm font-bold text-foreground">KDV Özeti</span>
+              <span className="text-xs text-slate-400 font-semibold">
+                Bu ay: <span className="text-amber-400 font-black">₺{kdvStats.thisMonthTax.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}</span>
+              </span>
+              {kdvStats.pendingTax > 0 && (
+                <span className="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold">
+                  ₺{kdvStats.pendingTax.toLocaleString('tr-TR', { maximumFractionDigits: 0 })} bekliyor
+                </span>
+              )}
+            </div>
+            {kdvExpanded
+              ? <ChevronUp className="w-4 h-4 text-slate-400" />
+              : <ChevronDown className="w-4 h-4 text-slate-400" />}
+          </button>
+
+          {kdvExpanded && (
+            <div className="p-5 space-y-5">
+              {/* Summary cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {[
+                  { label: 'Bu Ay KDV',    value: kdvStats.thisMonthTax, color: 'text-amber-400' },
+                  { label: 'Geçen Ay KDV', value: kdvStats.lastMonthTax, color: 'text-slate-400' },
+                  { label: 'Bekleyen KDV', value: kdvStats.pendingTax,   color: kdvStats.pendingTax > 0 ? 'text-orange-400' : 'text-emerald-400' },
+                  { label: 'Toplam KDV',   value: kdvStats.totalTax,     color: 'text-primary' },
+                ].map(({ label, value, color }) => (
+                  <div key={label} className="premium-card p-4">
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">{label}</p>
+                    <p className={`text-lg font-black font-mono ${color}`}>
+                      ₺{value.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Monthly breakdown */}
+              <div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Son 6 Ay KDV Dağılımı</p>
+                <div className="space-y-2">
+                  {kdvStats.monthly.map(({ month, net, tax }) => {
+                    const total = net + tax
+                    const taxPct = total > 0 ? Math.round((tax / total) * 100) : 0
+                    const monthLabel = new Date(month + '-01').toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })
+                    return (
+                      <div key={month} className="flex items-center gap-3">
+                        <span className="text-xs text-slate-400 font-semibold w-28 shrink-0 truncate">{monthLabel}</span>
+                        <div className="flex-1 h-5 rounded-full bg-slate-800/60 overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-primary/60 to-primary flex items-center justify-end pr-2 transition-all duration-500"
+                            style={{ width: total > 0 ? `${Math.min(100, (total / Math.max(...kdvStats.monthly.map(m => m.net + m.tax), 1)) * 100)}%` : '0%' }}
+                          />
+                        </div>
+                        <span className="text-xs font-mono text-amber-400 w-24 text-right shrink-0">
+                          ₺{tax.toLocaleString('tr-TR', { maximumFractionDigits: 0 })} KDV
+                        </span>
+                        <span className="text-[10px] text-slate-500 w-10 text-right shrink-0">%{taxPct}</span>
+                      </div>
+                    )
+                  })}
+                </div>
+                <p className="text-[10px] text-slate-600 mt-3">
+                  * Yalnızca &quot;Ödendi&quot; durumundaki faturalar dahildir. Resmi KDV beyannamesi için mali müşavirinize danışın.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
