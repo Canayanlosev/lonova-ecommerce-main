@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from 'react'
 import {
   Users, Building2, CalendarDays, Check, X, Plus, Trash2, Edit2,
   AlertCircle, DollarSign, Mail, Phone, RefreshCw, FileSpreadsheet, Download, Info,
-  ChevronLeft, ChevronRight
+  ChevronLeft, ChevronRight, Gift, Award
 } from 'lucide-react'
 import { hrService } from '@/lib/services/hr.service'
 import { useToast } from '@/store/ui.store'
@@ -65,6 +65,15 @@ const EMPTY_EMP: EmployeeForm = { firstName: '', lastName: '', email: '', phone:
 
 interface DeptForm { name: string; description: string }
 const EMPTY_DEPT: DeptForm = { name: '', description: '' }
+
+function getServiceYears(hireDate: string): number {
+  const hire = new Date(hireDate)
+  const today = new Date()
+  let years = today.getFullYear() - hire.getFullYear()
+  if (today.getMonth() < hire.getMonth() ||
+    (today.getMonth() === hire.getMonth() && today.getDate() < hire.getDate())) years--
+  return Math.max(0, years)
+}
 
 const LEAVE_STATUS: Record<string, { label: string; cls: string }> = {
   Pending:  { label: 'Bekliyor',    cls: 'bg-amber-500/10 text-amber-400 border border-amber-500/20' },
@@ -223,6 +232,20 @@ export default function HRPage() {
   const totalPayroll = employees.reduce((s, e) => s + e.salary, 0)
   const pendingLeaveCount = leaveRequests.filter(r => r.status === 'Pending').length
 
+  // ─── Work anniversaries (next 30 days, completing ≥1 year) ────────────────
+  const anniversaries = useMemo(() => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    return employees.map(e => {
+      const hire = new Date(e.hireDate)
+      const thisYear = new Date(today.getFullYear(), hire.getMonth(), hire.getDate())
+      const annivDate = thisYear >= today ? thisYear : new Date(today.getFullYear() + 1, hire.getMonth(), hire.getDate())
+      const daysUntil = Math.round((annivDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+      const yearsCompleting = annivDate.getFullYear() - hire.getFullYear()
+      return { employee: e, daysUntil, yearsCompleting }
+    }).filter(a => a.daysUntil <= 30 && a.yearsCompleting >= 1).sort((a, b) => a.daysUntil - b.daysUntil)
+  }, [employees])
+
   // ─── Leave Calendar ───────────────────────────────────────────────────────
   const [calendarDate, setCalendarDate] = useState(() => { const d = new Date(); d.setDate(1); return d })
   const todayISO = new Date().toISOString().slice(0, 10)
@@ -337,6 +360,39 @@ export default function HRPage() {
         ))}
       </div>
 
+      {/* Anniversary banner — only when upcoming anniversaries exist */}
+      {!loading && anniversaries.length > 0 && (
+        <div className="premium-card p-5 border-l-4 border-violet-500/70 animate-fade-in">
+          <div className="flex items-center gap-2.5 mb-3.5">
+            <Gift className="w-5 h-5 text-violet-400 shrink-0" />
+            <h3 className="text-sm font-bold text-foreground">Yaklaşan İşe Giriş Yıl Dönümleri</h3>
+            <span className="px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-400 text-xs font-bold border border-violet-500/20 ml-1">
+              {anniversaries.length} kişi
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {anniversaries.map(({ employee: e, daysUntil, yearsCompleting }) => (
+              <div key={e.id} className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-violet-500/5 border border-violet-500/15 hover:border-violet-500/35 transition-all group cursor-default">
+                <div className="w-8 h-8 rounded-full bg-violet-500/15 flex items-center justify-center text-xs font-black text-violet-400 shrink-0 border border-violet-500/20">
+                  {e.firstName[0]}{e.lastName[0]}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-foreground leading-tight truncate">{e.firstName} {e.lastName}</p>
+                  <p className="text-[10px] text-slate-400 font-semibold leading-tight mt-0.5 flex items-center gap-1">
+                    {daysUntil === 0
+                      ? <span className="text-violet-400 font-bold">🎉 Bugün!</span>
+                      : <span>{daysUntil} gün sonra</span>}
+                    <span className="text-slate-600">·</span>
+                    <Award className="w-2.5 h-2.5 text-amber-400 shrink-0" />
+                    <span className="text-amber-400 font-bold">{yearsCompleting}. yıl</span>
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Tab bar */}
       <div className="flex gap-1 p-1 bg-slate-950/20 dark:bg-slate-900/60 border border-border/80 rounded-xl w-fit flex-wrap">
         {TABS.map((t) => (
@@ -420,9 +476,17 @@ export default function HRPage() {
                               {e.firstName[0]}{e.lastName[0]}
                             </span>
                           </div>
-                          <span className="font-bold text-foreground hover:text-primary transition-colors cursor-pointer" onClick={() => openEditEmployee(e)}>
-                            {e.firstName} {e.lastName}
-                          </span>
+                          <div className="min-w-0">
+                            <span className="font-bold text-foreground hover:text-primary transition-colors cursor-pointer" onClick={() => openEditEmployee(e)}>
+                              {e.firstName} {e.lastName}
+                            </span>
+                            {getServiceYears(e.hireDate) > 0 && (
+                              <p className="text-[10px] text-slate-500 font-semibold leading-tight mt-0.5 flex items-center gap-1">
+                                <Award className="w-2.5 h-2.5 text-amber-500 shrink-0" />
+                                {getServiceYears(e.hireDate)} yıl kıdem
+                              </p>
+                            )}
+                          </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 hidden md:table-cell">
