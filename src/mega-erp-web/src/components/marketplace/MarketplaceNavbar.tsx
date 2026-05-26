@@ -1,14 +1,15 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect, useRef } from 'react'
-import { Search, ShoppingCart, User, Menu, X, LogOut, ChevronDown, Heart, Grid3X3, Clock, Trash2 } from 'lucide-react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import Image from 'next/image'
+import { Search, ShoppingCart, User, Menu, X, LogOut, ChevronDown, Heart, Grid3X3, Clock, Trash2, Package, TrendingUp } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useBuyerCartStore } from '@/store/buyerCart.store'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
 import { useWishlistStore } from '@/store/wishlist.store'
 import { ThemeSwitcher } from '@/components/ThemeSwitcher'
-import { marketplaceService, type CatalogCategory } from '@/lib/services/marketplace.service'
+import { marketplaceService, type CatalogCategory, type MarketplaceProduct } from '@/lib/services/marketplace.service'
 
 /** Single nav item that shows dropdown with sub-categories on hover */
 function CategoryNavItem({ cat, basePath }: { cat: CatalogCategory; basePath: string }) {
@@ -74,11 +75,14 @@ export function MarketplaceNavbar() {
   const [searchQuery, setSearchQuery] = useState('')
   const [searchFocused, setSearchFocused] = useState(false)
   const [recentSearches, setRecentSearches] = useState<string[]>([])
+  const [suggestions, setSuggestions] = useState<MarketplaceProduct[]>([])
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [categories, setCategories] = useState<CatalogCategory[]>([])
   const [allCatsOpen, setAllCatsOpen] = useState(false)
   const allCatsRef = useRef<HTMLDivElement>(null)
   const searchRef = useRef<HTMLDivElement>(null)
+  const suggestDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const router = useRouter()
   const itemCount = useBuyerCartStore((s) => s.itemCount)
   const wishlistCount = useWishlistStore((s) => s.count())
@@ -138,6 +142,31 @@ export function MarketplaceNavbar() {
     try { localStorage.removeItem('recent-searches') } catch { /* ignore */ }
   }
 
+  // Live suggestions — debounced 280ms, min 2 chars
+  const fetchSuggestions = useCallback((q: string) => {
+    if (suggestDebounceRef.current) clearTimeout(suggestDebounceRef.current)
+    if (q.trim().length < 2) {
+      setSuggestions([])
+      return
+    }
+    suggestDebounceRef.current = setTimeout(async () => {
+      setSuggestionsLoading(true)
+      try {
+        const res = await marketplaceService.getProducts({ search: q.trim(), pageSize: 5 })
+        setSuggestions(res.items)
+      } catch {
+        setSuggestions([])
+      } finally {
+        setSuggestionsLoading(false)
+      }
+    }, 280)
+  }, [])
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value)
+    fetchSuggestions(e.target.value)
+  }
+
   const handleLogout = () => {
     logout()
     router.push('/')
@@ -168,16 +197,19 @@ export function MarketplaceNavbar() {
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handleSearchChange}
                 onFocus={() => setSearchFocused(true)}
                 placeholder="Ürün, marka veya kategori ara..."
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 transition-all placeholder:text-slate-500"
               />
-              {/* Recent searches dropdown */}
+
+              {/* Search dropdown — recent searches (empty input) */}
               {searchFocused && !searchQuery && recentSearches.length > 0 && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-surface border border-border rounded-xl shadow-2xl z-50 overflow-hidden animate-fade-in">
                   <div className="flex items-center justify-between px-3 py-2 border-b border-border">
-                    <span className="text-xs text-slate-500 font-medium">Son Aramalar</span>
+                    <span className="text-xs text-slate-500 font-medium flex items-center gap-1.5">
+                      <Clock className="w-3 h-3" /> Son Aramalar
+                    </span>
                     <button
                       type="button"
                       onClick={clearRecentSearches}
@@ -197,6 +229,84 @@ export function MarketplaceNavbar() {
                       {q}
                     </button>
                   ))}
+                </div>
+              )}
+
+              {/* Search dropdown — live suggestions (when typing) */}
+              {searchFocused && searchQuery.trim().length >= 2 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-surface border border-border rounded-xl shadow-2xl z-50 overflow-hidden animate-fade-in">
+                  {suggestionsLoading ? (
+                    <div className="px-4 py-3 space-y-2">
+                      {[1,2,3].map(i => (
+                        <div key={i} className="flex items-center gap-3 animate-pulse">
+                          <div className="w-10 h-10 bg-slate-700/60 rounded-lg shrink-0" />
+                          <div className="flex-1 space-y-1">
+                            <div className="h-3 bg-slate-700/60 rounded w-3/4" />
+                            <div className="h-3 bg-slate-700/60 rounded w-1/3" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : suggestions.length > 0 ? (
+                    <>
+                      <div className="flex items-center justify-between px-3 py-2 border-b border-border">
+                        <span className="text-xs text-slate-500 font-medium flex items-center gap-1.5">
+                          <TrendingUp className="w-3 h-3" /> Ürünler
+                        </span>
+                        <span className="text-[10px] text-slate-500">{suggestions.length} sonuç</span>
+                      </div>
+                      {suggestions.map((product) => {
+                        const minPrice = product.variants.length > 0
+                          ? Math.min(...product.variants.map(v => v.price))
+                          : product.basePrice
+                        return (
+                          <Link
+                            key={product.id}
+                            href={`/urun/${product.id}`}
+                            onClick={() => {
+                              saveSearch(searchQuery.trim())
+                              setSearchFocused(false)
+                              setSearchQuery('')
+                              setSuggestions([])
+                            }}
+                            className="flex items-center gap-3 px-3 py-2.5 hover:bg-primary/5 transition-colors group"
+                          >
+                            <div className="w-10 h-10 rounded-lg bg-slate-800/60 overflow-hidden relative shrink-0">
+                              {product.imageUrl ? (
+                                <Image src={product.imageUrl} alt={product.name} fill className="object-cover" sizes="40px" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <Package className="w-5 h-5 text-slate-500" />
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm text-foreground font-medium truncate group-hover:text-primary transition-colors">
+                                {product.name}
+                              </p>
+                              <p className="text-xs text-slate-400">{product.categoryName}</p>
+                            </div>
+                            <p className="text-sm font-bold text-primary shrink-0">
+                              {minPrice.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+                            </p>
+                          </Link>
+                        )
+                      })}
+                      <Link
+                        href={`/ara?q=${encodeURIComponent(searchQuery.trim())}`}
+                        onClick={() => { saveSearch(searchQuery.trim()); setSearchFocused(false) }}
+                        className="flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-semibold text-primary border-t border-border hover:bg-primary/5 transition-colors"
+                      >
+                        <Search className="w-3.5 h-3.5" />
+                        &ldquo;{searchQuery}&rdquo; için tüm sonuçları gör
+                      </Link>
+                    </>
+                  ) : (
+                    <div className="px-4 py-6 text-center">
+                      <p className="text-sm text-slate-400">&ldquo;{searchQuery}&rdquo; için sonuç bulunamadı</p>
+                      <p className="text-xs text-slate-500 mt-1">Farklı bir arama deneyin</p>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

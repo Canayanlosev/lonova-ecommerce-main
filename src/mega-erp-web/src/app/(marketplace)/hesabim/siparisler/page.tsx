@@ -7,7 +7,7 @@ import Image from 'next/image'
 import {
   Package, ArrowRight, CreditCard, Banknote, Truck, MapPin,
   ChevronDown, ChevronUp, CheckCircle, Clock, XCircle, LogOut,
-  AlertTriangle, ExternalLink, RefreshCw, X, Star, User
+  AlertTriangle, ExternalLink, RefreshCw, X, Star, User, Check
 } from 'lucide-react'
 import { marketplaceService, BuyerOrderDto, type BuyerOrderItemDto } from '@/lib/services/marketplace.service'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
@@ -393,6 +393,56 @@ function OrderCard({ order, onUpdate }: { order: BuyerOrderDto; onUpdate: (updat
       {/* Expanded details */}
       {expanded && (
         <div className="p-4 space-y-5">
+          {/* Order Status Timeline */}
+          {order.status !== 'Cancelled' && (() => {
+            const STATUS_ORDER = ['Pending', 'Processing', 'Confirmed', 'Shipped', 'Delivered']
+            const currentIdx = STATUS_ORDER.indexOf(order.status)
+            const TIMELINE = [
+              { label: 'Sipariş\nAlındı' },
+              { label: 'Ödeme\nOnaylandı' },
+              { label: 'Hazır-\nlanıyor' },
+              { label: 'Kargoya\nVerildi' },
+              { label: 'Teslim\nEdildi' },
+            ]
+            return (
+              <div>
+                <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Sipariş Durumu</h4>
+                <div className="flex items-start">
+                  {TIMELINE.map((t, i) => {
+                    const isDone = currentIdx >= i
+                    const isActive = currentIdx === i
+                    return (
+                      <div key={i} className="flex items-center flex-1">
+                        <div className="flex flex-col items-center gap-1.5 flex-shrink-0">
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center border-2 transition-all ${
+                            isDone && !isActive ? 'bg-emerald-500 border-emerald-500' :
+                            isActive ? 'bg-primary border-primary' :
+                            'bg-slate-900 border-border'
+                          }`}>
+                            {isDone && !isActive
+                              ? <Check className="w-3.5 h-3.5 text-white" />
+                              : isActive
+                              ? <span className="w-2 h-2 rounded-full bg-white" />
+                              : <span className="w-2 h-2 rounded-full bg-slate-700" />
+                            }
+                          </div>
+                          <span className={`text-[9px] text-center leading-tight font-medium whitespace-pre-line ${
+                            isDone ? 'text-emerald-400' : isActive ? 'text-primary' : 'text-slate-600'
+                          }`}>{t.label}</span>
+                        </div>
+                        {i < TIMELINE.length - 1 && (
+                          <div className={`flex-1 h-0.5 mx-1 mb-5 ${
+                            currentIdx > i ? 'bg-emerald-500' : 'bg-border'
+                          }`} />
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })()}
+
           {/* Items */}
           <div>
             <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Ürünler</h4>

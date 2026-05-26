@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ShoppingCart, Star, Package, Heart, Check } from 'lucide-react'
+import { ShoppingCart, Star, Package, Heart, Check, Flame } from 'lucide-react'
 import type { MarketplaceProduct } from '@/lib/services/marketplace.service'
 import { marketplaceService } from '@/lib/services/marketplace.service'
 import { useBuyerCartStore } from '@/store/buyerCart.store'
@@ -32,6 +32,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const isOutOfStock = allStocks.length > 0 && allStocks.every(q => q === 0)
   const minStock = allStocks.length > 0 ? Math.min(...allStocks.filter(q => q > 0)) : null
   const isLowStock = !isOutOfStock && minStock !== null && minStock <= 5
+  const isPopular = product.reviewCount >= 10 && (product.averageRating ?? 0) >= 4.5
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault()
@@ -87,6 +88,12 @@ export function ProductCard({ product }: ProductCardProps) {
         {discountPercent > 0 && !isOutOfStock && (
           <span className="absolute top-2 left-2 px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-lg z-10 shadow-sm">
             %{discountPercent} İndirim
+          </span>
+        )}
+        {/* Popüler badge — only when no discount badge */}
+        {isPopular && discountPercent === 0 && !isOutOfStock && (
+          <span className="absolute top-2 left-2 inline-flex items-center gap-1 px-2 py-0.5 bg-orange-500 text-white text-[10px] font-bold rounded-lg z-10 shadow-sm">
+            <Flame className="w-2.5 h-2.5" /> Popüler
           </span>
         )}
         {/* Düşük stok badge */}

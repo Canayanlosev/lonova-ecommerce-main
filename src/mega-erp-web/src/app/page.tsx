@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import {
   ArrowRight, Zap, ShieldCheck, Truck, TrendingUp,
-  Users, Package, BarChart3, CheckCircle2,
-  Coffee, AlertTriangle, BookOpen, Clock, History, X as CloseIcon
+  Users, Package, BarChart3, CheckCircle2, Flame, Star, Tag,
+  Coffee, AlertTriangle, BookOpen, Clock, History, X as CloseIcon, Bell, Send
 } from 'lucide-react'
 import { marketplaceService, type MarketplaceProduct, type CatalogCategory } from '@/lib/services/marketplace.service'
 import { ProductCard } from '@/components/marketplace/ProductCard'
@@ -83,6 +83,23 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true)
   const [recentlyViewed, setRecentlyViewed] = useState<RecentItem[]>([])
   const [showPromo, setShowPromo] = useState(false)
+  const [activeProductTab, setActiveProductTab] = useState<'featured' | 'top_rated' | 'cheapest'>('featured')
+  const [newsletterEmail, setNewsletterEmail] = useState('')
+  const [newsletterState, setNewsletterState] = useState<'idle' | 'success'>('idle')
+
+  const displayedProducts = useMemo(() => {
+    if (activeProductTab === 'top_rated') {
+      return [...products].sort((a, b) => (b.averageRating ?? 0) - (a.averageRating ?? 0))
+    }
+    if (activeProductTab === 'cheapest') {
+      return [...products].sort((a, b) => {
+        const aPrice = a.variants.length > 0 ? Math.min(...a.variants.map(v => v.price)) : a.basePrice
+        const bPrice = b.variants.length > 0 ? Math.min(...b.variants.map(v => v.price)) : b.basePrice
+        return aPrice - bPrice
+      })
+    }
+    return products // featured = default API order
+  }, [products, activeProductTab])
 
   useEffect(() => {
     Promise.all([
@@ -343,7 +360,7 @@ export default function HomePage() {
 
           {/* ── PRODUCTS ── */}
           <section>
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
               <div>
                 <h2 className="text-xl font-bold text-foreground">Platformumuzdaki Ürünler</h2>
                 <p className="text-xs text-slate-500 mt-0.5">Satıcılarımızın listelediği ürünler</p>
@@ -358,6 +375,30 @@ export default function HomePage() {
               </div>
             </div>
 
+            {/* Product tabs */}
+            {!loading && products.length > 0 && (
+              <div className="flex items-center gap-2 mb-5 overflow-x-auto pb-1 scrollbar-hide">
+                {([
+                  { key: 'featured', label: 'Öne Çıkanlar', icon: Flame },
+                  { key: 'top_rated', label: 'En Yüksek Puan', icon: Star },
+                  { key: 'cheapest', label: 'En Uygun Fiyat', icon: Tag },
+                ] as const).map(({ key, label, icon: Icon }) => (
+                  <button
+                    key={key}
+                    onClick={() => setActiveProductTab(key)}
+                    className={`flex-shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                      activeProductTab === key
+                        ? 'bg-primary text-white shadow-sm shadow-primary/30'
+                        : 'bg-surface border border-border text-slate-400 hover:text-foreground hover:border-primary/40'
+                    }`}
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+
             {loading ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 {Array.from({ length: 8 }).map((_, i) => <ProductSkeleton key={i} />)}
@@ -370,12 +411,12 @@ export default function HomePage() {
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                {products.map((p, i) => (
+                {displayedProducts.map((p, i) => (
                   <motion.div
-                    key={p.id}
+                    key={`${activeProductTab}-${p.id}`}
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.04, duration: 0.35 }}
+                    transition={{ delay: i * 0.03, duration: 0.3 }}
                   >
                     <ProductCard product={p} />
                   </motion.div>
@@ -432,6 +473,49 @@ export default function HomePage() {
               </div>
             </section>
           )}
+
+          {/* ── NEWSLETTER ── */}
+          <section className="premium-card p-6 sm:p-8">
+            <div className="flex flex-col sm:flex-row items-center gap-6">
+              <div className="shrink-0 w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                <Bell className="w-6 h-6 text-primary" />
+              </div>
+              <div className="flex-1 text-center sm:text-left">
+                <h3 className="text-lg font-bold text-foreground mb-1">Fırsatlardan haberdar olun</h3>
+                <p className="text-sm text-slate-400">
+                  Kampanyalar, yeni ürünler ve platform güncellemelerini e-posta ile alın.
+                </p>
+              </div>
+              {newsletterState === 'success' ? (
+                <div className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold shrink-0">
+                  <CheckCircle2 className="w-4 h-4" /> Kaydedildi!
+                </div>
+              ) : (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    if (newsletterEmail.trim()) setNewsletterState('success')
+                  }}
+                  className="flex gap-2 w-full sm:w-auto"
+                >
+                  <input
+                    type="email"
+                    value={newsletterEmail}
+                    onChange={e => setNewsletterEmail(e.target.value)}
+                    placeholder="e-posta@adresiniz.com"
+                    required
+                    className="flex-1 sm:w-56 px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 transition-all"
+                  />
+                  <button
+                    type="submit"
+                    className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors"
+                  >
+                    <Send className="w-3.5 h-3.5" /> Abone Ol
+                  </button>
+                </form>
+              )}
+            </div>
+          </section>
 
           {/* ── CTA BANNER ── */}
           <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-primary/90 to-secondary p-8 sm:p-12">

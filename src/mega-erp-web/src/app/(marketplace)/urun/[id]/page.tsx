@@ -489,13 +489,34 @@ export default function ProductDetailPage() {
 
           {activeTab === 'reviews' && (
             <div className="space-y-6">
-              {/* Average */}
+              {/* Rating summary — average + distribution */}
               {product.reviewCount > 0 && (
-                <div className="flex items-center gap-4 p-4 bg-slate-800/50 rounded-xl">
-                  <div className="text-center">
-                    <p className="text-4xl font-bold text-foreground">{product.averageRating}</p>
+                <div className="flex flex-col sm:flex-row items-start gap-6 p-4 bg-slate-800/50 rounded-xl">
+                  {/* Average */}
+                  <div className="text-center shrink-0">
+                    <p className="text-5xl font-black text-foreground">{product.averageRating.toFixed(1)}</p>
                     <StarRow rating={product.averageRating} />
-                    <p className="text-xs text-slate-400 mt-1">{product.reviewCount} yorum</p>
+                    <p className="text-xs text-slate-400 mt-1">{product.reviewCount} değerlendirme</p>
+                  </div>
+                  {/* Distribution bars */}
+                  <div className="flex-1 w-full space-y-1.5">
+                    {[5, 4, 3, 2, 1].map((star) => {
+                      const count = reviews?.items.filter(r => r.rating === star).length ?? 0
+                      const pct = product.reviewCount > 0 ? Math.round((count / product.reviewCount) * 100) : 0
+                      return (
+                        <div key={star} className="flex items-center gap-2 text-xs">
+                          <span className="text-slate-400 w-4 text-right font-medium">{star}</span>
+                          <Star className="w-3 h-3 text-amber-400 fill-amber-400 shrink-0" />
+                          <div className="flex-1 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-amber-400 rounded-full transition-all duration-500"
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                          <span className="text-slate-500 w-7 text-right">{pct}%</span>
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
               )}
