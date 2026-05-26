@@ -772,6 +772,57 @@ export default function DashboardPage() {
           )}
         </div>
       </div>
+
+      {/* ── Canlı Sipariş Akışı ─────────────────────────────────────────── */}
+      <div className="premium-card p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            Canlı Sipariş Akışı
+          </h3>
+          <Link href="/dashboard/marketplace-orders" className="text-xs text-primary hover:text-primary/80 font-medium flex items-center gap-1">
+            Tümü <ArrowRight className="w-3 h-3" />
+          </Link>
+        </div>
+        {mktLoading ? (
+          <div className="space-y-2">
+            {[1,2,3,4].map(i => <div key={i} className="h-11 bg-slate-800/50 rounded-xl animate-pulse" />)}
+          </div>
+        ) : recentMktOrders.length === 0 ? (
+          <div className="text-center py-8">
+            <Package className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+            <p className="text-xs text-slate-500">Henüz marketplace siparişi yok</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {[...mktOrders]
+              .sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? ''))
+              .slice(0, 8)
+              .map((o) => {
+                const sc = MKT_STATUS[o.status] ?? { label: o.status, cls: 'bg-slate-700 text-slate-300' }
+                const diff = Date.now() - new Date(o.createdAt).getTime()
+                const mins = Math.floor(diff / 60000)
+                const hrs = Math.floor(diff / 3600000)
+                const days = Math.floor(diff / 86400000)
+                const ago = mins < 2 ? 'Az önce' : mins < 60 ? `${mins}dk önce` : hrs < 24 ? `${hrs}sa önce` : `${days}g önce`
+                const dotColor = o.status === 'Delivered' ? 'bg-emerald-400' : o.status === 'Shipped' ? 'bg-primary' : o.status === 'Cancelled' ? 'bg-red-400' : 'bg-amber-400'
+                return (
+                  <div key={o.id} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-800/40 transition-colors">
+                    <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="text-xs font-semibold text-foreground truncate">{o.recipientName ?? 'Müşteri'}</p>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold shrink-0 ${sc.cls}`}>{sc.label}</span>
+                      </div>
+                      <p className="text-[11px] text-slate-400">₺{o.totalAmount.toLocaleString('tr-TR')} · {ago}</p>
+                    </div>
+                  </div>
+                )
+              })
+            }
+          </div>
+        )}
+      </div>
     </div>
   );
 }

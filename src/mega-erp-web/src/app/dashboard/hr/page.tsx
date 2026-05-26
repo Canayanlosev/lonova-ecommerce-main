@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import {
   Users, Building2, CalendarDays, Check, X, Plus, Trash2, Edit2,
-  AlertCircle, DollarSign, Mail, Phone, RefreshCw, FileSpreadsheet, Download, Info
+  AlertCircle, DollarSign, Mail, Phone, RefreshCw, FileSpreadsheet, Download, Info,
+  ChevronLeft, ChevronRight
 } from 'lucide-react'
 import { hrService } from '@/lib/services/hr.service'
 import { useToast } from '@/store/ui.store'
@@ -222,6 +223,31 @@ export default function HRPage() {
   const totalPayroll = employees.reduce((s, e) => s + e.salary, 0)
   const pendingLeaveCount = leaveRequests.filter(r => r.status === 'Pending').length
 
+  // ─── Leave Calendar ───────────────────────────────────────────────────────
+  const [calendarDate, setCalendarDate] = useState(() => { const d = new Date(); d.setDate(1); return d })
+  const todayISO = new Date().toISOString().slice(0, 10)
+
+  const calendarGrid = useMemo(() => {
+    const year = calendarDate.getFullYear()
+    const month = calendarDate.getMonth()
+    const firstDow = new Date(year, month, 1).getDay()
+    const startOffset = (firstDow + 6) % 7 // Mon=0
+    const daysInMonth = new Date(year, month + 1, 0).getDate()
+    const cells: Array<{ day: number | null; dateStr: string; pending: number; approved: number; rejected: number }> = []
+    for (let i = 0; i < startOffset; i++) cells.push({ day: null, dateStr: '', pending: 0, approved: 0, rejected: 0 })
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
+      const dayLeaves = leaveRequests.filter(r => dateStr >= r.startDate.slice(0, 10) && dateStr <= r.endDate.slice(0, 10))
+      cells.push({
+        day: d, dateStr,
+        pending: dayLeaves.filter(r => r.status === 'Pending').length,
+        approved: dayLeaves.filter(r => r.status === 'Approved').length,
+        rejected: dayLeaves.filter(r => r.status === 'Rejected').length,
+      })
+    }
+    return cells
+  }, [calendarDate, leaveRequests])
+
   // ─── Payroll computation ───────────────────────────────────────────────────
   const bordroRows: BordroRow[] = employees.map(e => {
     const brut = e.salary
@@ -273,18 +299,18 @@ export default function HRPage() {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Users className="w-6 h-6 text-primary" /> İK Yönetimi
+        <div className="space-y-0.5">
+          <h1 className="text-3xl font-black tracking-tight flex items-center gap-2.5">
+            <Users className="w-8 h-8 text-primary" /> İK Yönetimi
           </h1>
-          <p className="text-slate-400 text-sm mt-0.5">Çalışan ve departman yönetimi</p>
+          <p className="text-slate-400 text-sm font-semibold">Çalışanlar, departman yapısı, izinler ve bordro süreçleri</p>
         </div>
         <button
           onClick={load}
-          className="p-2 rounded-lg border border-border text-slate-400 hover:text-foreground hover:bg-slate-800 transition-all"
+          className="p-2 rounded-xl border border-border bg-slate-950/20 hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
           title="Yenile"
         >
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -292,40 +318,40 @@ export default function HRPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: 'Toplam Çalışan', value: employees.length, icon: Users, color: 'bg-primary/10 text-primary' },
-          { label: 'Departman',      value: departments.length, icon: Building2, color: 'bg-primary/10 text-primary' },
-          { label: 'Bekleyen İzin',  value: pendingLeaveCount, icon: CalendarDays, color: pendingLeaveCount > 0 ? 'bg-amber-500/10 text-amber-400' : 'bg-slate-800 text-slate-400' },
-          { label: 'Aylık Bordro',   value: `₺${totalPayroll.toLocaleString('tr-TR')}`, icon: DollarSign, color: 'bg-emerald-500/10 text-emerald-400', isText: true },
+          { label: 'Toplam Çalışan', value: employees.length, icon: Users, color: 'bg-primary/10 text-primary border border-primary/20' },
+          { label: 'Departman',      value: departments.length, icon: Building2, color: 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' },
+          { label: 'Bekleyen İzin',  value: pendingLeaveCount, icon: CalendarDays, color: pendingLeaveCount > 0 ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-slate-950/40 text-slate-400 border border-border/80' },
+          { label: 'Aylık Bordro',   value: `₺${totalPayroll.toLocaleString('tr-TR')}`, icon: DollarSign, color: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20', isText: true },
         ].map(({ label, value, icon: Icon, color, isText }) => (
-          <div key={label} className="premium-card p-4 flex items-center gap-3">
-            <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${color}`}>
+          <div key={label} className="premium-card p-5 flex items-center gap-4 hover:-translate-y-0.5 transition-all duration-300">
+            <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${color}`}>
               <Icon className="w-5 h-5" />
             </div>
             <div className="min-w-0">
-              <p className="text-xs text-slate-500 truncate">{label}</p>
-              <p className={`font-bold text-foreground ${isText ? 'text-sm' : 'text-xl'}`}>{value}</p>
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider truncate">{label}</p>
+              <p className={`font-black text-foreground mt-1 ${isText ? 'text-sm font-mono' : 'text-2xl'}`}>{value}</p>
             </div>
           </div>
         ))}
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-1 p-1 bg-slate-950/20 dark:bg-slate-900/60 border border-border/85 rounded-xl w-fit flex-wrap">
+      <div className="flex gap-1 p-1 bg-slate-950/20 dark:bg-slate-900/60 border border-border/80 rounded-xl w-fit flex-wrap">
         {TABS.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
-              tab === t.id ? 'bg-surface text-primary border border-border/40 shadow-sm' : 'text-slate-400 hover:text-slate-200'
+            className={`flex items-center gap-1.5 px-4.5 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 ${
+              tab === t.id ? 'bg-surface text-primary border border-border/40 shadow-sm' : 'text-slate-405 hover:text-white'
             }`}
           >
             <t.icon className="w-4 h-4" />
             {t.label}
             {t.badge !== undefined && t.badge > 0 && (
-              <span className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-semibold border ${
-                tab === t.id ? 'bg-primary/10 text-primary border-primary/20' : 'bg-slate-800 text-slate-400 border-border/80'
+              <span className={`ml-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                tab === t.id ? 'bg-primary/10 text-primary border-primary/20' : 'bg-slate-950/40 text-slate-400 border-border/80'
               }`}>
                 {t.badge}
               </span>
@@ -337,94 +363,101 @@ export default function HRPage() {
       {/* ═══ Employees Tab ═══════════════════════════════════════════════════ */}
       {tab === 'employees' && (
         <div className="premium-card overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-            <p className="text-sm font-semibold text-foreground">{employees.length} çalışan</p>
+          <div className="flex items-center justify-between px-6 py-4 border-b border-border/80 bg-slate-900/40">
+            <p className="text-sm font-bold text-foreground">
+              {employees.length} <span className="text-slate-500 font-semibold">çalışan kayıtlı</span>
+            </p>
             <button
               onClick={openCreateEmployee}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors"
+              className="flex items-center gap-2 px-4.5 py-2.5 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-all shadow-sm shadow-primary/20 hover:shadow-primary/35 hover:-translate-y-0.5"
             >
-              <Plus className="w-4 h-4" /> Çalışan Ekle
+              <Plus className="w-4.5 h-4.5" /> Çalışan Ekle
             </button>
           </div>
           {loading ? (
-            <div className="divide-y divide-border">
+            <div className="divide-y divide-border/60">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="flex items-center gap-3 px-4 py-3">
-                  <div className="w-9 h-9 rounded-full bg-slate-800 animate-pulse shrink-0" />
-                  <div className="flex-1 space-y-1.5">
-                    <div className="h-3.5 bg-slate-800 rounded w-32 animate-pulse" />
-                    <div className="h-3 bg-slate-800 rounded w-48 animate-pulse" />
+                <div key={i} className="flex items-center gap-4 px-6 py-4.5">
+                  <div className="w-9 h-9 rounded-full bg-slate-850 animate-pulse shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-slate-850 rounded w-32 animate-pulse" />
+                    <div className="h-3 bg-slate-850 rounded w-48 animate-pulse" />
                   </div>
                 </div>
               ))}
             </div>
           ) : employees.length === 0 ? (
-            <div className="p-12 text-center">
-              <Users className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-              <p className="text-slate-400">Henüz çalışan eklenmedi.</p>
-              <button onClick={openCreateEmployee} className="mt-4 text-sm text-primary hover:underline">
-                İlk çalışanı ekle
+            <div className="p-16 text-center">
+              <Users className="w-14 h-14 text-slate-700 mx-auto mb-4" />
+              <p className="text-slate-400 font-semibold">Henüz çalışan eklenmedi.</p>
+              <button
+                onClick={openCreateEmployee}
+                className="mt-4 text-sm font-bold text-primary hover:text-primary/95 hover:underline transition-all"
+              >
+                İlk çalışanı ekleyin
               </button>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border text-xs text-slate-400">
-                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Çalışan</th>
-                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden md:table-cell">İletişim</th>
-                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden lg:table-cell">Departman</th>
-                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden sm:table-cell">İşe Başlama</th>
-                    <th className="text-right px-4 py-3 font-semibold uppercase tracking-wider">Maaş</th>
-                    <th className="text-right px-4 py-3 font-semibold uppercase tracking-wider">İşlem</th>
+                  <tr className="border-b border-border/70 text-[10px] text-slate-400 font-black uppercase tracking-wider bg-slate-950/20">
+                    <th className="text-left px-6 py-4.5 font-bold">Çalışan</th>
+                    <th className="text-left px-6 py-4.5 font-bold hidden md:table-cell">İletişim</th>
+                    <th className="text-left px-6 py-4.5 font-bold hidden lg:table-cell">Departman</th>
+                    <th className="text-left px-6 py-4.5 font-bold hidden sm:table-cell">İşe Başlama</th>
+                    <th className="text-right px-6 py-4.5 font-bold">Maaş</th>
+                    <th className="text-right px-6 py-4.5 font-bold">İşlem</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border">
+                <tbody className="divide-y divide-border/40">
                   {employees.map((e) => (
-                    <tr key={e.id} className="hover:bg-primary/5 hover:border-primary/10 transition-colors">
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
+                    <tr key={e.id} className="hover:bg-slate-800/30 border-b border-border/30 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
                             <span className="text-xs font-bold text-primary">
                               {e.firstName[0]}{e.lastName[0]}
                             </span>
                           </div>
-                          <span className="font-semibold text-foreground">{e.firstName} {e.lastName}</span>
+                          <span className="font-bold text-foreground hover:text-primary transition-colors cursor-pointer" onClick={() => openEditEmployee(e)}>
+                            {e.firstName} {e.lastName}
+                          </span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 hidden md:table-cell">
-                        <div className="flex flex-col gap-0.5">
-                          <div className="flex items-center gap-1 text-slate-400 text-xs">
-                            <Mail className="w-3 h-3 text-slate-500" />{e.email}
+                      <td className="px-6 py-4 hidden md:table-cell">
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-1.5 text-slate-405 text-xs">
+                            <Mail className="w-3.5 h-3.5 text-slate-500 shrink-0" />{e.email}
                           </div>
                           {e.phone && (
-                            <div className="flex items-center gap-1 text-slate-400 text-xs">
-                              <Phone className="w-3 h-3 text-slate-500" />{e.phone}
+                            <div className="flex items-center gap-1.5 text-slate-405 text-xs">
+                              <Phone className="w-3.5 h-3.5 text-slate-500 shrink-0" />{e.phone}
                             </div>
                           )}
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-slate-400 hidden lg:table-cell text-xs">
+                      <td className="px-6 py-4 text-slate-400 hidden lg:table-cell text-xs font-semibold">
                         {e.departmentName || <span className="italic text-slate-600">—</span>}
                       </td>
-                      <td className="px-4 py-3 text-slate-400 text-xs hidden sm:table-cell">
+                      <td className="px-6 py-4 text-slate-400 text-xs font-semibold hidden sm:table-cell font-mono">
                         {new Date(e.hireDate).toLocaleDateString('tr-TR')}
                       </td>
-                      <td className="px-4 py-3 text-right font-bold text-foreground text-sm">
+                      <td className="px-6 py-4 text-right font-bold text-emerald-400 text-sm font-mono">
                         ₺{e.salary.toLocaleString('tr-TR')}
                       </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center justify-end gap-1">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => openEditEmployee(e)}
-                            className="p-1.5 rounded-lg border border-transparent hover:border-border text-slate-400 hover:text-foreground hover:bg-slate-800 transition-all"
+                            className="p-2 rounded-xl border border-border bg-slate-950/20 hover:bg-slate-800 text-slate-405 hover:text-white transition-all"
                             title="Düzenle"
                           >
                             <Edit2 className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => handleDeleteEmployee(e.id, `${e.firstName} ${e.lastName}`)}
-                            className="p-1.5 rounded-lg border border-transparent hover:border-border text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                            className="p-2 rounded-xl border border-red-500/10 bg-red-500/5 hover:border-red-500/20 text-slate-405 hover:text-red-400 hover:bg-red-500/10 transition-all"
                             title="Sil"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -442,62 +475,67 @@ export default function HRPage() {
 
       {/* ═══ Departments Tab ═══════════════════════════════════════════════════ */}
       {tab === 'departments' && (
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div className="flex justify-end">
             <button
               onClick={openCreateDept}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors"
+              className="flex items-center gap-2 px-4.5 py-2.5 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-all shadow-sm shadow-primary/20 hover:shadow-primary/35 hover:-translate-y-0.5"
             >
-              <Plus className="w-4 h-4" /> Departman Ekle
+              <Plus className="w-4.5 h-4.5" /> Departman Ekle
             </button>
           </div>
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="premium-card p-5 h-28 animate-pulse" />
+                <div key={i} className="premium-card p-6 h-32 animate-pulse" />
               ))}
             </div>
           ) : departments.length === 0 ? (
-            <div className="premium-card p-12 text-center">
-              <Building2 className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-              <p className="text-slate-400">Henüz departman eklenmedi.</p>
-              <button onClick={openCreateDept} className="mt-4 text-sm text-primary hover:underline">
-                İlk departmanı ekle
+            <div className="premium-card p-16 text-center">
+              <Building2 className="w-14 h-14 text-slate-700 mx-auto mb-4" />
+              <p className="text-slate-400 font-semibold">Henüz departman eklenmedi.</p>
+              <button
+                onClick={openCreateDept}
+                className="mt-4 text-sm font-bold text-primary hover:text-primary/95 hover:underline transition-all"
+              >
+                İlk departmanı ekleyin
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {departments.map((d) => {
                 const empCount = employees.filter(e => e.departmentId === d.id).length
                 return (
-                  <div key={d.id} className="premium-card p-5 hover:border-primary/50 transition-all duration-200 group">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
+                  <div key={d.id} className="premium-card p-6 hover:-translate-y-0.5 transition-all duration-300 group">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20 shrink-0">
                         <Building2 className="w-5 h-5 text-primary" />
                       </div>
-                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => openEditDept(d)}
-                          className="p-1.5 rounded-lg border border-transparent hover:border-border text-slate-400 hover:text-foreground hover:bg-slate-800 transition-all"
+                          className="p-2 rounded-xl border border-border bg-slate-950/20 hover:bg-slate-800 text-slate-405 hover:text-white transition-all"
                           title="Düzenle"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleDeleteDept(d.id, d.name)}
-                          className="p-1.5 rounded-lg border border-transparent hover:border-border text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                          className="p-2 rounded-xl border border-red-500/10 bg-red-500/5 hover:border-red-500/20 text-slate-450 hover:text-red-400 hover:bg-red-500/10 transition-all"
                           title="Sil"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
-                    <p className="font-bold text-foreground">{d.name}</p>
-                    {d.description && <p className="text-xs text-slate-400 mt-1">{d.description}</p>}
-                    <p className="text-xs text-slate-500 mt-2">
-                      <span className={`font-bold ${empCount > 0 ? 'text-primary' : 'text-slate-600'}`}>{empCount}</span>
-                      {' '}çalışan
-                    </p>
+                    <p className="font-bold text-foreground text-base tracking-tight">{d.name}</p>
+                    {d.description && <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">{d.description}</p>}
+                    <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border/40">
+                      <span className="w-2 h-2 rounded-full bg-primary" />
+                      <p className="text-xs text-slate-450 font-bold">
+                        <span className="text-foreground">{empCount}</span> çalışan aktif
+                      </p>
+                    </div>
                   </div>
                 )
               })}
@@ -508,106 +546,183 @@ export default function HRPage() {
 
       {/* ═══ Leave Tab ══════════════════════════════════════════════════════ */}
       {tab === 'leave' && (
-        <div className="premium-card overflow-hidden">
-          <div className="px-4 py-3 border-b border-border">
-            <p className="text-sm font-semibold text-foreground">{leaveRequests.length} talep</p>
+        <div className="space-y-6">
+          {/* ── Leave Calendar ── */}
+          <div className="premium-card p-6">
+            <div className="flex items-center justify-between mb-4.5">
+              <h3 className="text-sm font-bold text-foreground tracking-tight uppercase">
+                {calendarDate.toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })} İzin Takvimi
+              </h3>
+              <div className="flex items-center gap-1.5 bg-slate-950/40 p-0.5 border border-border/80 rounded-xl">
+                <button
+                  onClick={() => setCalendarDate(d => new Date(d.getFullYear(), d.getMonth() - 1, 1))}
+                  className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => { const n = new Date(); n.setDate(1); setCalendarDate(n) }}
+                  className="px-2.5 py-1 text-[11px] font-bold text-slate-450 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+                >
+                  Bugün
+                </button>
+                <button
+                  onClick={() => setCalendarDate(d => new Date(d.getFullYear(), d.getMonth() + 1, 1))}
+                  className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+            {/* Day headers */}
+            <div className="grid grid-cols-7 gap-1.5 mb-1.5">
+              {['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'].map(d => (
+                <div key={d} className="text-center text-[10px] font-black text-slate-500 py-1 uppercase tracking-wider hidden sm:block">{d}</div>
+              ))}
+              {['Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct', 'Pa'].map(d => (
+                <div key={d} className="text-center text-[10px] font-black text-slate-500 py-1 uppercase tracking-wider sm:hidden">{d}</div>
+              ))}
+            </div>
+            {/* Days grid */}
+            <div className="grid grid-cols-7 gap-1.5">
+              {calendarGrid.map((cell, i) => {
+                const isToday = cell.dateStr === todayISO
+                const hasLeaves = cell.day && (cell.pending + cell.approved + cell.rejected) > 0
+                return (
+                  <div
+                    key={i}
+                    className={`min-h-[50px] p-2 rounded-xl flex flex-col items-center justify-between border border-border/30 transition-all ${
+                      cell.day ? (hasLeaves ? 'bg-slate-900/60 border-primary/20 hover:bg-slate-900' : 'hover:bg-slate-800/30') : 'border-transparent'
+                    } ${isToday ? 'ring-2 ring-primary/80 border-transparent bg-primary/5' : ''}`}
+                  >
+                    {cell.day && (
+                      <>
+                        <span className={`text-xs font-bold leading-none ${isToday ? 'text-primary' : 'text-slate-400'}`}>
+                          {cell.day}
+                        </span>
+                        <div className="flex gap-1 flex-wrap justify-center mt-1.5">
+                          {cell.approved > 0 && <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 border border-emerald-400/20" title={`${cell.approved} Onaylı`} />}
+                          {cell.pending > 0 && <div className="w-2.5 h-2.5 rounded-full bg-amber-500 border border-amber-400/20" title={`${cell.pending} Bekleyen`} />}
+                          {cell.rejected > 0 && <div className="w-2.5 h-2.5 rounded-full bg-red-500 border border-red-400/20" title={`${cell.rejected} Red`} />}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+            {/* Legend */}
+            <div className="flex items-center gap-4.5 mt-4 pt-4 border-t border-border/80">
+              {[['bg-emerald-500', 'Onaylı İzin'], ['bg-amber-500', 'Bekleyen Talep'], ['bg-red-500', 'Reddedilen']].map(([c, l]) => (
+                <div key={l} className="flex items-center gap-1.5 text-xs text-slate-400 font-bold">
+                  <div className={`w-2.5 h-2.5 rounded-full ${c}`} />{l}
+                </div>
+              ))}
+            </div>
           </div>
-          {loading ? (
-            <div className="p-8 text-center">
-              <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin mx-auto" />
+
+          {/* ── Leave Table ── */}
+          <div className="premium-card overflow-hidden">
+            <div className="px-6 py-4 border-b border-border/80 bg-slate-900/40">
+              <p className="text-sm font-bold text-foreground">{leaveRequests.length} talep <span className="text-slate-500 font-semibold">kayıtlı</span></p>
             </div>
-          ) : leaveRequests.length === 0 ? (
-            <div className="p-12 text-center">
-              <CalendarDays className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-              <p className="text-slate-400">Henüz izin talebi bulunmuyor.</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border text-xs text-slate-400">
-                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Çalışan</th>
-                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden sm:table-cell">Tarih Aralığı</th>
-                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden lg:table-cell">Neden</th>
-                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Durum</th>
-                    <th className="text-right px-4 py-3 font-semibold uppercase tracking-wider">İşlem</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {leaveRequests.map((r) => {
-                    const sc = LEAVE_STATUS[r.status] ?? { label: r.status, cls: 'bg-slate-700 text-slate-300' }
-                    return (
-                      <tr key={r.id} className="hover:bg-primary/5 hover:border-primary/10 transition-colors">
-                        <td className="px-4 py-3 font-semibold text-foreground">{r.employeeName}</td>
-                        <td className="px-4 py-3 text-slate-400 text-xs hidden sm:table-cell">
-                          {new Date(r.startDate).toLocaleDateString('tr-TR')} —{' '}
-                          {new Date(r.endDate).toLocaleDateString('tr-TR')}
-                        </td>
-                        <td className="px-4 py-3 text-slate-400 text-xs hidden lg:table-cell truncate max-w-[180px]">
-                          {r.reason || <span className="italic text-slate-600">—</span>}
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${sc.cls}`}>
-                            {sc.label}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-right">
-                          {r.status === 'Pending' && (
-                            <div className="flex items-center justify-end gap-1">
-                              <button
-                                onClick={() => updateLeave(r.id, 'Approved')}
-                                className="p-1.5 rounded-lg border border-transparent hover:border-border text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all"
-                                title="Onayla"
-                              >
-                                <Check className="w-3.5 h-3.5" />
-                              </button>
-                              <button
-                                onClick={() => updateLeave(r.id, 'Rejected')}
-                                className="p-1.5 rounded-lg border border-transparent hover:border-border text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
-                                title="Reddet"
-                              >
-                                <X className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          )}
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
+            {loading ? (
+              <div className="p-12 text-center">
+                <div className="w-8 h-8 border-3 border-primary/30 border-t-primary rounded-full animate-spin mx-auto" />
+              </div>
+            ) : leaveRequests.length === 0 ? (
+              <div className="p-16 text-center">
+                <CalendarDays className="w-14 h-14 text-slate-700 mx-auto mb-4" />
+                <p className="text-slate-400 font-semibold">Henüz izin talebi bulunmuyor.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border/70 text-[10px] text-slate-400 font-black uppercase tracking-wider bg-slate-950/20">
+                      <th className="text-left px-6 py-4.5 font-bold">Çalışan</th>
+                      <th className="text-left px-6 py-4.5 font-bold hidden sm:table-cell">Tarih Aralığı</th>
+                      <th className="text-left px-6 py-4.5 font-bold hidden lg:table-cell">Neden</th>
+                      <th className="text-left px-6 py-4.5 font-bold">Durum</th>
+                      <th className="text-right px-6 py-4.5 font-bold">İşlem</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/40">
+                    {leaveRequests.map((r) => {
+                      const sc = LEAVE_STATUS[r.status] ?? { label: r.status, cls: 'bg-slate-750 text-slate-350' }
+                      return (
+                        <tr key={r.id} className="hover:bg-slate-800/30 border-b border-border/30 transition-colors">
+                          <td className="px-6 py-4 font-bold text-foreground">{r.employeeName}</td>
+                          <td className="px-6 py-4 text-slate-400 text-xs font-semibold hidden sm:table-cell font-mono">
+                            {new Date(r.startDate).toLocaleDateString('tr-TR')} —{' '}
+                            {new Date(r.endDate).toLocaleDateString('tr-TR')}
+                          </td>
+                          <td className="px-6 py-4 text-slate-405 text-xs hidden lg:table-cell truncate max-w-[200px] leading-relaxed">
+                            {r.reason || <span className="italic text-slate-600">—</span>}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${sc.cls}`}>
+                              {sc.label}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            {r.status === 'Pending' && (
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  onClick={() => updateLeave(r.id, 'Approved')}
+                                  className="p-2 rounded-xl border border-emerald-500/10 bg-emerald-500/5 hover:border-emerald-500/20 text-slate-450 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all"
+                                  title="Onayla"
+                                >
+                                  <Check className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => updateLeave(r.id, 'Rejected')}
+                                  className="p-2 rounded-xl border border-red-500/10 bg-red-500/5 hover:border-red-500/20 text-slate-450 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                                  title="Reddet"
+                                >
+                                  <X className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
       {/* ═══ Bordro Tab ═════════════════════════════════════════════════════ */}
       {tab === 'bordro' && (
-        <div className="space-y-5">
+        <div className="space-y-6 animate-fade-in">
           {/* Info notice */}
-          <div className="flex items-start gap-3 p-4 rounded-xl border border-amber-500/20 bg-amber-500/5 text-amber-400 text-xs">
-            <Info className="w-4 h-4 mt-0.5 shrink-0" />
+          <div className="flex items-start gap-3 p-4.5 rounded-xl border border-amber-500/20 bg-amber-500/5 text-amber-400 text-xs leading-relaxed">
+            <Info className="w-4.5 h-4.5 mt-0.5 shrink-0" />
             <span>
-              Bu hesaplamalar <strong>2024 SGK/vergi oranlarına göre yaklaşık</strong> değerlerdir.
+              Bu hesaplamalar <strong className="font-bold">2024 SGK/vergi oranlarına göre yaklaşık</strong> değerlerdir.
               SGK İşçi %15 · SGK İşveren %18 · Gelir Vergisi kademeli · Damga Vergisi %0.759.
               Kesin tutarlar için mali müşavirinize danışın.
             </span>
           </div>
 
           {/* Summary cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: 'Toplam Brüt', value: bordroToplam.brut, color: 'text-primary bg-primary/10' },
-              { label: 'Toplam Net',  value: bordroToplam.net,  color: 'text-emerald-400 bg-emerald-500/10' },
-              { label: 'SGK İşçi Kesintisi', value: bordroToplam.sgkIscii, color: 'text-amber-400 bg-amber-500/10' },
-              { label: 'Toplam İşveren Maliyeti', value: bordroToplam.toplamMaliyet, color: 'text-violet-400 bg-violet-500/10' },
+              { label: 'Toplam Brüt', value: bordroToplam.brut, color: 'text-primary bg-primary/10 border border-primary/20' },
+              { label: 'Toplam Net',  value: bordroToplam.net,  color: 'text-emerald-450 bg-emerald-500/10 border border-emerald-500/20' },
+              { label: 'SGK İşçi Kesintisi', value: bordroToplam.sgkIscii, color: 'text-amber-400 bg-amber-500/10 border border-amber-500/20' },
+              { label: 'Toplam İşveren Maliyeti', value: bordroToplam.toplamMaliyet, color: 'text-violet-400 bg-violet-500/10 border border-violet-500/20' },
             ].map(({ label, value, color }) => (
-              <div key={label} className="premium-card p-4">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 text-xs font-bold ${color}`}>
+              <div key={label} className="premium-card p-5 hover:-translate-y-0.5 transition-all duration-300">
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 text-xs font-bold ${color}`}>
                   ₺
                 </div>
-                <p className="text-xs text-slate-500 mb-0.5">{label}</p>
-                <p className="font-black text-foreground text-lg">
+                <p className="text-xs text-slate-505 font-bold mb-1 uppercase tracking-wider">{label}</p>
+                <p className="font-black text-foreground text-xl font-mono">
                   {value.toLocaleString('tr-TR')}
                 </p>
               </div>
@@ -616,67 +731,67 @@ export default function HRPage() {
 
           {/* Table */}
           <div className="premium-card overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-              <p className="text-sm font-semibold text-foreground">
-                {new Date().toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })} — {employees.length} çalışan
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border/85 bg-slate-900/40">
+              <p className="text-sm font-bold text-foreground">
+                {new Date().toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })} Bordro Detayı <span className="text-slate-500 font-semibold">— {employees.length} çalışan</span>
               </p>
               <button
                 onClick={handleExportBordro}
                 disabled={employees.length === 0}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl border border-border text-slate-400 hover:text-foreground hover:border-primary/40 transition-all text-xs font-medium disabled:opacity-40"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border bg-slate-950/20 text-slate-405 hover:text-white hover:border-primary/45 transition-all text-xs font-bold disabled:opacity-40"
               >
                 <Download className="w-3.5 h-3.5" /> CSV İndir
               </button>
             </div>
 
             {employees.length === 0 ? (
-              <div className="p-12 text-center">
-                <FileSpreadsheet className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                <p className="text-slate-400">Bordro hesaplamak için çalışan ekleyin.</p>
+              <div className="p-16 text-center">
+                <FileSpreadsheet className="w-14 h-14 text-slate-700 mx-auto mb-4" />
+                <p className="text-slate-400 font-semibold">Bordro hesaplamak için çalışan ekleyin.</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
                   <thead>
-                    <tr className="border-b border-border text-slate-400 font-semibold text-[10px] uppercase tracking-wider">
-                      <th className="text-left px-4 py-3 font-semibold">Çalışan</th>
-                      <th className="text-right px-4 py-3 font-semibold">Brüt Maaş</th>
-                      <th className="text-right px-4 py-3 font-semibold hidden md:table-cell">SGK İşçi (%15)</th>
-                      <th className="text-right px-4 py-3 font-semibold hidden lg:table-cell">Gelir Vergisi</th>
-                      <th className="text-right px-4 py-3 font-semibold hidden lg:table-cell">Damga Vergisi</th>
-                      <th className="text-right px-4 py-3 font-semibold">Net Maaş</th>
-                      <th className="text-right px-4 py-3 font-semibold hidden md:table-cell">SGK İşveren (%18)</th>
-                      <th className="text-right px-4 py-3 font-semibold">Toplam Maliyet</th>
+                    <tr className="border-b border-border/70 text-slate-400 font-black text-[10px] uppercase tracking-wider bg-slate-950/20">
+                      <th className="text-left px-6 py-4.5 font-bold">Çalışan</th>
+                      <th className="text-right px-6 py-4.5 font-bold">Brüt Maaş</th>
+                      <th className="text-right px-6 py-4.5 font-bold hidden md:table-cell">SGK İşçi (%15)</th>
+                      <th className="text-right px-6 py-4.5 font-bold hidden lg:table-cell">Gelir Vergisi</th>
+                      <th className="text-right px-6 py-4.5 font-bold hidden lg:table-cell">Damga Vergisi</th>
+                      <th className="text-right px-6 py-4.5 font-bold">Net Maaş</th>
+                      <th className="text-right px-6 py-4.5 font-bold hidden md:table-cell">SGK İşveren (%18)</th>
+                      <th className="text-right px-6 py-4.5 font-bold">Toplam Maliyet</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-border">
+                  <tbody className="divide-y divide-border/40">
                     {bordroRows.map((r) => (
-                      <tr key={r.id} className="hover:bg-primary/5 hover:border-primary/10 transition-colors">
-                        <td className="px-4 py-3">
+                      <tr key={r.id} className="hover:bg-slate-800/30 border-b border-border/30 transition-colors">
+                        <td className="px-6 py-4">
                           <div>
-                            <p className="font-semibold text-foreground text-sm">{r.ad}</p>
-                            <p className="text-slate-500">{r.departman}</p>
+                            <p className="font-bold text-foreground text-sm">{r.ad}</p>
+                            <p className="text-slate-500 font-semibold mt-0.5">{r.departman}</p>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-right font-bold text-foreground">
+                        <td className="px-6 py-4 text-right font-bold text-foreground font-mono">
                           ₺{r.brut.toLocaleString('tr-TR')}
                         </td>
-                        <td className="px-4 py-3 text-right text-amber-400 font-medium hidden md:table-cell">
+                        <td className="px-6 py-4 text-right text-amber-500 font-bold hidden md:table-cell font-mono">
                           −₺{r.sgkIscii.toLocaleString('tr-TR')}
                         </td>
-                        <td className="px-4 py-3 text-right text-amber-400 font-medium hidden lg:table-cell">
+                        <td className="px-6 py-4 text-right text-amber-500 font-bold hidden lg:table-cell font-mono">
                           −₺{r.gelirVergisi.toLocaleString('tr-TR')}
                         </td>
-                        <td className="px-4 py-3 text-right text-amber-400 font-medium hidden lg:table-cell">
+                        <td className="px-6 py-4 text-right text-amber-500 font-bold hidden lg:table-cell font-mono">
                           −₺{r.damgaVergisi.toLocaleString('tr-TR')}
                         </td>
-                        <td className="px-4 py-3 text-right font-black text-emerald-400">
+                        <td className="px-6 py-4 text-right font-black text-emerald-400 text-sm font-mono">
                           ₺{r.net.toLocaleString('tr-TR')}
                         </td>
-                        <td className="px-4 py-3 text-right text-violet-400 font-medium hidden md:table-cell">
+                        <td className="px-6 py-4 text-right text-violet-400 font-bold hidden md:table-cell font-mono">
                           +₺{r.sgkIsveren.toLocaleString('tr-TR')}
                         </td>
-                        <td className="px-4 py-3 text-right font-semibold text-foreground">
+                        <td className="px-6 py-4 text-right font-bold text-foreground font-mono">
                           ₺{r.toplamMaliyet.toLocaleString('tr-TR')}
                         </td>
                       </tr>
@@ -684,27 +799,27 @@ export default function HRPage() {
                   </tbody>
                   {/* Totals row */}
                   <tfoot>
-                    <tr className="border-t-2 border-border bg-slate-800/30">
-                      <td className="px-4 py-3 font-bold text-foreground text-sm">TOPLAM</td>
-                      <td className="px-4 py-3 text-right font-bold text-foreground">
+                    <tr className="border-t-2 border-border/80 bg-slate-950/40">
+                      <td className="px-6 py-4.5 font-black text-foreground text-sm">TOPLAM</td>
+                      <td className="px-6 py-4.5 text-right font-black text-foreground font-mono text-sm">
                         ₺{bordroToplam.brut.toLocaleString('tr-TR')}
                       </td>
-                      <td className="px-4 py-3 text-right text-amber-400 font-semibold hidden md:table-cell">
+                      <td className="px-6 py-4.5 text-right text-amber-500 font-black hidden md:table-cell font-mono text-sm">
                         −₺{bordroRows.reduce((s, r) => s + r.sgkIscii, 0).toLocaleString('tr-TR')}
                       </td>
-                      <td className="px-4 py-3 text-right text-amber-400 font-semibold hidden lg:table-cell">
+                      <td className="px-6 py-4.5 text-right text-amber-500 font-black hidden lg:table-cell font-mono text-sm">
                         −₺{bordroRows.reduce((s, r) => s + r.gelirVergisi, 0).toLocaleString('tr-TR')}
                       </td>
-                      <td className="px-4 py-3 text-right text-amber-400 font-semibold hidden lg:table-cell">
+                      <td className="px-6 py-4.5 text-right text-amber-500 font-black hidden lg:table-cell font-mono text-sm">
                         −₺{bordroRows.reduce((s, r) => s + r.damgaVergisi, 0).toLocaleString('tr-TR')}
                       </td>
-                      <td className="px-4 py-3 text-right font-black text-emerald-400">
+                      <td className="px-6 py-4.5 text-right font-black text-emerald-400 font-mono text-base">
                         ₺{bordroToplam.net.toLocaleString('tr-TR')}
                       </td>
-                      <td className="px-4 py-3 text-right text-violet-400 font-semibold hidden md:table-cell">
+                      <td className="px-6 py-4.5 text-right text-violet-400 font-black hidden md:table-cell font-mono text-sm">
                         +₺{bordroRows.reduce((s, r) => s + r.sgkIsveren, 0).toLocaleString('tr-TR')}
                       </td>
-                      <td className="px-4 py-3 text-right font-black text-foreground">
+                      <td className="px-6 py-4.5 text-right font-black text-foreground font-mono text-sm">
                         ₺{bordroToplam.toplamMaliyet.toLocaleString('tr-TR')}
                       </td>
                     </tr>
@@ -718,51 +833,54 @@ export default function HRPage() {
 
       {/* ═══ Employee Modal ══════════════════════════════════════════════════ */}
       {empModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="w-full max-w-lg bg-slate-900 rounded-2xl shadow-2xl border border-border">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-lg bg-slate-900 border border-border/80 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.55)]">
+            <div className="flex items-center justify-between px-6 py-4.5 border-b border-border/80 bg-slate-950/20">
               <h2 className="text-base font-bold text-foreground">{editEmpId ? 'Çalışan Düzenle' : 'Yeni Çalışan'}</h2>
-              <button onClick={() => setEmpModal(false)} className="p-1.5 rounded-lg text-slate-400 hover:text-foreground hover:bg-slate-800 transition-all">
+              <button
+                onClick={() => setEmpModal(false)}
+                className="p-1.5 rounded-xl border border-border bg-slate-950/20 hover:bg-slate-800 text-slate-400 hover:text-white transition-all"
+              >
                 <X className="w-4 h-4" />
               </button>
             </div>
             <div className="px-6 py-5 space-y-4">
               {empError && (
-                <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
-                  <AlertCircle className="w-4 h-4 shrink-0" />{empError}
+                <div className="flex items-center gap-2 p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold">
+                  <AlertCircle className="w-4.5 h-4.5 shrink-0" />{empError}
                 </div>
               )}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3.5">
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5">Ad *</label>
+                  <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Ad *</label>
                   <input value={empForm.firstName} onChange={e => setEmpForm(f => ({ ...f, firstName: e.target.value }))} className={inputCls} placeholder="Ad" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5">Soyad *</label>
+                  <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Soyad *</label>
                   <input value={empForm.lastName} onChange={e => setEmpForm(f => ({ ...f, lastName: e.target.value }))} className={inputCls} placeholder="Soyad" />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5">E-posta *</label>
+                <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">E-posta *</label>
                 <input type="email" value={empForm.email} onChange={e => setEmpForm(f => ({ ...f, email: e.target.value }))} className={inputCls} placeholder="ornek@firma.com" />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3.5">
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5">Telefon</label>
+                  <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Telefon</label>
                   <input value={empForm.phone} onChange={e => setEmpForm(f => ({ ...f, phone: e.target.value }))} className={inputCls} placeholder="05xx xxx xx xx" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5">İşe Başlama</label>
+                  <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">İşe Başlama</label>
                   <input type="date" value={empForm.hireDate} onChange={e => setEmpForm(f => ({ ...f, hireDate: e.target.value }))} className={inputCls} />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3.5">
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5">Maaş (₺)</label>
+                  <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Maaş (₺)</label>
                   <input type="number" value={empForm.salary} onChange={e => setEmpForm(f => ({ ...f, salary: e.target.value }))} className={inputCls} placeholder="0" min={0} />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5">Departman</label>
+                  <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Departman</label>
                   <select value={empForm.departmentId} onChange={e => setEmpForm(f => ({ ...f, departmentId: e.target.value }))}
                     className={inputCls}>
                     <option value="">— Seçiniz —</option>
@@ -771,10 +889,10 @@ export default function HRPage() {
                 </div>
               </div>
             </div>
-            <div className="flex justify-end gap-3 px-6 py-4 border-t border-border">
-              <button onClick={() => setEmpModal(false)} className="px-4 py-2 text-sm text-slate-400 hover:text-foreground transition-colors">İptal</button>
+            <div className="flex justify-end gap-3 px-6 py-4.5 border-t border-border bg-slate-950/20">
+              <button onClick={() => setEmpModal(false)} className="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white transition-colors">İptal</button>
               <button onClick={handleSaveEmployee} disabled={empSaving}
-                className="flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-colors">
+                className="flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white rounded-xl text-sm font-bold transition-all shadow-sm shadow-primary/20 hover:shadow-primary/30">
                 {empSaving ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Check className="w-4 h-4" />}
                 {editEmpId ? 'Güncelle' : 'Oluştur'}
               </button>
@@ -785,22 +903,25 @@ export default function HRPage() {
 
       {/* ═══ Department Modal ════════════════════════════════════════════════ */}
       {deptModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="w-full max-w-md bg-slate-900 rounded-2xl shadow-2xl border border-border">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-md bg-slate-900 border border-border/80 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.55)]">
+            <div className="flex items-center justify-between px-6 py-4.5 border-b border-border/80 bg-slate-950/20">
               <h2 className="text-base font-bold text-foreground">{editDeptId ? 'Departman Düzenle' : 'Yeni Departman'}</h2>
-              <button onClick={() => setDeptModal(false)} className="p-1.5 rounded-lg text-slate-400 hover:text-foreground hover:bg-slate-800 transition-all">
+              <button
+                onClick={() => setDeptModal(false)}
+                className="p-1.5 rounded-xl border border-border bg-slate-950/20 hover:bg-slate-800 text-slate-400 hover:text-white transition-all"
+              >
                 <X className="w-4 h-4" />
               </button>
             </div>
             <div className="px-6 py-5 space-y-4">
               {deptError && (
-                <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
-                  <AlertCircle className="w-4 h-4 shrink-0" />{deptError}
+                <div className="flex items-center gap-2 p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold">
+                  <AlertCircle className="w-4.5 h-4.5 shrink-0" />{deptError}
                 </div>
               )}
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5">Departman Adı *</label>
+                <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Departman Adı *</label>
                 <input
                   value={deptForm.name}
                   onChange={e => setDeptForm(f => ({ ...f, name: e.target.value }))}
@@ -811,20 +932,20 @@ export default function HRPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5">Açıklama</label>
+                <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Açıklama</label>
                 <textarea
                   value={deptForm.description}
                   onChange={e => setDeptForm(f => ({ ...f, description: e.target.value }))}
-                  rows={2}
+                  rows={3}
                   className={`${inputCls} resize-none`}
                   placeholder="Departman hakkında kısa açıklama (opsiyonel)"
                 />
               </div>
             </div>
-            <div className="flex justify-end gap-3 px-6 py-4 border-t border-border">
-              <button onClick={() => setDeptModal(false)} className="px-4 py-2 text-sm text-slate-400 hover:text-foreground transition-colors">İptal</button>
+            <div className="flex justify-end gap-3 px-6 py-4.5 border-t border-border bg-slate-950/20">
+              <button onClick={() => setDeptModal(false)} className="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white transition-colors">İptal</button>
               <button onClick={handleSaveDept} disabled={deptSaving}
-                className="flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-colors">
+                className="flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white rounded-xl text-sm font-bold transition-all shadow-sm shadow-primary/20 hover:shadow-primary/30">
                 {deptSaving ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Check className="w-4 h-4" />}
                 {editDeptId ? 'Güncelle' : 'Oluştur'}
               </button>

@@ -54,13 +54,13 @@ const EMPTY_PO: POForm = { supplierId: '', expectedDate: '', notes: '', lines: [
 const EMPTY_MOVE: StockMovementForm = { movementType: 'In', productId: '', fromBinId: '', toBinId: '', quantity: 1, note: '' }
 
 const PO_STATUS: Record<string, { label: string; cls: string }> = {
-  Pending:   { label: 'Beklemede', cls: 'bg-amber-500/15 text-amber-400' },
-  Confirmed: { label: 'Onaylandı', cls: 'bg-blue-500/15 text-blue-400' },
-  Received:  { label: 'Teslim Alındı', cls: 'bg-emerald-500/15 text-emerald-400' },
-  Cancelled: { label: 'İptal', cls: 'bg-red-500/15 text-red-400' },
+  Pending:   { label: 'Beklemede', cls: 'bg-amber-500/10 text-amber-400 border border-amber-500/20' },
+  Confirmed: { label: 'Onaylandı', cls: 'bg-blue-500/10 text-blue-400 border border-blue-500/20' },
+  Received:  { label: 'Teslim Alındı', cls: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' },
+  Cancelled: { label: 'İptal', cls: 'bg-red-500/10 text-red-400 border border-red-500/20' },
 }
 
-const inputCls = 'w-full px-3 py-2 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all'
+const inputCls = 'w-full px-3 py-2.5 rounded-xl bg-slate-950/40 border border-border/80 text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all'
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -80,6 +80,9 @@ export default function WMSPage() {
   // ─ Stock edit ──
   const [editingMinStock, setEditingMinStock] = useState<string | null>(null)
   const [editMinValue, setEditMinValue] = useState('')
+
+  // ─ Quick stock adjust ──
+  const [quickAdjusting, setQuickAdjusting] = useState<Record<string, boolean>>({})
 
   // ─ Movement ──
   const [showMoveForm, setShowMoveForm] = useState(false)
@@ -177,6 +180,27 @@ export default function WMSPage() {
     const r = await api.get('/api/wms/warehouses')
     setWarehouses(r.data)
     setNewWarehouseName('')
+  }
+
+  // ─ Quick stock adjust ────────────────────────────────────────────────────
+  const handleQuickAdjust = async (productId: string, delta: number) => {
+    if (quickAdjusting[productId]) return
+    setQuickAdjusting(prev => ({ ...prev, [productId]: true }))
+    try {
+      await api.post('/api/wms/stock-movements', {
+        movementType: delta > 0 ? 'In' : 'Out',
+        productId,
+        quantity: Math.abs(delta),
+        note: `Hızlı düzeltme (${delta > 0 ? '+' : ''}${delta})`,
+      })
+      setStock(prev => prev.map(s =>
+        s.productId === productId
+          ? { ...s, quantity: s.quantity + delta, isLowStock: (s.quantity + delta) <= s.minStockLevel }
+          : s
+      ))
+    } catch { /* */ } finally {
+      setQuickAdjusting(prev => { const { [productId]: _, ...rest } = prev; return rest })
+    }
   }
 
   // ─ Min stock edit ─────────────────────────────────────────────────────────
@@ -329,22 +353,20 @@ export default function WMSPage() {
 
       {/* Low-stock alert banner */}
       {!loading && lowStockItems.length > 0 && (
-        <div className="flex items-start sm:items-center gap-3 p-4 rounded-xl bg-amber-500/8 border border-amber-500/25 text-amber-400">
-          <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 sm:mt-0" />
-          <div className="flex-1 min-w-0">
-            <span className="text-sm font-semibold">
-              {lowStockItems.length} ürün kritik stok seviyesinde.{' '}
-            </span>
+        <div className="flex items-start sm:items-center gap-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/25 text-amber-400">
+          <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 sm:mt-0 text-amber-400 animate-pulse" />
+          <div className="flex-1 min-w-0 font-semibold text-sm">
+            <span>{lowStockItems.length} ürün kritik stok seviyesinde.{' '}</span>
             <button
               onClick={() => setTab('stock')}
-              className="text-sm underline underline-offset-2 hover:text-amber-300 transition-colors"
+              className="underline underline-offset-2 hover:text-amber-300 transition-colors"
             >
               Stok Durumu'nu görüntüle
             </button>
-            <span className="text-sm text-amber-400/70"> · </span>
+            <span className="text-amber-400/70"> · </span>
             <button
               onClick={() => { setTab('purchase-orders'); setShowPOForm(true) }}
-              className="text-sm underline underline-offset-2 hover:text-amber-300 transition-colors"
+              className="underline underline-offset-2 hover:text-amber-300 transition-colors"
             >
               Satın alma siparişi oluştur
             </button>
@@ -384,12 +406,12 @@ export default function WMSPage() {
             key={key}
             onClick={() => setTab(key)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200
-              ${tab === key ? 'bg-surface text-primary border border-border/40 shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
+              ${tab === key ? 'bg-slate-800 text-primary border border-border/50 shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-850/50'}`}
           >
             <Icon className="w-4 h-4" />
             {label}
             {key === 'stock' && lowStockItems.length > 0 && tab !== 'stock' && (
-              <span className="w-4 h-4 rounded-full bg-amber-500 text-white text-[10px] font-bold flex items-center justify-center">
+              <span className="w-5 h-5 rounded-full bg-amber-500 text-slate-950 text-[10px] font-black flex items-center justify-center animate-pulse">
                 {lowStockItems.length}
               </span>
             )}
@@ -422,16 +444,16 @@ export default function WMSPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {warehouses.map(w => (
-                <div key={w.id} className="premium-card p-5">
+                <div key={w.id} className="premium-card p-5 hover:border-primary/30 transition-all group">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/25 flex items-center justify-center transition-colors group-hover:bg-primary/15">
                       <Warehouse className="w-4 h-4 text-primary" />
                     </div>
-                    <span className="font-semibold text-foreground">{w.name}</span>
+                    <span className="font-bold text-foreground">{w.name}</span>
                   </div>
-                  {w.address && <p className="text-sm text-slate-400 mt-1">{w.address}</p>}
-                  <span className={`text-xs mt-3 inline-flex items-center gap-1 font-medium ${w.isActive ? 'text-emerald-400' : 'text-slate-500'}`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${w.isActive ? 'bg-emerald-400' : 'bg-slate-500'}`} />
+                  {w.address && <p className="text-xs text-slate-400 mt-1.5">{w.address}</p>}
+                  <span className={`text-xs mt-3.5 inline-flex items-center gap-1.5 font-bold px-2 py-0.5 rounded-full ${w.isActive ? 'bg-emerald-400/10 text-emerald-400 border border-emerald-400/20' : 'bg-slate-400/10 text-slate-400 border border-slate-400/20'}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${w.isActive ? 'bg-emerald-400' : 'bg-slate-400'}`} />
                     {w.isActive ? 'Aktif' : 'Pasif'}
                   </span>
                 </div>
@@ -448,19 +470,19 @@ export default function WMSPage() {
             <div className="premium-card overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left px-4 py-3 text-slate-400 font-medium">Ürün</th>
-                    <th className="text-left px-4 py-3 text-slate-400 font-medium">Miktar</th>
-                    <th className="text-left px-4 py-3 text-slate-400 font-medium">Min Seviye</th>
-                    <th className="text-left px-4 py-3 text-slate-400 font-medium">Durum</th>
-                    <th className="text-left px-4 py-3 text-slate-400 font-medium">İşlem</th>
+                  <tr className="border-b border-border text-xs text-slate-400">
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Ürün</th>
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Miktar</th>
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Min Seviye</th>
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Durum</th>
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">İşlem</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-border">
                   {stock.map((s, i) => (
-                    <tr key={i} className={`border-b border-border/40 transition-colors ${s.isLowStock ? 'bg-amber-500/4 hover:bg-amber-500/8' : 'hover:bg-surface/50'}`}>
-                      <td className="px-4 py-3 font-medium">{resolveProductName(s.productId)}</td>
-                      <td className={`px-4 py-3 font-bold ${s.isLowStock ? 'text-amber-400' : 'text-foreground'}`}>{s.quantity}</td>
+                    <tr key={i} className={`transition-colors ${s.isLowStock ? 'bg-amber-500/5 hover:bg-amber-500/10' : 'hover:bg-primary/5'}`}>
+                      <td className="px-4 py-3 font-semibold text-foreground">{resolveProductName(s.productId)}</td>
+                      <td className={`px-4 py-3 font-black ${s.isLowStock ? 'text-amber-400' : 'text-foreground'}`}>{s.quantity}</td>
                       <td className="px-4 py-3">
                         {editingMinStock === s.productId ? (
                           <input
@@ -469,13 +491,13 @@ export default function WMSPage() {
                             onChange={e => setEditMinValue(e.target.value)}
                             onBlur={() => handleSaveMinStock(s.productId)}
                             onKeyDown={e => e.key === 'Enter' && handleSaveMinStock(s.productId)}
-                            className="w-20 px-2 py-1 rounded-lg bg-background border border-primary/50 text-foreground text-sm focus:outline-none"
+                            className="w-20 px-2 py-1 rounded-lg bg-slate-950 border border-primary/50 text-foreground text-sm font-semibold focus:outline-none"
                             autoFocus
                           />
                         ) : (
                           <button
                             onClick={() => { setEditingMinStock(s.productId); setEditMinValue(String(s.minStockLevel)) }}
-                            className="text-slate-400 hover:text-foreground transition-colors cursor-text"
+                            className="text-slate-400 hover:text-white font-semibold transition-colors cursor-text border-b border-dashed border-slate-600 hover:border-white"
                             title="Düzenlemek için tıkla"
                           >
                             {s.minStockLevel}
@@ -483,34 +505,52 @@ export default function WMSPage() {
                         )}
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${s.isLowStock ? 'bg-amber-400/15 text-amber-400' : 'bg-emerald-400/15 text-emerald-400'}`}>
+                        <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold border ${s.isLowStock ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
                           {s.isLowStock ? 'Düşük Stok' : 'Normal'}
                         </span>
                       </td>
-                      <td className="px-4 py-3 flex items-center gap-2">
-                        {s.isLowStock && (
-                          <>
-                            <Link
-                              href="/dashboard/ecommerce"
-                              className="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors font-medium"
-                            >
-                              Ürün <ExternalLink className="w-3 h-3" />
-                            </Link>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {/* Quick adjust */}
+                          <div className="flex items-center gap-1">
                             <button
-                              onClick={() => {
-                                setTab('purchase-orders')
-                                setShowPOForm(true)
-                                setPoForm(f => ({
-                                  ...f,
-                                  lines: [{ productId: s.productId, quantity: s.minStockLevel * 2, unitPrice: 0 }]
-                                }))
-                              }}
-                              className="text-xs text-amber-400 hover:text-amber-300 transition-colors font-medium underline underline-offset-2"
-                            >
-                              Sipariş Et
-                            </button>
-                          </>
-                        )}
+                              onClick={() => handleQuickAdjust(s.productId, -5)}
+                              disabled={!!quickAdjusting[s.productId] || s.quantity < 1}
+                              title="Stoktan 5 çıkar"
+                              className="px-2 py-0.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 disabled:opacity-40 text-xs font-bold transition-colors"
+                            >−5</button>
+                            <button
+                              onClick={() => handleQuickAdjust(s.productId, 5)}
+                              disabled={!!quickAdjusting[s.productId]}
+                              title="Stoğa 5 ekle"
+                              className="px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 disabled:opacity-40 text-xs font-bold transition-colors"
+                            >+5</button>
+                          </div>
+                          {/* Low-stock specific actions */}
+                          {s.isLowStock && (
+                            <>
+                              <Link
+                                href="/dashboard/ecommerce"
+                                className="inline-flex items-center gap-1 text-xs text-primary hover:underline transition-colors font-bold"
+                              >
+                                Ürün <ExternalLink className="w-3 h-3" />
+                              </Link>
+                              <button
+                                onClick={() => {
+                                  setTab('purchase-orders')
+                                  setShowPOForm(true)
+                                  setPoForm(f => ({
+                                    ...f,
+                                    lines: [{ productId: s.productId, quantity: s.minStockLevel * 2, unitPrice: 0 }]
+                                  }))
+                                }}
+                                className="text-xs text-amber-400 hover:text-amber-300 font-bold transition-colors underline underline-offset-2"
+                              >
+                                Sipariş Et
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -526,12 +566,12 @@ export default function WMSPage() {
             <Plus className="w-4 h-4" /> Stok Hareketi Ekle
           </button>
           {showMoveForm && (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="premium-card p-6 space-y-4">
-              <h3 className="font-semibold text-foreground">Stok Hareketi</h3>
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="premium-card p-6 border border-border/80 space-y-4 bg-slate-900/60 backdrop-blur-md">
+              <h3 className="text-base font-bold text-foreground">Stok Hareketi Ekle</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs text-slate-400 mb-1 block">Hareket Tipi</label>
-                  <select value={moveForm.movementType} onChange={e => setMoveForm(f => ({ ...f, movementType: e.target.value }))} className={inputCls}>
+                  <label className="text-xs font-semibold text-slate-400 mb-1.5 block">Hareket Tipi</label>
+                  <select value={moveForm.movementType} onChange={e => setMoveForm(f => ({ ...f, movementType: e.target.value }))} className={inputCls + ' cursor-pointer'}>
                     <option value="In">Giriş</option>
                     <option value="Out">Çıkış</option>
                     <option value="Transfer">Transfer</option>
@@ -539,9 +579,9 @@ export default function WMSPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs text-slate-400 mb-1 block">Ürün</label>
+                  <label className="text-xs font-semibold text-slate-400 mb-1.5 block">Ürün</label>
                   {Object.keys(productNames).length > 0 ? (
-                    <select value={moveForm.productId} onChange={e => setMoveForm(f => ({ ...f, productId: e.target.value }))} className={inputCls}>
+                    <select value={moveForm.productId} onChange={e => setMoveForm(f => ({ ...f, productId: e.target.value }))} className={inputCls + ' cursor-pointer'}>
                       <option value="">Ürün seçin...</option>
                       {Object.entries(productNames).map(([id, name]) => (
                         <option key={id} value={id}>{name}</option>
@@ -552,11 +592,11 @@ export default function WMSPage() {
                   )}
                 </div>
                 <div>
-                  <label className="text-xs text-slate-400 mb-1 block">Miktar</label>
-                  <input type="number" value={moveForm.quantity} onChange={e => setMoveForm(f => ({ ...f, quantity: Number(e.target.value) }))} min={1} className={inputCls} />
+                  <label className="text-xs font-semibold text-slate-400 mb-1.5 block">Miktar</label>
+                  <input type="number" value={moveForm.quantity} onChange={e => setMoveForm(f => ({ ...f, quantity: Number(e.target.value) }))} min={1} className={inputCls + ' font-mono'} />
                 </div>
                 <div>
-                  <label className="text-xs text-slate-400 mb-1 block">Not</label>
+                  <label className="text-xs font-semibold text-slate-400 mb-1.5 block">Not</label>
                   <input value={moveForm.note} onChange={e => setMoveForm(f => ({ ...f, note: e.target.value }))} placeholder="Açıklama (isteğe bağlı)" className={inputCls} />
                 </div>
               </div>
@@ -564,7 +604,7 @@ export default function WMSPage() {
                 <button onClick={handleMove} disabled={saving} className="premium-button flex items-center gap-2 disabled:opacity-60">
                   {saving && <Loader2 className="w-4 h-4 animate-spin" />} Kaydet
                 </button>
-                <button onClick={() => setShowMoveForm(false)} className="px-4 py-2 rounded-xl border border-border text-foreground text-sm hover:bg-surface transition-colors">İptal</button>
+                <button onClick={() => setShowMoveForm(false)} className="px-4 py-2 rounded-xl border border-border text-slate-400 hover:text-white text-sm font-semibold transition-colors">İptal</button>
               </div>
             </motion.div>
           )}
@@ -572,13 +612,13 @@ export default function WMSPage() {
           {/* Movement History */}
           <div className="premium-card p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-foreground">Hareket Geçmişi</h3>
+              <h3 className="text-base font-bold text-foreground">Hareket Geçmişi</h3>
               {movementsLoaded && (
                 <button
                   onClick={() => { setMovementsLoaded(false) }}
-                  className="p-1.5 rounded-lg border border-border hover:bg-slate-800 transition-colors"
+                  className="p-1.5 rounded-lg border border-border bg-slate-950/20 hover:bg-slate-800 transition-colors"
                 >
-                  <RefreshCw className="w-3.5 h-3.5 text-slate-400" />
+                  <RefreshCw className="w-3.5 h-3.5 text-slate-400 hover:text-white" />
                 </button>
               )}
             </div>
@@ -590,47 +630,47 @@ export default function WMSPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-border text-xs text-slate-500">
-                      <th className="text-left pb-2 font-medium">Tarih</th>
-                      <th className="text-left pb-2 font-medium">Ürün</th>
-                      <th className="text-left pb-2 font-medium">Tip</th>
-                      <th className="text-right pb-2 font-medium">Miktar</th>
-                      <th className="text-left pb-2 font-medium hidden sm:table-cell">Not</th>
+                    <tr className="border-b border-border text-xs text-slate-400">
+                      <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Tarih</th>
+                      <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Ürün</th>
+                      <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Tip</th>
+                      <th className="text-right px-4 py-3 font-semibold uppercase tracking-wider">Miktar</th>
+                      <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden sm:table-cell">Not</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
                     {movements.slice(0, 50).map(m => {
                       const typeConfig: Record<string, { label: string; cls: string; sign: string }> = {
-                        In:       { label: 'Giriş',    cls: 'bg-emerald-500/15 text-emerald-400', sign: '+' },
-                        Out:      { label: 'Çıkış',    cls: 'bg-red-500/15 text-red-400',         sign: '−' },
-                        Transfer: { label: 'Transfer', cls: 'bg-blue-500/15 text-blue-400',        sign: '↔' },
-                        Loss:     { label: 'Kayıp',    cls: 'bg-amber-500/15 text-amber-400',      sign: '!' },
+                        In:       { label: 'Giriş',    cls: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20', sign: '+' },
+                        Out:      { label: 'Çıkış',    cls: 'bg-red-500/10 text-red-400 border border-red-500/20',         sign: '−' },
+                        Transfer: { label: 'Transfer', cls: 'bg-blue-500/10 text-blue-400 border border-blue-500/20',        sign: '↔' },
+                        Loss:     { label: 'Kayıp',    cls: 'bg-amber-500/10 text-amber-400 border border-amber-500/20',      sign: '!' },
                       }
-                      const tc = typeConfig[m.movementType] ?? { label: m.movementType, cls: 'bg-slate-500/15 text-slate-400', sign: '' }
+                      const tc = typeConfig[m.movementType] ?? { label: m.movementType, cls: 'bg-slate-500/10 text-slate-400 border border-slate-500/20', sign: '' }
                       return (
-                        <tr key={m.id} className="hover:bg-slate-800/20 transition-colors">
-                          <td className="py-2.5 text-xs text-slate-400">
+                        <tr key={m.id} className="hover:bg-primary/5 hover:border-primary/10 transition-colors">
+                          <td className="px-4 py-3 text-xs text-slate-450 font-semibold whitespace-nowrap">
                             {new Date(m.createdAt).toLocaleString('tr-TR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                           </td>
-                          <td className="py-2.5 text-xs font-medium text-foreground">
+                          <td className="px-4 py-3 font-semibold text-foreground">
                             {resolveProductName(m.productId)}
                           </td>
-                          <td className="py-2.5">
-                            <span className={`text-xs px-2 py-0.5 rounded-lg font-semibold ${tc.cls}`}>{tc.label}</span>
+                          <td className="px-4 py-3">
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${tc.cls}`}>{tc.label}</span>
                           </td>
-                          <td className={`py-2.5 text-right font-bold text-sm ${
-                            m.movementType === 'In' ? 'text-emerald-400' : m.movementType === 'Out' || m.movementType === 'Loss' ? 'text-red-400' : 'text-foreground'
+                          <td className={`px-4 py-3 text-right font-black text-sm ${
+                            m.movementType === 'In' ? 'text-emerald-450' : m.movementType === 'Out' || m.movementType === 'Loss' ? 'text-red-450' : 'text-foreground'
                           }`}>
                             {tc.sign}{m.quantity}
                           </td>
-                          <td className="py-2.5 text-xs text-slate-500 hidden sm:table-cell max-w-xs truncate">{m.note ?? '—'}</td>
+                          <td className="px-4 py-3 text-xs text-slate-400 font-semibold hidden sm:table-cell max-w-xs truncate">{m.note ?? '—'}</td>
                         </tr>
                       )
                     })}
                   </tbody>
                 </table>
                 {movements.length > 50 && (
-                  <p className="text-xs text-slate-500 text-center mt-3">Son 50 hareket gösteriliyor</p>
+                  <p className="text-xs text-slate-500 text-center mt-3 font-semibold">Son 50 hareket gösteriliyor</p>
                 )}
               </div>
             )}
@@ -641,7 +681,7 @@ export default function WMSPage() {
         /* ── Suppliers Tab ──────────────────────────────────────────────── */
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-slate-400">{suppliers.length} tedarikçi kayıtlı</p>
+            <p className="text-sm text-slate-400 font-semibold">{suppliers.length} tedarikçi kayıtlı</p>
             <button
               onClick={openCreateSupplier}
               className="premium-button flex items-center gap-2"
@@ -657,41 +697,41 @@ export default function WMSPage() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="premium-card p-5 border border-primary/20 space-y-4"
+                className="premium-card p-5 border border-primary/20 space-y-4 bg-slate-900/60 backdrop-blur-md"
               >
                 <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-foreground text-sm">
+                  <h3 className="font-bold text-foreground text-sm">
                     {editSupplierId ? 'Tedarikçiyi Düzenle' : 'Yeni Tedarikçi'}
                   </h3>
-                  <button onClick={() => { setShowSupplierForm(false); setEditSupplierId(null) }} className="text-slate-400 hover:text-foreground">
+                  <button onClick={() => { setShowSupplierForm(false); setEditSupplierId(null) }} className="text-slate-400 hover:text-white">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs text-slate-400 mb-1 block">Firma Adı *</label>
+                    <label className="text-xs font-semibold text-slate-400 mb-1.5 block">Firma Adı *</label>
                     <input value={supplierForm.name} onChange={e => setSupplierForm(f => ({ ...f, name: e.target.value }))} placeholder="Tedarikçi firma adı" className={inputCls} />
                   </div>
                   <div>
-                    <label className="text-xs text-slate-400 mb-1 block">E-posta</label>
+                    <label className="text-xs font-semibold text-slate-400 mb-1.5 block">E-posta</label>
                     <input type="email" value={supplierForm.contactEmail} onChange={e => setSupplierForm(f => ({ ...f, contactEmail: e.target.value }))} placeholder="firma@ornek.com" className={inputCls} />
                   </div>
                   <div>
-                    <label className="text-xs text-slate-400 mb-1 block">Telefon</label>
+                    <label className="text-xs font-semibold text-slate-400 mb-1.5 block">Telefon</label>
                     <input value={supplierForm.contactPhone} onChange={e => setSupplierForm(f => ({ ...f, contactPhone: e.target.value }))} placeholder="+90 5XX XXX XX XX" className={inputCls} />
                   </div>
                   <div>
-                    <label className="text-xs text-slate-400 mb-1 block">Adres</label>
+                    <label className="text-xs font-semibold text-slate-400 mb-1.5 block">Adres</label>
                     <input value={supplierForm.address} onChange={e => setSupplierForm(f => ({ ...f, address: e.target.value }))} placeholder="Firma adresi" className={inputCls} />
                   </div>
                 </div>
-                {supplierError && <p className="text-red-400 text-xs">{supplierError}</p>}
+                {supplierError && <p className="text-red-400 text-xs font-semibold">{supplierError}</p>}
                 <div className="flex gap-2">
-                  <button onClick={handleSaveSupplier} disabled={supplierSaving} className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-white text-xs font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors">
+                  <button onClick={handleSaveSupplier} disabled={supplierSaving} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary/95 disabled:opacity-50 transition-colors shadow-md shadow-primary/20">
                     {supplierSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
                     {editSupplierId ? 'Güncelle' : 'Ekle'}
                   </button>
-                  <button onClick={() => { setShowSupplierForm(false); setEditSupplierId(null) }} className="px-4 py-2 rounded-lg border border-border text-slate-400 hover:text-foreground text-xs transition-colors">İptal</button>
+                  <button onClick={() => { setShowSupplierForm(false); setEditSupplierId(null) }} className="px-4 py-2 rounded-xl border border-border text-slate-400 hover:text-white text-xs font-semibold transition-colors">İptal</button>
                 </div>
               </motion.div>
             )}
@@ -706,41 +746,41 @@ export default function WMSPage() {
             <div className="premium-card overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left px-4 py-3 text-slate-400 font-medium">Firma</th>
-                    <th className="text-left px-4 py-3 text-slate-400 font-medium hidden md:table-cell">E-posta</th>
-                    <th className="text-left px-4 py-3 text-slate-400 font-medium hidden sm:table-cell">Telefon</th>
-                    <th className="text-right px-4 py-3 text-slate-400 font-medium">İşlem</th>
+                  <tr className="border-b border-border text-xs text-slate-400">
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Firma</th>
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden md:table-cell">E-posta</th>
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden sm:table-cell">Telefon</th>
+                    <th className="text-right px-4 py-3 font-semibold uppercase tracking-wider">İşlem</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-border">
                   {suppliers.map(s => (
-                    <tr key={s.id} className="border-b border-border/40 hover:bg-surface/50 transition-colors">
+                    <tr key={s.id} className="hover:bg-primary/5 hover:border-primary/10 transition-colors">
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center shrink-0">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shrink-0">
                             <Truck className="w-3.5 h-3.5 text-cyan-400" />
                           </div>
                           <div>
-                            <p className="font-medium text-foreground">{s.name}</p>
-                            {s.address && <p className="text-xs text-slate-500 truncate max-w-[160px]">{s.address}</p>}
+                            <p className="font-semibold text-foreground">{s.name}</p>
+                            {s.address && <p className="text-xs text-slate-400 font-semibold truncate max-w-[200px]">{s.address}</p>}
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-slate-400 text-xs hidden md:table-cell">{s.contactEmail ?? '—'}</td>
-                      <td className="px-4 py-3 text-slate-400 text-xs hidden sm:table-cell">{s.contactPhone ?? '—'}</td>
+                      <td className="px-4 py-3 text-slate-400 font-semibold text-xs hidden md:table-cell">{s.contactEmail ?? '—'}</td>
+                      <td className="px-4 py-3 text-slate-400 font-semibold text-xs hidden sm:table-cell">{s.contactPhone ?? '—'}</td>
                       <td className="px-4 py-3 text-right">
-                        <div className="flex items-center justify-end gap-1">
+                        <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => openEditSupplier(s)}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-foreground hover:bg-slate-700 transition-all"
+                            className="p-2 rounded-xl text-slate-405 hover:text-white bg-slate-950/20 hover:bg-slate-800 transition-colors"
                             title="Düzenle"
                           >
                             <Edit2 className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => handleDeleteSupplier(s.id, s.name)}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                            className="p-2 rounded-xl text-slate-405 hover:text-red-400 bg-slate-950/20 hover:bg-red-500/10 transition-colors"
                             title="Sil"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -759,7 +799,7 @@ export default function WMSPage() {
         /* ── Purchase Orders Tab ────────────────────────────────────────── */
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-slate-400">{purchaseOrders.length} satın alma siparişi</p>
+            <p className="text-sm text-slate-400 font-semibold">{purchaseOrders.length} satın alma siparişi</p>
             <button onClick={() => { setShowPOForm(true); setPoError('') }} className="premium-button flex items-center gap-2">
               <Plus className="w-4 h-4" /> Yeni Sipariş
             </button>
@@ -772,65 +812,65 @@ export default function WMSPage() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="premium-card p-5 border border-primary/20 space-y-5"
+                className="premium-card p-5 border border-primary/20 space-y-5 bg-slate-900/60 backdrop-blur-md"
               >
                 <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-foreground text-sm">Yeni Satın Alma Siparişi</h3>
-                  <button onClick={() => { setShowPOForm(false); setPoForm(EMPTY_PO) }} className="text-slate-400 hover:text-foreground">
+                  <h3 className="font-bold text-foreground text-sm">Yeni Satın Alma Siparişi</h3>
+                  <button onClick={() => { setShowPOForm(false); setPoForm(EMPTY_PO) }} className="text-slate-400 hover:text-white">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="text-xs text-slate-400 mb-1 block">Tedarikçi *</label>
-                    <select value={poForm.supplierId} onChange={e => setPoForm(f => ({ ...f, supplierId: e.target.value }))} className={inputCls}>
+                    <label className="text-xs font-semibold text-slate-400 mb-1.5 block">Tedarikçi *</label>
+                    <select value={poForm.supplierId} onChange={e => setPoForm(f => ({ ...f, supplierId: e.target.value }))} className={inputCls + ' cursor-pointer font-semibold'}>
                       <option value="">Seçiniz...</option>
                       {suppliers.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="text-xs text-slate-400 mb-1 block">Beklenen Teslim Tarihi</label>
+                    <label className="text-xs font-semibold text-slate-400 mb-1.5 block">Beklenen Teslim Tarihi</label>
                     <input type="date" value={poForm.expectedDate} onChange={e => setPoForm(f => ({ ...f, expectedDate: e.target.value }))} className={inputCls} />
                   </div>
                   <div>
-                    <label className="text-xs text-slate-400 mb-1 block">Not</label>
+                    <label className="text-xs font-semibold text-slate-400 mb-1.5 block">Not</label>
                     <input value={poForm.notes} onChange={e => setPoForm(f => ({ ...f, notes: e.target.value }))} placeholder="İsteğe bağlı not" className={inputCls} />
                   </div>
                 </div>
 
                 {/* Line items */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Ürün Satırları</label>
-                    <button onClick={addPOLine} className="text-xs text-primary hover:text-primary/80 flex items-center gap-1 transition-colors">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-slate-450 uppercase tracking-wide">Ürün Satırları</label>
+                    <button onClick={addPOLine} className="text-xs text-primary hover:text-primary/80 flex items-center gap-1 transition-colors font-bold">
                       <Plus className="w-3 h-3" /> Satır Ekle
                     </button>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {poForm.lines.map((line, i) => (
-                      <div key={i} className="grid grid-cols-[1fr_80px_90px_32px] gap-2 items-end">
+                      <div key={i} className="grid grid-cols-[1fr_80px_100px_36px] gap-2.5 items-end">
                         <div>
-                          {i === 0 && <label className="text-[10px] text-slate-500 mb-0.5 block">Ürün</label>}
-                          <select value={line.productId} onChange={e => updatePOLine(i, 'productId', e.target.value)} className={inputCls}>
+                          {i === 0 && <label className="text-[10px] font-semibold text-slate-500 mb-1 block">Ürün</label>}
+                          <select value={line.productId} onChange={e => updatePOLine(i, 'productId', e.target.value)} className={inputCls + ' cursor-pointer'}>
                             <option value="">Ürün...</option>
                             {Object.entries(productNames).map(([id, name]) => <option key={id} value={id}>{name}</option>)}
                           </select>
                         </div>
                         <div>
-                          {i === 0 && <label className="text-[10px] text-slate-500 mb-0.5 block">Miktar</label>}
-                          <input type="number" min={1} value={line.quantity} onChange={e => updatePOLine(i, 'quantity', Number(e.target.value))} className={inputCls} />
+                          {i === 0 && <label className="text-[10px] font-semibold text-slate-500 mb-1 block">Miktar</label>}
+                          <input type="number" min={1} value={line.quantity} onChange={e => updatePOLine(i, 'quantity', Number(e.target.value))} className={inputCls + ' font-mono'} />
                         </div>
                         <div>
-                          {i === 0 && <label className="text-[10px] text-slate-500 mb-0.5 block">Birim Fiyat ₺</label>}
-                          <input type="number" min={0} step={0.01} value={line.unitPrice} onChange={e => updatePOLine(i, 'unitPrice', Number(e.target.value))} className={inputCls} />
+                          {i === 0 && <label className="text-[10px] font-semibold text-slate-500 mb-1 block">Birim Fiyat ₺</label>}
+                          <input type="number" min={0} step={0.01} value={line.unitPrice} onChange={e => updatePOLine(i, 'unitPrice', Number(e.target.value))} className={inputCls + ' font-mono'} />
                         </div>
                         <button
                           onClick={() => removePOLine(i)}
                           disabled={poForm.lines.length === 1}
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all disabled:opacity-30"
+                          className="p-2.5 rounded-xl text-slate-400 hover:text-red-400 bg-slate-950/20 hover:bg-red-500/10 transition-colors disabled:opacity-30"
                         >
-                          <X className="w-3.5 h-3.5" />
+                          <X className="w-4 h-4" />
                         </button>
                       </div>
                     ))}
@@ -838,21 +878,21 @@ export default function WMSPage() {
                 </div>
 
                 {/* Total */}
-                <div className="flex items-center justify-end gap-2 text-sm">
-                  <span className="text-slate-400">Toplam:</span>
-                  <span className="font-bold text-foreground">
+                <div className="flex items-center justify-end gap-2 text-sm border-t border-border pt-4">
+                  <span className="text-slate-400 font-semibold">Toplam:</span>
+                  <span className="font-black text-foreground text-lg font-mono">
                     ₺{poForm.lines.reduce((s, l) => s + l.quantity * l.unitPrice, 0).toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
 
-                {poError && <p className="text-red-400 text-xs">{poError}</p>}
+                {poError && <p className="text-red-400 text-xs font-semibold">{poError}</p>}
 
                 <div className="flex gap-2">
-                  <button onClick={handleCreatePO} disabled={poSaving} className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-white text-xs font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors">
+                  <button onClick={handleCreatePO} disabled={poSaving} className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary/95 disabled:opacity-50 transition-colors shadow-md shadow-primary/20">
                     {poSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
                     Sipariş Oluştur
                   </button>
-                  <button onClick={() => { setShowPOForm(false); setPoForm(EMPTY_PO) }} className="px-4 py-2 rounded-lg border border-border text-slate-400 hover:text-foreground text-xs transition-colors">İptal</button>
+                  <button onClick={() => { setShowPOForm(false); setPoForm(EMPTY_PO) }} className="px-4 py-2.5 rounded-xl border border-border text-slate-400 hover:text-white text-xs font-semibold transition-colors">İptal</button>
                 </div>
               </motion.div>
             )}
@@ -864,27 +904,27 @@ export default function WMSPage() {
           ) : purchaseOrders.length === 0 && !showPOForm ? (
             <EmptyState icon={<ShoppingBag className="w-8 h-8" />} title="Satın alma siparişi yok" description="Tedarikçilerden ürün sipariş etmek için yeni sipariş oluşturun." />
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-3">
               {purchaseOrders.map(po => {
-                const sc = PO_STATUS[po.status] ?? { label: po.status, cls: 'bg-slate-700 text-slate-300' }
+                const sc = PO_STATUS[po.status] ?? { label: po.status, cls: 'bg-slate-700/10 text-slate-350 border border-slate-700/20' }
                 const isExpanded = expandedPO === po.id
                 const totalCost = po.items.reduce((s, i) => s + i.orderedQuantity * i.unitPrice, 0)
                 const canReceive = po.status === 'Pending' || po.status === 'Confirmed'
 
                 return (
-                  <div key={po.id} className="premium-card overflow-hidden">
+                  <div key={po.id} className="premium-card overflow-hidden p-0">
                     <div
-                      className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-surface/50 transition-colors"
+                      className="flex items-center gap-3 px-5 py-4 cursor-pointer hover:bg-primary/5 transition-colors"
                       onClick={() => setExpandedPO(isExpanded ? null : po.id)}
                     >
-                      <div className="flex-1 min-w-0 flex items-center gap-3 flex-wrap">
-                        <span className={`text-xs px-2 py-0.5 rounded-full font-semibold shrink-0 ${sc.cls}`}>{sc.label}</span>
-                        <span className="text-sm font-medium text-foreground truncate">{po.supplierName ?? '—'}</span>
-                        <span className="text-xs text-slate-500">{new Date(po.orderDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                      <div className="flex-1 min-w-0 flex items-center gap-3.5 flex-wrap">
+                        <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold shrink-0 ${sc.cls}`}>{sc.label}</span>
+                        <span className="text-sm font-bold text-foreground truncate">{po.supplierName ?? '—'}</span>
+                        <span className="text-xs text-slate-400 font-semibold">{new Date(po.orderDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                         {po.expectedDate && (
-                          <span className="text-xs text-slate-500">→ {new Date(po.expectedDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}</span>
+                          <span className="text-xs text-slate-400 font-semibold">→ {new Date(po.expectedDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}</span>
                         )}
-                        <span className="text-xs font-semibold text-foreground ml-auto">
+                        <span className="text-xs font-black text-foreground ml-auto font-mono">
                           ₺{totalCost.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} · {po.items.length} kalem
                         </span>
                       </div>
@@ -892,59 +932,61 @@ export default function WMSPage() {
                     </div>
 
                     {isExpanded && (
-                      <div className="border-t border-border px-4 py-3 space-y-3">
+                      <div className="border-t border-border px-5 py-4 bg-slate-950/20 space-y-4">
                         {/* Items table */}
-                        <table className="w-full text-xs">
-                          <thead>
-                            <tr className="text-slate-500">
-                              <th className="text-left pb-1.5 font-medium">Ürün</th>
-                              <th className="text-right pb-1.5 font-medium">Sipariş</th>
-                              <th className="text-right pb-1.5 font-medium">Alınan</th>
-                              <th className="text-right pb-1.5 font-medium">Birim ₺</th>
-                              <th className="text-right pb-1.5 font-medium">Toplam</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-border/40">
-                            {po.items.map((item, i) => (
-                              <tr key={i}>
-                                <td className="py-1.5 text-foreground">{resolveProductName(item.productId)}</td>
-                                <td className="py-1.5 text-right text-foreground">{item.orderedQuantity}</td>
-                                <td className="py-1.5 text-right text-emerald-400">{item.receivedQuantity}</td>
-                                <td className="py-1.5 text-right text-slate-400">₺{item.unitPrice.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}</td>
-                                <td className="py-1.5 text-right font-semibold text-foreground">₺{(item.orderedQuantity * item.unitPrice).toLocaleString('tr-TR', { minimumFractionDigits: 2 })}</td>
+                        <div className="overflow-hidden border border-border/60 rounded-xl">
+                          <table className="w-full text-xs">
+                            <thead>
+                              <tr className="bg-slate-900/60 border-b border-border text-slate-400">
+                                <th className="text-left px-4 py-2 font-semibold uppercase tracking-wider">Ürün</th>
+                                <th className="text-right px-4 py-2 font-semibold uppercase tracking-wider">Sipariş</th>
+                                <th className="text-right px-4 py-2 font-semibold uppercase tracking-wider">Alınan</th>
+                                <th className="text-right px-4 py-2 font-semibold uppercase tracking-wider">Birim ₺</th>
+                                <th className="text-right px-4 py-2 font-semibold uppercase tracking-wider">Toplam</th>
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                            </thead>
+                            <tbody className="divide-y divide-border/40">
+                              {po.items.map((item, i) => (
+                                <tr key={i} className="hover:bg-slate-900/20">
+                                  <td className="px-4 py-2 font-semibold text-foreground">{resolveProductName(item.productId)}</td>
+                                  <td className="px-4 py-2 text-right font-semibold text-foreground">{item.orderedQuantity}</td>
+                                  <td className="px-4 py-2 text-right font-bold text-emerald-450">{item.receivedQuantity}</td>
+                                  <td className="px-4 py-2 text-right font-semibold text-slate-405 font-mono">₺{item.unitPrice.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}</td>
+                                  <td className="px-4 py-2 text-right font-black text-foreground font-mono">₺{(item.orderedQuantity * item.unitPrice).toLocaleString('tr-TR', { minimumFractionDigits: 2 })}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
 
                         {po.notes && (
-                          <p className="text-xs text-slate-500 italic">{po.notes}</p>
+                          <p className="text-xs text-slate-400 font-semibold italic bg-slate-950/40 p-2.5 rounded-xl border border-border">{po.notes}</p>
                         )}
 
                         {/* Receive action */}
                         {canReceive && (
                           receivingPO === po.id ? (
-                            <div className="flex items-center gap-2 p-3 rounded-lg bg-emerald-500/8 border border-emerald-500/20">
-                              <div className="flex-1">
-                                <p className="text-xs font-semibold text-emerald-400 mb-1.5">Teslim Alma Onayı</p>
-                                <p className="text-xs text-slate-400 mb-2">Tüm ürünler stoğa eklenecek. Depo bölümü (isteğe bağlı):</p>
+                            <div className="flex items-center gap-3 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/25">
+                              <div className="flex-1 space-y-2">
+                                <p className="text-xs font-bold text-emerald-400">Teslim Alma Onayı</p>
+                                <p className="text-xs text-slate-455 font-semibold">Tüm sipariş satırları stoğa aktarılacak. Depo raf veya bölme no (opsiyonel):</p>
                                 <input
                                   value={receiveBinId}
                                   onChange={e => setReceiveBinId(e.target.value)}
-                                  placeholder="Bin ID (boş bırakılabilir)"
+                                  placeholder="Örn: BIN-A1 (boş kalabilir)"
                                   className={inputCls + ' max-w-xs'}
                                 />
                               </div>
-                              <div className="flex flex-col gap-2">
+                              <div className="flex flex-col gap-2 shrink-0">
                                 <button
                                   onClick={() => handleReceivePO(po.id)}
-                                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-xs font-semibold hover:bg-emerald-600 transition-colors"
+                                  className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 text-white text-xs font-bold hover:bg-emerald-600 transition-colors shadow-md shadow-emerald-500/10"
                                 >
-                                  <Check className="w-3 h-3" /> Onayla
+                                  <Check className="w-3.5 h-3.5" /> Onayla
                                 </button>
                                 <button
                                   onClick={() => setReceivingPO(null)}
-                                  className="px-3 py-1.5 rounded-lg border border-border text-slate-400 text-xs transition-colors"
+                                  className="px-4 py-2 rounded-xl border border-border text-slate-400 text-xs font-semibold hover:text-white transition-colors"
                                 >
                                   İptal
                                 </button>
@@ -953,7 +995,7 @@ export default function WMSPage() {
                           ) : (
                             <button
                               onClick={() => setReceivingPO(po.id)}
-                              className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-500/15 text-emerald-400 text-xs font-semibold hover:bg-emerald-500/25 transition-colors"
+                              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 text-xs font-bold border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors"
                             >
                               <Check className="w-3.5 h-3.5" /> Teslim Al (Stoğa Ekle)
                             </button>
@@ -971,3 +1013,4 @@ export default function WMSPage() {
     </div>
   )
 }
+

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ShoppingCart, Star, Package, Heart } from 'lucide-react'
+import { ShoppingCart, Star, Package, Heart, Check } from 'lucide-react'
 import type { MarketplaceProduct } from '@/lib/services/marketplace.service'
 import { marketplaceService } from '@/lib/services/marketplace.service'
 import { useBuyerCartStore } from '@/store/buyerCart.store'
@@ -19,6 +19,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const setCart = useBuyerCartStore((s) => s.setCart)
   const { toggle, has } = useWishlistStore()
   const [adding, setAdding] = useState(false)
+  const [added, setAdded] = useState(false)
   const isWishlisted = has(product.id)
 
   const variantPrices = product.variants.map(v => v.price)
@@ -43,6 +44,8 @@ export function ProductCard({ product }: ProductCardProps) {
     try {
       const cart = await marketplaceService.addToCart(product.id)
       setCart(cart)
+      setAdded(true)
+      setTimeout(() => setAdded(false), 1500)
     } catch {
       router.push('/alici-auth/giris')
     } finally {
@@ -124,10 +127,15 @@ export function ProductCard({ product }: ProductCardProps) {
           <button
             onClick={handleAddToCart}
             disabled={adding || isOutOfStock}
-            title={isOutOfStock ? 'Stokta yok' : 'Sepete ekle'}
-            className="w-8 h-8 rounded-lg bg-primary/10 hover:bg-primary flex items-center justify-center transition-colors group/btn disabled:opacity-40 disabled:cursor-not-allowed"
+            title={isOutOfStock ? 'Stokta yok' : added ? 'Sepete eklendi!' : 'Sepete ekle'}
+            className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 group/btn disabled:opacity-40 disabled:cursor-not-allowed ${
+              added ? 'bg-emerald-500 scale-110' : 'bg-primary/10 hover:bg-primary'
+            }`}
           >
-            <ShoppingCart className={`w-4 h-4 text-primary group-hover/btn:text-white transition-colors ${adding ? 'animate-spin' : ''}`} />
+            {added
+              ? <Check className="w-4 h-4 text-white" />
+              : <ShoppingCart className={`w-4 h-4 text-primary group-hover/btn:text-white transition-colors ${adding ? 'animate-bounce' : ''}`} />
+            }
           </button>
         </div>
       </div>

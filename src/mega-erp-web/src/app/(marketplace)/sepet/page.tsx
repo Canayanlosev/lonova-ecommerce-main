@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, Package, Tag, Check, X, Loader2 } from 'lucide-react'
+import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, Package, Tag, Check, X, Loader2, Truck } from 'lucide-react'
 import { marketplaceService } from '@/lib/services/marketplace.service'
 import { useBuyerCartStore } from '@/store/buyerCart.store'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
@@ -147,6 +147,40 @@ export default function CartPage() {
         {/* Order summary */}
         <div className="premium-card p-6 h-fit sticky top-24 space-y-4">
           <h2 className="text-lg font-bold text-foreground">Sipariş Özeti</h2>
+
+          {/* Free shipping progress */}
+          {(() => {
+            const threshold = 500
+            const remaining = Math.max(0, threshold - total)
+            const pct = Math.min(100, (total / threshold) * 100)
+            return remaining > 0 ? (
+              <div className="p-3 rounded-xl bg-amber-500/8 border border-amber-500/20 space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="flex items-center gap-1.5 text-slate-400 font-medium">
+                    <Truck className="w-3.5 h-3.5" /> Ücretsiz Kargo
+                  </span>
+                  <span className="text-amber-400 font-bold">
+                    ₺{remaining.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} kaldı
+                  </span>
+                </div>
+                <div className="w-full bg-slate-800 rounded-full h-1.5">
+                  <div
+                    className="h-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-500"
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+                <p className="text-[11px] text-slate-400">
+                  <span className="font-semibold text-amber-400">₺{remaining.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}</span>{' '}
+                  daha ekle, kargo ücretsiz!
+                </p>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+                <Truck className="w-3.5 h-3.5 shrink-0" />
+                Ücretsiz kargo kazandınız! 🎉
+              </div>
+            )
+          })()}
 
           {/* Coupon input */}
           <div className="space-y-2">

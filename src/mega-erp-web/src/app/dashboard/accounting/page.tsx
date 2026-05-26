@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useMemo } from "react";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
+  PieChart, Pie, Cell
 } from "recharts";
 
 import { SkeletonRow } from "@/components/ui/Skeleton";
@@ -174,6 +175,15 @@ export default function AccountingPage() {
     return map
   }, [entries, currentMonthISO])
 
+  // ─── Pie data for Bütçe tab ────────────────────────────────────────────────
+  const PIE_COLORS = ['#6366f1','#22d3ee','#f97316','#ef4444','#a855f7','#10b981','#f59e0b','#ec4899','#84cc16','#06b6d4','#8b5cf6','#14b8a6','#fb923c','#e11d48']
+  const pieData = useMemo(() =>
+    Object.entries(spendingByCategory)
+      .filter(([, v]) => v > 0)
+      .sort(([, a], [, b]) => b - a)
+      .map(([name, value]) => ({ name, value })),
+    [spendingByCategory])
+
   // ─── P&L computation ──────────────────────────────────────────────────────
   const totalGelir = useMemo(() => entries.reduce((s, e) => s + (e.debit || 0), 0), [entries])
   const totalGider = useMemo(() => entries.reduce((s, e) => s + (e.credit || 0), 0), [entries])
@@ -213,7 +223,7 @@ export default function AccountingPage() {
               key={id}
               onClick={() => setTab(id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200
-                ${tab === id ? "bg-surface text-primary border border-border/40 shadow-sm" : "text-slate-400 hover:text-slate-200"}`}
+                ${tab === id ? "bg-slate-800 text-primary border border-border/50 shadow-sm" : "text-slate-400 hover:text-white hover:bg-slate-850/50"}`}
             >
               <Icon size={15} />{label}
             </button>
@@ -224,7 +234,7 @@ export default function AccountingPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={openExpenseModal}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl border border-border text-slate-400 hover:text-foreground hover:border-primary/40 text-sm font-medium transition-all"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border bg-slate-950/20 text-slate-400 hover:text-white hover:border-primary/50 text-sm font-semibold transition-all"
             >
               <Plus className="w-4 h-4" /> Gider Ekle
             </button>
@@ -244,14 +254,14 @@ export default function AccountingPage() {
       {tab === "journal" && !loading && (
         <div className={`flex items-center gap-3 p-4 rounded-xl border ${
           unbookedCount === 0
-            ? 'bg-emerald-500/5 border-emerald-500/20 text-emerald-400'
-            : 'bg-amber-500/5 border-amber-500/20 text-amber-400'
+            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 font-semibold'
+            : 'bg-amber-500/10 border-amber-500/20 text-amber-400 font-semibold'
         }`}>
           {unbookedCount === 0
-            ? <CheckCircle2 className="w-5 h-5 shrink-0" />
-            : <AlertTriangle className="w-5 h-5 shrink-0" />
+            ? <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-400" />
+            : <AlertTriangle className="w-5 h-5 shrink-0 text-amber-400" />
           }
-          <span className="text-sm font-medium">
+          <span className="text-sm">
             {unbookedCount === 0
               ? 'Tüm siparişler muhasebeleştirildi.'
               : `${unbookedCount} tamamlanan sipariş henüz muhasebeleştirilmemiş. "Satış Siparişlerini Aktar" butonuna basın.`
@@ -262,29 +272,31 @@ export default function AccountingPage() {
 
       {tab === "accounts" && (
         <div className="premium-card p-6">
-          <div className="mb-4"><h3 className="text-base font-bold text-foreground">Hesap Planı ({accounts.length})</h3></div>
+          <div className="mb-4">
+            <h3 className="text-base font-bold text-foreground">Hesap Planı ({accounts.length})</h3>
+          </div>
           <div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left px-4 py-3 text-slate-500 font-semibold text-xs uppercase tracking-wider">Kod</th>
-                    <th className="text-left px-4 py-3 text-slate-500 font-semibold text-xs uppercase tracking-wider">Hesap Adı</th>
-                    <th className="text-left px-4 py-3 text-slate-500 font-semibold text-xs uppercase tracking-wider hidden sm:table-cell">Tür</th>
-                    <th className="text-right px-4 py-3 text-slate-500 font-semibold text-xs uppercase tracking-wider">Bakiye</th>
+                  <tr className="border-b border-border text-xs text-slate-400">
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Kod</th>
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Hesap Adı</th>
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden sm:table-cell">Tür</th>
+                    <th className="text-right px-4 py-3 font-semibold uppercase tracking-wider">Bakiye</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-border">
                   {loading
                     ? Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} cols={4} />)
                     : accounts.length === 0
                     ? <tr><td colSpan={4}><EmptyState icon={<CreditCard />} title="Hesap bulunamadı" /></td></tr>
                     : accounts.map((a) => (
-                      <tr key={a.id} className="border-b border-border hover:bg-surface/50 transition-colors">
-                        <td className="px-4 py-3 font-mono text-xs text-primary font-semibold">{a.code}</td>
-                        <td className="px-4 py-3 font-medium">{a.name}</td>
-                        <td className="px-4 py-3 text-slate-500 hidden sm:table-cell">{a.type}</td>
-                        <td className={`px-4 py-3 text-right font-bold ${a.balance >= 0 ? "text-emerald-500" : "text-red-500"}`}>
+                      <tr key={a.id} className="hover:bg-primary/5 hover:border-primary/10 transition-colors">
+                        <td className="px-4 py-3 font-mono text-xs text-primary font-bold">{a.code}</td>
+                        <td className="px-4 py-3 font-semibold text-foreground">{a.name}</td>
+                        <td className="px-4 py-3 text-slate-400 font-semibold hidden sm:table-cell">{a.type}</td>
+                        <td className={`px-4 py-3 text-right font-black ${a.balance >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                           ₺{a.balance.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}
                         </td>
                       </tr>
@@ -401,35 +413,35 @@ export default function AccountingPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left px-4 py-3 text-slate-500 font-semibold text-xs uppercase tracking-wider">Tarih</th>
-                    <th className="text-left px-4 py-3 text-slate-500 font-semibold text-xs uppercase tracking-wider">Açıklama</th>
-                    <th className="text-right px-4 py-3 text-slate-500 font-semibold text-xs uppercase tracking-wider">Borç</th>
-                    <th className="text-right px-4 py-3 text-slate-500 font-semibold text-xs uppercase tracking-wider">Alacak</th>
+                  <tr className="border-b border-border text-xs text-slate-400">
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Tarih</th>
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Açıklama</th>
+                    <th className="text-right px-4 py-3 font-semibold uppercase tracking-wider">Borç</th>
+                    <th className="text-right px-4 py-3 font-semibold uppercase tracking-wider">Alacak</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-border">
                   {loading
                     ? Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} cols={4} />)
                     : entries.length === 0
                     ? <tr><td colSpan={4}><EmptyState icon={<BookOpen />} title="Yevmiye kaydı bulunamadı" description='Satış siparişlerini aktarmak için "Satış Siparişlerini Aktar" butonuna basın.' /></td></tr>
                     : entries.map((e) => (
-                      <tr key={e.id} className="border-b border-border hover:bg-surface/50 transition-colors">
-                        <td className="px-4 py-3 text-xs text-slate-500 whitespace-nowrap">
+                      <tr key={e.id} className="hover:bg-primary/5 hover:border-primary/10 transition-colors">
+                        <td className="px-4 py-3 text-xs text-slate-400 font-semibold whitespace-nowrap">
                           {new Date(e.date).toLocaleDateString("tr-TR")}
                         </td>
                         <td className="px-4 py-3 max-w-xs">
-                          <p className="truncate font-medium">
+                          <p className="truncate font-semibold text-foreground">
                             {e.description.replace(/\[ORDER:[^\]]+\]\s*/, '')}
                           </p>
                           {e.description.includes('[ORDER:') && (
-                            <span className="text-[10px] font-semibold text-primary/80 bg-primary/5 px-2 py-0.5 rounded-full border border-primary/10">otomatik aktarım</span>
+                            <span className="inline-block mt-1 text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">otomatik aktarım</span>
                           )}
                         </td>
-                        <td className="px-4 py-3 text-right text-emerald-500 font-medium whitespace-nowrap">
+                        <td className="px-4 py-3 text-right text-emerald-400 font-black whitespace-nowrap">
                           {e.debit > 0 ? `₺${e.debit.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}` : "—"}
                         </td>
-                        <td className="px-4 py-3 text-right text-red-400 font-medium whitespace-nowrap">
+                        <td className="px-4 py-3 text-right text-red-400 font-black whitespace-nowrap">
                           {e.credit > 0 ? `₺${e.credit.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}` : "—"}
                         </td>
                       </tr>
@@ -465,6 +477,56 @@ export default function AccountingPage() {
               Bütçeler yerel olarak kaydedilir (bu cihaza özel).
             </div>
           </div>
+
+          {/* Spending breakdown PieChart */}
+          {pieData.length > 0 && (
+            <div className="premium-card p-5">
+              <h3 className="text-sm font-bold text-foreground mb-4">Bu Ay Gider Dağılımı</h3>
+              <div className="flex flex-col sm:flex-row items-center gap-6">
+                <div style={{ width: 200, height: 200, flexShrink: 0 }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={pieData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={55}
+                        outerRadius={85}
+                        paddingAngle={2}
+                        dataKey="value"
+                      >
+                        {pieData.map((_, i) => (
+                          <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        contentStyle={{ background: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8 }}
+                        labelStyle={{ color: '#e2e8f0', fontSize: 12 }}
+                        formatter={(val) => [`₺${Number(val).toLocaleString('tr-TR')}`, '']}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="flex-1 min-w-0 space-y-2 w-full">
+                  {pieData.slice(0, 8).map((item, i) => {
+                    const tot = pieData.reduce((s, d) => s + d.value, 0)
+                    const pct = tot > 0 ? Math.round((item.value / tot) * 100) : 0
+                    return (
+                      <div key={item.name} className="flex items-center gap-2">
+                        <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
+                        <span className="text-xs text-slate-400 truncate flex-1">{item.name}</span>
+                        <span className="text-xs font-bold text-foreground">₺{item.value.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}</span>
+                        <span className="text-xs text-slate-500 w-7 text-right">%{pct}</span>
+                      </div>
+                    )
+                  })}
+                  {pieData.length > 8 && (
+                    <p className="text-xs text-slate-500 pl-4">+{pieData.length - 8} kategori daha</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Category budget rows */}
           <div className="premium-card overflow-hidden">
@@ -576,45 +638,46 @@ export default function AccountingPage() {
 
       {/* ═══ Expense Modal ═══════════════════════════════════════════════════ */}
       {expenseModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="w-full max-w-md bg-slate-900 rounded-2xl shadow-2xl border border-border">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+          <div className="w-full max-w-md bg-slate-900 border border-border/80 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.4)] overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-slate-950/20">
               <h2 className="text-base font-bold text-foreground">Gider Kaydı Ekle</h2>
-              <button onClick={() => setExpenseModal(false)} className="p-1.5 rounded-lg text-slate-400 hover:text-foreground hover:bg-slate-800 transition-all">
+              <button onClick={() => setExpenseModal(false)} className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
                 <X className="w-4 h-4" />
               </button>
             </div>
             <div className="px-6 py-5 space-y-4">
               {expError && (
-                <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold">
                   <AlertTriangle className="w-4 h-4 shrink-0" />{expError}
                 </div>
               )}
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5">Tarih</label>
+                <label className="block text-xs font-semibold text-slate-400 mb-1.5">Tarih</label>
                 <input
                   type="date"
                   value={expForm.date}
                   onChange={e => setExpForm(f => ({ ...f, date: e.target.value }))}
-                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
+                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-slate-950/40 text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5">Gider Kategorisi / Açıklama *</label>
+                <label className="block text-xs font-semibold text-slate-400 mb-1.5">Gider Kategorisi / Açıklama *</label>
                 <input
+                  type="text"
                   list="gider-cats"
                   value={expForm.description}
                   onChange={e => setExpForm(f => ({ ...f, description: e.target.value }))}
                   placeholder="Kira, Elektrik, Malzeme..."
                   autoFocus
-                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
+                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-slate-950/40 text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
                 />
                 <datalist id="gider-cats">
                   {GIDER_KATEGORILER.map(k => <option key={k} value={k} />)}
                 </datalist>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5">Tutar (₺) *</label>
+                <label className="block text-xs font-semibold text-slate-400 mb-1.5">Tutar (₺) *</label>
                 <input
                   type="number"
                   value={expForm.amount}
@@ -622,16 +685,16 @@ export default function AccountingPage() {
                   placeholder="0.00"
                   min={0}
                   step={0.01}
-                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
+                  className="w-full px-3 py-2.5 rounded-xl border border-border bg-slate-950/40 text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all font-mono font-bold"
                 />
               </div>
               {accounts.length > 0 && (
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5">Hesap (opsiyonel)</label>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5">Hesap (opsiyonel)</label>
                   <select
                     value={expForm.accountId}
                     onChange={e => setExpForm(f => ({ ...f, accountId: e.target.value }))}
-                    className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
+                    className="w-full px-3 py-2.5 rounded-xl border border-border bg-slate-950/40 text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all font-semibold cursor-pointer"
                   >
                     <option value="">— Hesap seçin —</option>
                     {accounts.map(a => (
@@ -641,12 +704,12 @@ export default function AccountingPage() {
                 </div>
               )}
             </div>
-            <div className="flex justify-end gap-3 px-6 py-4 border-t border-border">
-              <button onClick={() => setExpenseModal(false)} className="px-4 py-2 text-sm text-slate-400 hover:text-foreground transition-colors">İptal</button>
+            <div className="flex justify-end gap-3 px-6 py-4 border-t border-border bg-slate-950/20">
+              <button onClick={() => setExpenseModal(false)} className="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white transition-colors">İptal</button>
               <button
                 onClick={handleSaveExpense}
                 disabled={expSaving}
-                className="flex items-center gap-2 px-5 py-2.5 bg-red-500 hover:bg-red-500/90 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-colors"
+                className="flex items-center gap-2 px-5 py-2.5 bg-red-500 hover:bg-red-500/90 disabled:opacity-60 text-white rounded-xl text-sm font-bold transition-colors shadow-md shadow-red-500/20"
               >
                 {expSaving ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Check className="w-4 h-4" />}
                 Gider Kaydet
