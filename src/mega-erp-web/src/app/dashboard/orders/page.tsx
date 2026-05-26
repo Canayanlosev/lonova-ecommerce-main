@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo } from "react";
 
 import { SkeletonRow } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { Package, AlertCircle, Search, Download, CheckSquare, Square, Layers, Loader2 } from "lucide-react";
+import { Package, AlertCircle, Search, Download, CheckSquare, Square, Layers, Loader2, TrendingUp, Clock, CheckCircle2, XCircle } from "lucide-react";
 import { ordersService } from "@/lib/services/orders.service";
 import type { Order } from "@/types/api.types";
 import Link from "next/link";
@@ -47,6 +47,9 @@ export default function OrdersPage() {
   const totalRevenue = orders.filter(o => o.status !== 'Cancelled').reduce((s, o) => s + o.totalAmount, 0);
   const pendingCount = orders.filter(o => o.status === 'Pending').length;
   const paidCount = orders.filter(o => o.status === 'Paid').length;
+  const cancelledCount = orders.filter(o => o.status === 'Cancelled').length;
+  const todayISO = new Date().toISOString().slice(0, 10);
+  const todayCount = orders.filter(o => o.orderDate?.slice(0, 10) === todayISO).length;
 
   const allFilteredSelected = filtered.length > 0 && filtered.every(o => selected.has(o.id));
 
@@ -117,22 +120,36 @@ export default function OrdersPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="premium-card p-5 border border-border/80 bg-slate-900/40">
-          <p className="text-[10px] font-black text-slate-450 uppercase tracking-wider mb-1.5">Toplam Sipariş</p>
-          <p className="text-2xl font-black text-foreground font-mono">{orders.length}</p>
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+        {[
+          { label: 'Toplam Sipariş', value: orders.length, icon: Package, color: 'bg-primary/10 text-primary border border-primary/20' },
+          { label: 'Bugün',          value: todayCount,    icon: Clock,    color: todayCount > 0 ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'bg-slate-950/40 text-slate-500 border border-border/80' },
+          { label: 'Beklemede',      value: pendingCount,  icon: AlertCircle, color: pendingCount > 0 ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-slate-950/40 text-slate-500 border border-border/80' },
+          { label: 'Ödendi',         value: paidCount,     icon: CheckCircle2, color: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' },
+          { label: 'İptal',          value: cancelledCount, icon: XCircle, color: cancelledCount > 0 ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-slate-950/40 text-slate-500 border border-border/80' },
+        ].map(({ label, value, icon: Icon, color }) => (
+          <div key={label} className="premium-card p-5 flex items-center gap-4 hover:-translate-y-0.5 transition-all duration-300">
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${color}`}>
+              <Icon className="w-5 h-5" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate">{label}</p>
+              <p className="text-2xl font-black text-foreground mt-0.5">{value}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Revenue callout */}
+      <div className="premium-card p-4 flex items-center gap-4 border-emerald-500/15 bg-emerald-500/3">
+        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+          <TrendingUp className="w-5 h-5 text-emerald-400" />
         </div>
-        <div className="premium-card p-5 border border-border/80 bg-slate-900/40">
-          <p className="text-[10px] font-black text-slate-450 uppercase tracking-wider mb-1.5">Beklemede</p>
-          <p className={`text-2xl font-black font-mono ${pendingCount > 0 ? 'text-amber-450' : 'text-slate-450'}`}>{pendingCount}</p>
-        </div>
-        <div className="premium-card p-5 border border-border/80 bg-slate-900/40">
-          <p className="text-[10px] font-black text-slate-450 uppercase tracking-wider mb-1.5">Ödendi</p>
-          <p className="text-2xl font-black text-emerald-405 font-mono">{paidCount}</p>
-        </div>
-        <div className="premium-card p-5 border border-border/80 bg-slate-900/40">
-          <p className="text-[10px] font-black text-slate-450 uppercase tracking-wider mb-1.5">Toplam Gelir</p>
-          <p className="text-2xl font-black text-primary font-mono">₺{totalRevenue.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}</p>
+        <div>
+          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Toplam Gelir (İptal Hariç)</p>
+          <p className="text-xl font-black text-emerald-400 font-mono mt-0.5">
+            ₺{totalRevenue.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}
+          </p>
         </div>
       </div>
 
