@@ -270,6 +270,37 @@ export default function AnalyticsPage() {
     return hourlyData.reduce((max, h) => h.count > max.count ? h : max)
   }, [hourlyData])
 
+  // ── Day-of-week revenue ─────────────────────────────────────────────────────
+  const DOW_LABELS = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt']
+  const dowData = useMemo(() => {
+    const buckets = Array.from({ length: 7 }, (_, i) => ({ day: DOW_LABELS[i], orders: 0, revenue: 0 }))
+    for (const o of paidOrders) {
+      const d = new Date(o.createdAt).getDay() // 0=Sun
+      buckets[d].orders += 1
+      buckets[d].revenue += o.totalAmount
+    }
+    return buckets
+  }, [paidOrders])
+
+  // ── New vs Returning buyers ─────────────────────────────────────────────────
+  const buyerSegmentation = useMemo(() => {
+    // Buyers who ordered BEFORE the current period (in prevPeriodOrders or earlier)
+    const prevBuyerIds = new Set(
+      orders
+        .filter(o => new Date(o.createdAt) < cutoff)
+        .map(o => o.buyerUserId)
+    )
+    let newBuyers = 0, returningBuyers = 0
+    const seen = new Set<string>()
+    for (const o of periodOrders) {
+      if (seen.has(o.buyerUserId)) continue
+      seen.add(o.buyerUserId)
+      if (prevBuyerIds.has(o.buyerUserId)) returningBuyers++
+      else newBuyers++
+    }
+    return { newBuyers, returningBuyers }
+  }, [orders, periodOrders, cutoff])
+
   const fmt = (n: number) => n.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 })
 
   const handleExportCsv = () => {
@@ -630,6 +661,75 @@ export default function AnalyticsPage() {
           <p className="text-xs text-slate-500 mt-2 text-center">
             Müşterileriniz en çok hangi saatlerde sipariş veriyor? Kampanyalarınızı buna göre planlayın.
           </p>
+        </div>
+      )}
+
+      {/* Day-of-week revenue distribution */}
+      {!loading && paidOrders.length > 0 && (
+        <div className="premium-card p-6">
+          <h2 className="text-sm font-semibold text-foreground mb-1">Haftalık Satış Dağılımı</h2>
+          <p className="text-xs text-slate-500 mb-4">Hangi günler daha fazla sipariş ve gelir geliyor?</p>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={dowData} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+              <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} tickFormatter={v => v === 0 ? '' : `₺${(v/1000).toFixed(0)}k`} />
+              <Tooltip
+                contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8, fontSize: 12 }}
+                formatter={(v: unknown) => [
+                  (v as number).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 }),
+                  'Gelir'
+                ]}
+                labelFormatter={(label) => `${label} günü`}
+              />
+              <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} maxBarSize={32} opacity={0.85} />
+            </BarChart>
+          </ResponsiveContainer>
+          {/* Best & worst day summary */}
+          {dowData.some(d => d.revenue > 0) && (() => {
+            const sorted = [...dowData].filter(d => d.revenue > 0).sort((a, b) => b.revenue - a.revenue)
+            const best = sorted[0]
+            const worst = sorted[sorted.length - 1]
+            return (
+              <div className="flex items-center gap-4 mt-3 text-xs text-slate-400">
+                <span>🏆 En iyi gün: <span className="text-emerald-400 font-semibold">{best.day}</span> — {best.revenue.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 })}</span>
+                <span>📉 En düşük: <span className="text-slate-500 font-semibold">{worst.day}</span></span>
+              </div>
+            )
+          })()}
+        </div>
+      )}
+
+      {/* New vs Returning buyers */}
+      {!loading && periodOrders.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="premium-card p-5 flex items-start gap-4">
+            <div className="w-10 h-10 rounded-xl bg-blue-500/15 flex items-center justify-center shrink-0">
+              <Users className="w-5 h-5 text-blue-400" />
+            </div>
+            <div>
+              <p className="text-xs text-slate-400 mb-0.5">Yeni Alıcılar</p>
+              <p className="text-2xl font-bold text-foreground">{buyerSegmentation.newBuyers}</p>
+              <p className="text-xs text-slate-500 mt-1">
+                {uniqueBuyers > 0 ? Math.round((buyerSegmentation.newBuyers / uniqueBuyers) * 100) : 0}% toplam alıcı
+              </p>
+            </div>
+          </div>
+          <div className="premium-card p-5 flex items-start gap-4">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center shrink-0">
+              <TrendingUp className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div>
+              <p className="text-xs text-slate-400 mb-0.5">Tekrar Eden Alıcılar</p>
+              <p className="text-2xl font-bold text-foreground">{buyerSegmentation.returningBuyers}</p>
+              <p className="text-xs text-slate-500 mt-1">
+                {uniqueBuyers > 0 ? Math.round((buyerSegmentation.returningBuyers / uniqueBuyers) * 100) : 0}% toplam alıcı
+              </p>
+              {buyerSegmentation.returningBuyers > 0 && (
+                <p className="text-[11px] text-emerald-400 font-medium mt-0.5">Sadık müşteri tabanı güçlü 🎯</p>
+              )}
+            </div>
+          </div>
         </div>
       )}
 

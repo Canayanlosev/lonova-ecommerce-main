@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, Package, Tag, Check, X, Loader2, Truck } from 'lucide-react'
-import { marketplaceService } from '@/lib/services/marketplace.service'
+import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, Package, Tag, Check, X, Loader2, Truck, Star, Sparkles } from 'lucide-react'
+import { marketplaceService, type MarketplaceProduct } from '@/lib/services/marketplace.service'
 import { useBuyerCartStore } from '@/store/buyerCart.store'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
 
@@ -17,6 +17,7 @@ export default function CartPage() {
   const [couponCode, setCouponCode] = useState('')
   const [couponApplying, setCouponApplying] = useState(false)
   const [couponResult, setCouponResult] = useState<{ valid: boolean; discount: number; message?: string } | null>(null)
+  const [recommendations, setRecommendations] = useState<MarketplaceProduct[]>([])
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -24,7 +25,20 @@ export default function CartPage() {
       return
     }
     marketplaceService.getCart()
-      .then(setCart)
+      .then((cart) => {
+        setCart(cart)
+        // Fetch recommendations after cart loads
+        const cartProductIds = new Set(cart.items.map(i => i.productId))
+        marketplaceService.getProducts({ pageSize: 12 })
+          .then(res => {
+            const recs = res.items
+              .filter(p => !cartProductIds.has(p.id))
+              .sort((a, b) => (b.averageRating ?? 0) - (a.averageRating ?? 0))
+              .slice(0, 6)
+            setRecommendations(recs)
+          })
+          .catch(() => {})
+      })
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [isAuthenticated, router, setCart])
@@ -104,7 +118,8 @@ export default function CartPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Cart items */}
-        <div className="lg:col-span-2 space-y-3">
+        <div className="lg:col-span-2 space-y-4">
+          <div className="space-y-3">
           {items.map((item) => (
             <div key={item.id} className="premium-card p-4 flex gap-4">
               <div className="w-20 h-20 rounded-xl bg-slate-800 overflow-hidden relative shrink-0">
@@ -142,6 +157,59 @@ export default function CartPage() {
               </div>
             </div>
           ))}
+          </div>
+
+          {/* Recommendations */}
+          {recommendations.length > 0 && (
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <h3 className="text-sm font-bold text-foreground">Bunları da beğenebilirsiniz</h3>
+              </div>
+              <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
+                {recommendations.map((p) => {
+                  const minPrice = p.variants.length > 0
+                    ? Math.min(...p.variants.map(v => v.price))
+                    : p.basePrice
+                  return (
+                    <Link
+                      key={p.id}
+                      href={`/urun/${p.id}`}
+                      className="flex-shrink-0 w-36 premium-card overflow-hidden group"
+                    >
+                      <div className="relative w-full aspect-square bg-slate-800/60">
+                        {p.imageUrl ? (
+                          <Image
+                            src={p.imageUrl}
+                            alt={p.name}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                            sizes="144px"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <Package className="w-8 h-8 text-slate-600" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-2">
+                        <p className="text-xs text-foreground font-medium leading-tight line-clamp-2 mb-1">{p.name}</p>
+                        {p.reviewCount > 0 && (
+                          <div className="flex items-center gap-1 mb-1">
+                            <Star className="w-2.5 h-2.5 text-amber-400 fill-amber-400" />
+                            <span className="text-[10px] text-slate-400">{p.averageRating.toFixed(1)}</span>
+                          </div>
+                        )}
+                        <p className="text-xs font-bold text-primary">
+                          {minPrice.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+                        </p>
+                      </div>
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Order summary */}
