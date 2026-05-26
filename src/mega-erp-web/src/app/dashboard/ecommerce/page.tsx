@@ -148,6 +148,13 @@ export default function EcommercePage() {
     }
   };
 
+  // ── Product stats ─────────────────────────────────────────────────────────
+  const productStats = React.useMemo(() => ({
+    total: products.length,
+    published: products.filter(p => p.isPublishedToMarketplace !== false).length,
+    hidden: products.filter(p => p.isPublishedToMarketplace === false).length,
+  }), [products])
+
   const filtered = products.filter((p) => {
     const matchSearch =
       p.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -173,6 +180,39 @@ export default function EcommercePage() {
           </Button>
         </Link>
       </div>
+
+      {/* Quick stats */}
+      {!loading && products.length > 0 && (
+        <div className="grid grid-cols-3 gap-4">
+          <div className="premium-card p-4 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <Package size={18} className="text-primary" />
+            </div>
+            <div>
+              <p className="text-xs text-slate-400">Toplam Ürün</p>
+              <p className="text-xl font-black text-foreground">{productStats.total}</p>
+            </div>
+          </div>
+          <div className="premium-card p-4 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
+              <Eye size={18} className="text-emerald-400" />
+            </div>
+            <div>
+              <p className="text-xs text-slate-400">Yayında</p>
+              <p className="text-xl font-black text-emerald-400">{productStats.published}</p>
+            </div>
+          </div>
+          <div className="premium-card p-4 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-slate-700/50 flex items-center justify-center shrink-0">
+              <EyeOff size={18} className="text-slate-400" />
+            </div>
+            <div>
+              <p className="text-xs text-slate-400">Gizli</p>
+              <p className="text-xl font-black text-foreground">{productStats.hidden}</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="premium-card p-6">
         <div className="mb-4">
