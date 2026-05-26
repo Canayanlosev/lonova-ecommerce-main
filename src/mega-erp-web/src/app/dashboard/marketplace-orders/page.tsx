@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import {
   Truck, CheckCircle, Clock, XCircle, Package,
-  RefreshCw, X, AlertCircle, Search, ChevronDown, Download, ExternalLink
+  RefreshCw, X, AlertCircle, Search, ChevronDown, Download, ExternalLink,
+  TrendingUp, ShoppingBag
 } from 'lucide-react'
 import Link from 'next/link'
 import api from '@/lib/api'
@@ -155,6 +156,18 @@ export default function MarketplaceOrdersPage() {
 
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
+  // ── Page stats (computed from current loaded+filtered orders) ─────────────
+  const pageStats = useMemo(() => {
+    const todayISO = new Date().toISOString().slice(0, 10)
+    return {
+      todayCount: orders.filter(o => o.createdAt.slice(0, 10) === todayISO).length,
+      pending: orders.filter(o => o.status === 'Pending').length,
+      shipped: orders.filter(o => o.status === 'Shipped').length,
+      delivered: orders.filter(o => o.status === 'Delivered').length,
+      revenue: filtered.reduce((s, o) => s + (o.totalAmount ?? 0), 0),
+    }
+  }, [orders, filtered])
+
   const handleExportCsv = () => {
     const rows = [
       ['Sipariş ID', 'Alıcı', 'Şehir', 'Tutar (₺)', 'Durum', 'Ödeme', 'Ödeme Yöntemi', 'Ürün Adedi', 'Takip No', 'Tarih'],
@@ -203,6 +216,49 @@ export default function MarketplaceOrdersPage() {
           </button>
         </div>
       </div>
+
+      {/* Quick stats */}
+      {!loading && orders.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          <div className="premium-card p-3 flex items-center gap-3">
+            <ShoppingBag className="w-4 h-4 text-primary shrink-0" />
+            <div>
+              <p className="text-[10px] text-slate-500 leading-none mb-0.5">Bugün</p>
+              <p className="text-base font-black text-foreground">{pageStats.todayCount}</p>
+            </div>
+          </div>
+          <div className="premium-card p-3 flex items-center gap-3">
+            <Clock className="w-4 h-4 text-amber-400 shrink-0" />
+            <div>
+              <p className="text-[10px] text-slate-500 leading-none mb-0.5">Beklemede</p>
+              <p className={`text-base font-black ${pageStats.pending > 0 ? 'text-amber-400' : 'text-foreground'}`}>{pageStats.pending}</p>
+            </div>
+          </div>
+          <div className="premium-card p-3 flex items-center gap-3">
+            <Truck className="w-4 h-4 text-cyan-400 shrink-0" />
+            <div>
+              <p className="text-[10px] text-slate-500 leading-none mb-0.5">Kargoda</p>
+              <p className="text-base font-black text-cyan-400">{pageStats.shipped}</p>
+            </div>
+          </div>
+          <div className="premium-card p-3 flex items-center gap-3">
+            <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+            <div>
+              <p className="text-[10px] text-slate-500 leading-none mb-0.5">Teslim</p>
+              <p className="text-base font-black text-emerald-400">{pageStats.delivered}</p>
+            </div>
+          </div>
+          <div className="premium-card p-3 flex items-center gap-3 col-span-2 sm:col-span-1">
+            <TrendingUp className="w-4 h-4 text-violet-400 shrink-0" />
+            <div>
+              <p className="text-[10px] text-slate-500 leading-none mb-0.5">Gelir (görüntü)</p>
+              <p className="text-sm font-black text-violet-400">
+                ₺{pageStats.revenue.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="flex gap-3 flex-wrap">
