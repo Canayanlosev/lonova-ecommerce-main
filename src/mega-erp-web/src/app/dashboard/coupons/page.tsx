@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Tag, Plus, Trash2, Edit2, Check, X, RefreshCw, Copy, CheckCheck } from 'lucide-react'
+import { useEffect, useState, useMemo } from 'react'
+import { Tag, Plus, Trash2, Edit2, Check, X, RefreshCw, Copy, CheckCheck, Zap, BarChart3, Clock, Sparkles } from 'lucide-react'
 import api from '@/lib/api'
 
 interface CouponDto {
@@ -112,6 +112,23 @@ export default function CouponsPage() {
   const isExpired = (expiresAt?: string | null) =>
     expiresAt ? new Date(expiresAt) < new Date() : false
 
+  // ── Stats ──────────────────────────────────────────────────────────────────
+  const stats = useMemo(() => {
+    const active = coupons.filter(c => c.isActive && !isExpired(c.expiresAt)).length
+    const expired = coupons.filter(c => isExpired(c.expiresAt)).length
+    const totalUses = coupons.reduce((s, c) => s + c.usedCount, 0)
+    const almostFull = coupons.filter(c => c.maxUses > 0 && c.usedCount / c.maxUses >= 0.9 && !isExpired(c.expiresAt)).length
+    return { active, expired, totalUses, almostFull }
+  }, [coupons])
+
+  // ── Random code generator ─────────────────────────────────────────────────
+  const generateCode = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    let code = ''
+    for (let i = 0; i < 8; i++) code += chars[Math.floor(Math.random() * chars.length)]
+    setForm(prev => ({ ...prev, code }))
+  }
+
   const handleCopy = (code: string, id: string) => {
     navigator.clipboard.writeText(code).then(() => {
       setCopiedId(id)
@@ -142,6 +159,48 @@ export default function CouponsPage() {
         </div>
       </div>
 
+      {/* Stats banner */}
+      {!loading && coupons.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="premium-card p-4 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/15 flex items-center justify-center shrink-0">
+              <Tag className="w-4.5 h-4.5 text-emerald-400" />
+            </div>
+            <div>
+              <p className="text-xs text-slate-400">Aktif Kupon</p>
+              <p className="text-xl font-black text-foreground">{stats.active}</p>
+            </div>
+          </div>
+          <div className="premium-card p-4 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-blue-500/15 flex items-center justify-center shrink-0">
+              <BarChart3 className="w-4.5 h-4.5 text-blue-400" />
+            </div>
+            <div>
+              <p className="text-xs text-slate-400">Toplam Kullanım</p>
+              <p className="text-xl font-black text-foreground">{stats.totalUses}</p>
+            </div>
+          </div>
+          <div className="premium-card p-4 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-red-500/15 flex items-center justify-center shrink-0">
+              <Clock className="w-4.5 h-4.5 text-red-400" />
+            </div>
+            <div>
+              <p className="text-xs text-slate-400">Süresi Dolan</p>
+              <p className="text-xl font-black text-foreground">{stats.expired}</p>
+            </div>
+          </div>
+          <div className="premium-card p-4 flex items-center gap-3">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${stats.almostFull > 0 ? 'bg-amber-500/15' : 'bg-slate-700/50'}`}>
+              <Sparkles className={`w-4.5 h-4.5 ${stats.almostFull > 0 ? 'text-amber-400' : 'text-slate-500'}`} />
+            </div>
+            <div>
+              <p className="text-xs text-slate-400">Dolmak Üzere</p>
+              <p className={`text-xl font-black ${stats.almostFull > 0 ? 'text-amber-400' : 'text-foreground'}`}>{stats.almostFull}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Create/Edit Form */}
       {showForm && (
         <div className="premium-card p-6">
@@ -154,14 +213,26 @@ export default function CouponsPage() {
           <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="sm:col-span-1">
               <label className="block text-xs font-medium text-slate-400 mb-1">Kupon Kodu *</label>
-              <input
-                type="text"
-                value={form.code}
-                onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
-                placeholder="YAZA20"
-                disabled={!!editId}
-                className="w-full px-3 py-2 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 disabled:opacity-50"
-              />
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={form.code}
+                  onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
+                  placeholder="YAZA20"
+                  disabled={!!editId}
+                  className="flex-1 px-3 py-2 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 disabled:opacity-50 font-mono"
+                />
+                {!editId && (
+                  <button
+                    type="button"
+                    onClick={generateCode}
+                    title="Rastgele kod üret"
+                    className="px-2.5 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors shrink-0"
+                  >
+                    <Zap className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
             </div>
             <div>
               <label className="block text-xs font-medium text-slate-400 mb-1">İndirim Tipi</label>
