@@ -27,6 +27,8 @@ interface Order {
   buyerUserId: string
   createdAt: string
   items: OrderItem[]
+  city?: string
+  district?: string
 }
 
 interface DailyRevenue {
@@ -345,6 +347,21 @@ export default function AnalyticsPage() {
     }
     return { newBuyers, returningBuyers }
   }, [orders, periodOrders, cutoff])
+
+  // City distribution — top cities by order count & revenue
+  const cityDistribution = useMemo(() => {
+    const map: Record<string, { orders: number; revenue: number }> = {}
+    for (const o of periodOrders) {
+      const city = (o.city?.trim() || 'Belirtilmemiş')
+      if (!map[city]) map[city] = { orders: 0, revenue: 0 }
+      map[city].orders++
+      map[city].revenue += o.totalAmount ?? 0
+    }
+    return Object.entries(map)
+      .map(([city, v]) => ({ city, ...v }))
+      .sort((a, b) => b.orders - a.orders)
+      .slice(0, 8)
+  }, [periodOrders])
 
   const fmt = (n: number) => n.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 })
 
@@ -848,6 +865,38 @@ export default function AnalyticsPage() {
                       />
                     </div>
                   </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* City distribution */}
+      {!loading && cityDistribution.length > 0 && cityDistribution.some(c => c.city !== 'Belirtilmemiş') && (
+        <div className="premium-card p-6">
+          <h2 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+            📍 Şehir Dağılımı
+            <span className="text-xs text-slate-500 font-normal">— siparişlerin geldiği şehirler</span>
+          </h2>
+          <div className="space-y-2.5">
+            {cityDistribution.map(({ city, orders: cnt, revenue }, i) => {
+              const maxOrders = cityDistribution[0].orders
+              const pct = Math.round((cnt / maxOrders) * 100)
+              return (
+                <div key={city} className="flex items-center gap-3">
+                  <span className="text-[10px] font-black text-slate-600 w-4 shrink-0 text-right">{i + 1}</span>
+                  <span className="text-xs font-semibold text-foreground w-28 shrink-0 truncate">{city}</span>
+                  <div className="flex-1 h-4 bg-slate-800/60 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-primary/70 to-primary rounded-full transition-all duration-500"
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                  <span className="text-xs font-mono text-primary w-12 text-right shrink-0">{cnt} sipariş</span>
+                  <span className="text-xs font-mono text-slate-400 w-20 text-right shrink-0 hidden sm:block">
+                    {fmt(revenue)}
+                  </span>
                 </div>
               )
             })}
