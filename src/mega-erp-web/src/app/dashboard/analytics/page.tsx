@@ -282,6 +282,51 @@ export default function AnalyticsPage() {
     return buckets
   }, [paidOrders])
 
+  // ── Revenue forecast (14-day moving avg → 30-day projection) ───────────────
+  const forecast = useMemo(() => {
+    if (paidOrders.length === 0) return null
+    // Use last 14 days of paid orders for baseline
+    const baseline = new Date(now)
+    baseline.setDate(baseline.getDate() - 14)
+    const last14 = paidOrders.filter(o => new Date(o.createdAt) >= baseline)
+    if (last14.length === 0) return null
+    const dailyAvg = last14.reduce((s, o) => s + o.totalAmount, 0) / 14
+    const proj7  = dailyAvg * 7
+    const proj30 = dailyAvg * 30
+    // Week-over-week: compare last 7 vs prev 7 daily avg
+    const last7cut = new Date(now); last7cut.setDate(last7cut.getDate() - 7)
+    const prev7cut = new Date(now); prev7cut.setDate(prev7cut.getDate() - 14)
+    const last7rev = paidOrders.filter(o => new Date(o.createdAt) >= last7cut).reduce((s, o) => s + o.totalAmount, 0) / 7
+    const prev7rev = paidOrders.filter(o => new Date(o.createdAt) >= prev7cut && new Date(o.createdAt) < last7cut).reduce((s, o) => s + o.totalAmount, 0) / 7
+    const wowChange = prev7rev > 0 ? Math.round(((last7rev - prev7rev) / prev7rev) * 100) : null
+    return { dailyAvg, proj7, proj30, wowChange }
+  }, [paidOrders, now])
+
+  // ── Product performance: current vs previous period ──────────────────────
+  const productPerformance = useMemo(() => {
+    const prevMap: Record<string, number> = {}
+    for (const o of prevPaidOrders) {
+      for (const item of (o.items ?? [])) {
+        prevMap[item.productId] = (prevMap[item.productId] ?? 0) + item.quantity
+      }
+    }
+    const currMap: Record<string, { name: string; qty: number }> = {}
+    for (const o of paidOrders) {
+      for (const item of (o.items ?? [])) {
+        if (!currMap[item.productId]) currMap[item.productId] = { name: item.productName, qty: 0 }
+        currMap[item.productId].qty += item.quantity
+      }
+    }
+    return Object.entries(currMap)
+      .map(([id, { name, qty }]) => {
+        const prevQty = prevMap[id] ?? 0
+        const change = prevQty > 0 ? Math.round(((qty - prevQty) / prevQty) * 100) : null
+        return { id, name, qty, prevQty, change }
+      })
+      .sort((a, b) => b.qty - a.qty)
+      .slice(0, 5)
+  }, [paidOrders, prevPaidOrders])
+
   // ── New vs Returning buyers ─────────────────────────────────────────────────
   const buyerSegmentation = useMemo(() => {
     // Buyers who ordered BEFORE the current period (in prevPeriodOrders or earlier)
@@ -729,6 +774,83 @@ export default function AnalyticsPage() {
                 <p className="text-[11px] text-emerald-400 font-medium mt-0.5">Sadık müşteri tabanı güçlü 🎯</p>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Revenue Forecast */}
+      {!loading && forecast && (
+        <div className="premium-card p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <TrendingUp className="w-4 h-4 text-emerald-400" />
+            <h2 className="text-sm font-semibold text-foreground">Gelir Tahmini</h2>
+            <span className="text-xs text-slate-500 ml-auto">Son 14 gün ortalamasına göre</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="p-4 rounded-xl bg-slate-800/50 border border-border">
+              <p className="text-xs text-slate-400 mb-1">Günlük Ortalama</p>
+              <p className="text-xl font-black text-foreground">{fmt(forecast.dailyAvg)}</p>
+              {forecast.wowChange !== null && (
+                <span className={`inline-flex items-center gap-1 text-xs font-semibold mt-1 ${forecast.wowChange >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {forecast.wowChange >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                  {forecast.wowChange >= 0 ? '+' : ''}{forecast.wowChange}% hafta/hafta
+                </span>
+              )}
+            </div>
+            <div className="p-4 rounded-xl bg-primary/8 border border-primary/20">
+              <p className="text-xs text-slate-400 mb-1">Önümüzdeki 7 Gün</p>
+              <p className="text-xl font-black text-primary">{fmt(forecast.proj7)}</p>
+              <p className="text-xs text-slate-500 mt-1">tahmini gelir</p>
+            </div>
+            <div className="p-4 rounded-xl bg-emerald-500/8 border border-emerald-500/20">
+              <p className="text-xs text-slate-400 mb-1">Aylık Projeksiyon</p>
+              <p className="text-xl font-black text-emerald-400">{fmt(forecast.proj30)}</p>
+              <p className="text-xs text-slate-500 mt-1">30 günlük tahmini gelir</p>
+            </div>
+          </div>
+          <p className="text-xs text-slate-600 mt-3">⚠️ Tahminler geçmiş veri ortalamasına dayalıdır. Gerçek değerler farklılık gösterebilir.</p>
+        </div>
+      )}
+
+      {/* Product Performance Comparison */}
+      {!loading && productPerformance.length > 0 && (
+        <div className="premium-card p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Package className="w-4 h-4 text-primary" />
+              <h2 className="text-sm font-semibold text-foreground">Ürün Performansı</h2>
+            </div>
+            <span className="text-xs text-slate-500">Mevcut vs. önceki dönem</span>
+          </div>
+          <div className="space-y-3">
+            {productPerformance.map((p, i) => {
+              const maxQty = productPerformance[0].qty
+              const pct = maxQty > 0 ? (p.qty / maxQty) * 100 : 0
+              return (
+                <div key={p.id} className="flex items-center gap-3">
+                  <span className="text-xs text-slate-500 w-4 text-right shrink-0">{i + 1}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-xs font-semibold text-foreground truncate max-w-[60%]">{p.name}</p>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="text-xs text-slate-400">{p.qty} adet</span>
+                        {p.change !== null && (
+                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${p.change > 0 ? 'bg-emerald-500/15 text-emerald-400' : p.change < 0 ? 'bg-red-500/15 text-red-400' : 'bg-slate-700 text-slate-400'}`}>
+                            {p.change > 0 ? '+' : ''}{p.change}%
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary rounded-full transition-all duration-500"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
       )}
