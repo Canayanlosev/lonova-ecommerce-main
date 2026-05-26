@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
   User, Package, Heart, MapPin, Lock, ChevronRight,
-  ShoppingBag, Star, Settings, LogOut
+  ShoppingBag, Star, Settings, LogOut, TrendingUp
 } from 'lucide-react'
 import { marketplaceService, type BuyerOrderDto } from '@/lib/services/marketplace.service'
 import { useBuyerAuthStore } from '@/store/buyerAuth.store'
@@ -46,6 +46,12 @@ export default function HesabimPage() {
 
   const initials = `${buyer.firstName?.[0] ?? ''}${buyer.lastName?.[0] ?? ''}`.toUpperCase()
   const recentOrders = [...orders].slice(0, 3)
+  const totalSpent = orders.filter(o => o.status !== 'Cancelled').reduce((s, o) => s + (o.totalAmount ?? 0), 0)
+  const deliveredCount = orders.filter(o => o.status === 'Delivered').length
+  const thisMonthISO = new Date().toISOString().slice(0, 7)
+  const thisMonthSpent = orders
+    .filter(o => o.status !== 'Cancelled' && o.createdAt?.slice(0, 7) === thisMonthISO)
+    .reduce((s, o) => s + (o.totalAmount ?? 0), 0)
 
   const handleLogout = () => {
     logout()
@@ -83,13 +89,20 @@ export default function HesabimPage() {
         </div>
 
         {/* Quick stats */}
-        <div className="md:col-span-2 grid grid-cols-3 gap-4">
+        <div className="md:col-span-2 grid grid-cols-2 gap-3">
           <Link href="/hesabim/siparisler" className="premium-card p-4 flex flex-col items-center justify-center text-center hover:border-primary/40 transition-all group">
             <ShoppingBag className="w-6 h-6 text-blue-400 mb-2 group-hover:scale-110 transition-transform" />
             <p className="text-2xl font-black text-foreground">
               {loadingOrders ? '—' : orders.length}
             </p>
-            <p className="text-xs text-slate-400 mt-0.5">Sipariş</p>
+            <p className="text-xs text-slate-400 mt-0.5">Toplam Sipariş</p>
+          </Link>
+          <Link href="/hesabim/siparisler" className="premium-card p-4 flex flex-col items-center justify-center text-center hover:border-primary/40 transition-all group">
+            <Star className="w-6 h-6 text-amber-400 mb-2 group-hover:scale-110 transition-transform" />
+            <p className="text-2xl font-black text-foreground">
+              {loadingOrders ? '—' : deliveredCount}
+            </p>
+            <p className="text-xs text-slate-400 mt-0.5">Teslim Edildi</p>
           </Link>
           <Link href="/hesabim/favoriler" className="premium-card p-4 flex flex-col items-center justify-center text-center hover:border-primary/40 transition-all group">
             <Heart className="w-6 h-6 text-pink-400 mb-2 group-hover:scale-110 transition-transform" />
@@ -97,11 +110,16 @@ export default function HesabimPage() {
             <p className="text-xs text-slate-400 mt-0.5">Favori</p>
           </Link>
           <div className="premium-card p-4 flex flex-col items-center justify-center text-center">
-            <Star className="w-6 h-6 text-amber-400 mb-2" />
-            <p className="text-2xl font-black text-foreground">
-              {loadingOrders ? '—' : orders.filter(o => o.status === 'Delivered').length}
+            <TrendingUp className="w-6 h-6 text-emerald-400 mb-2" />
+            <p className="text-lg font-black text-emerald-400 font-mono">
+              {loadingOrders ? '—' : `₺${totalSpent.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}`}
             </p>
-            <p className="text-xs text-slate-400 mt-0.5">Teslim</p>
+            <p className="text-xs text-slate-400 mt-0.5">Toplam Harcama</p>
+            {!loadingOrders && thisMonthSpent > 0 && (
+              <p className="text-[10px] text-slate-500 mt-1">
+                Bu ay: ₺{thisMonthSpent.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}
+              </p>
+            )}
           </div>
         </div>
       </div>
