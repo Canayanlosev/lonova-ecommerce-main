@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import {
   Truck, Package, CheckCircle2, RotateCcw, Clock, Search,
   Settings, Plus, Trash2, Edit2, Check, X, RefreshCw, Download,
-  MapPin
+  MapPin, AlertTriangle, Filter
 } from "lucide-react";
 import { shippingService } from "@/lib/services/shipping.service";
 import { useToast } from "@/store/ui.store";
@@ -29,6 +29,7 @@ export default function ShippingPage() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
   const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState<string>('all')
 
   // Methods state
   const [methods, setMethods] = useState<ShippingMethod[]>([])
@@ -90,16 +91,30 @@ export default function ShippingPage() {
     returned: shipments.filter(s => s.status === 'Returned').length,
   }), [shipments])
 
+  // Late shipments: past estimated delivery date, not yet delivered/returned
+  const lateShipments = useMemo(() => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    return shipments.filter(s =>
+      s.estimatedDeliveryDate &&
+      new Date(s.estimatedDeliveryDate) < today &&
+      s.status !== 'Delivered' &&
+      s.status !== 'Returned'
+    )
+  }, [shipments])
+
   // Filtered shipments
   const filtered = useMemo(() => {
-    if (!search.trim()) return shipments
+    let result = shipments
+    if (statusFilter !== 'all') result = result.filter(s => s.status === statusFilter)
+    if (!search.trim()) return result
     const q = search.toLowerCase()
-    return shipments.filter(s =>
+    return result.filter(s =>
       s.trackingNumber?.toLowerCase().includes(q) ||
       s.orderId?.toLowerCase().includes(q) ||
       s.status?.toLowerCase().includes(q)
     )
-  }, [shipments, search])
+  }, [shipments, search, statusFilter])
 
   // CSV export
   const handleExport = () => {
@@ -192,6 +207,34 @@ export default function ShippingPage() {
         <StatCard icon={<CheckCircle2 className="w-4 h-4 text-emerald-400" />} label="Teslim Edildi" value={stats.delivered} color="bg-emerald-500/10" />
       </div>
 
+      {/* Late delivery alert */}
+      {!loading && lateShipments.length > 0 && (
+        <div className="flex items-start gap-3 p-4 rounded-xl border border-red-500/20 bg-red-500/5 animate-fade-in">
+          <AlertTriangle className="w-4.5 h-4.5 text-red-400 shrink-0 mt-0.5" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-red-400">
+              {lateShipments.length} kargo tahmini teslimat tarihini geçti
+            </p>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {lateShipments.slice(0, 5).map(s => (
+                <span key={s.id} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-red-500/10 border border-red-500/20 text-xs font-mono text-red-300">
+                  {s.trackingNumber || `#${s.orderId?.slice(0, 8).toUpperCase()}`}
+                </span>
+              ))}
+              {lateShipments.length > 5 && (
+                <span className="text-xs text-slate-500 self-center">+{lateShipments.length - 5} daha</span>
+              )}
+            </div>
+          </div>
+          <button
+            onClick={() => setStatusFilter('InTransit')}
+            className="text-xs font-bold text-red-400 hover:text-red-300 shrink-0 underline underline-offset-2 transition-colors"
+          >
+            Filtrele
+          </button>
+        </div>
+      )}
+
       {/* Tabs */}
       <div className="flex gap-1 p-1 bg-slate-950/20 dark:bg-slate-900/60 border border-border/85 rounded-xl w-fit">
         <button
@@ -219,9 +262,9 @@ export default function ShippingPage() {
 
       {tab === 'shipments' && (
         <div className="premium-card overflow-hidden">
-          {/* Search bar */}
-          <div className="p-4 border-b border-border bg-slate-950/20 dark:bg-slate-900/40">
-            <div className="relative max-w-sm">
+          {/* Search + filter bar */}
+          <div className="p-4 border-b border-border bg-slate-950/20 dark:bg-slate-900/40 flex flex-wrap items-center gap-3">
+            <div className="relative flex-1 min-w-[200px] max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type="text"
@@ -230,6 +273,24 @@ export default function ShippingPage() {
                 placeholder="Takip no veya sipariş ID ara..."
                 className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-950/30 border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
               />
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Filter className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+              <div className="flex rounded-lg border border-border/80 p-0.5 bg-background text-xs">
+                {([['all', 'Tümü'], ['Pending', 'Beklemede'], ['Shipped', 'Gönderildi'], ['InTransit', 'Yolda'], ['Delivered', 'Teslim']] as const).map(([k, l]) => (
+                  <button
+                    key={k}
+                    onClick={() => setStatusFilter(k)}
+                    className={`px-2.5 py-1 rounded-md text-xs font-semibold whitespace-nowrap transition-all ${
+                      statusFilter === k
+                        ? 'bg-surface text-primary border border-border/40 shadow-sm'
+                        : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    {l}{k !== 'all' ? ` (${shipments.filter(s => s.status === k).length})` : ` (${shipments.length})`}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -268,12 +329,18 @@ export default function ShippingPage() {
                 ) : (
                   filtered.map((s) => {
                     const sc = STATUS_CONFIG[s.status] ?? { label: s.status, color: 'bg-slate-700 text-slate-300' }
+                    const isLate = s.estimatedDeliveryDate &&
+                      new Date(s.estimatedDeliveryDate) < new Date() &&
+                      s.status !== 'Delivered' && s.status !== 'Returned'
                     return (
-                      <tr key={s.id} className="hover:bg-primary/5 hover:border-primary/10 transition-colors">
+                      <tr key={s.id} className={`hover:bg-primary/5 transition-colors ${isLate ? 'bg-red-500/5 border-l-2 border-l-red-500/40' : ''}`}>
                         <td className="px-4 py-3">
-                          <span className="font-mono text-xs text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">
-                            {s.trackingNumber || '—'}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            {isLate && <AlertTriangle className="w-3 h-3 text-red-400 shrink-0" aria-label="Teslimat gecikmeli" />}
+                            <span className="font-mono text-xs text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">
+                              {s.trackingNumber || '—'}
+                            </span>
+                          </div>
                         </td>
                         <td className="px-4 py-3 font-mono text-xs text-slate-400 hidden md:table-cell">
                           #{s.orderId?.slice(0, 8).toUpperCase()}
@@ -281,8 +348,11 @@ export default function ShippingPage() {
                         <td className="px-4 py-3 text-slate-400 text-xs hidden lg:table-cell">
                           {s.shippedDate ? new Date(s.shippedDate).toLocaleDateString('tr-TR') : '—'}
                         </td>
-                        <td className="px-4 py-3 text-slate-400 text-xs hidden md:table-cell">
-                          {s.estimatedDeliveryDate ? new Date(s.estimatedDeliveryDate).toLocaleDateString('tr-TR') : '—'}
+                        <td className="px-4 py-3 text-xs hidden md:table-cell">
+                          <span className={isLate ? 'text-red-400 font-semibold' : 'text-slate-400'}>
+                            {s.estimatedDeliveryDate ? new Date(s.estimatedDeliveryDate).toLocaleDateString('tr-TR') : '—'}
+                            {isLate && ' ⚠'}
+                          </span>
                         </td>
                         <td className="px-4 py-3">
                           <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${sc.color}`}>
