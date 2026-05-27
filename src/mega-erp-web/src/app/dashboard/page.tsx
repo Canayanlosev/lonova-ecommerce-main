@@ -116,10 +116,17 @@ export default function DashboardPage() {
   const [todayTasks, setTodayTasks] = useState<DashTask[]>([])
   const [overdueTasks, setOverdueTasks] = useState<DashTask[]>([])
 
+  // Cross-module stats from localStorage
+  const [pendingReturns, setPendingReturns] = useState(0)
+  const [activeQuotes, setActiveQuotes] = useState(0)
+  const [activeQuotesValue, setActiveQuotesValue] = useState(0)
+  const [monthlyExpense, setMonthlyExpense] = useState(0)
+  const [unpaidSupplier, setUnpaidSupplier] = useState(0)
+
   useEffect(() => {
     const saved = typeof window !== 'undefined' ? Number(localStorage.getItem('monthly-target')) || 0 : 0
     setMonthlyTarget(saved)
-    // Load tasks from localStorage
+    // Load tasks
     try {
       const raw = typeof window !== 'undefined' ? localStorage.getItem('crm-gorevler') : null
       if (raw) {
@@ -127,6 +134,46 @@ export default function DashboardPage() {
         const today = new Date().toISOString().slice(0, 10)
         setTodayTasks(all.filter(t => !t.completed && t.dueDate === today))
         setOverdueTasks(all.filter(t => !t.completed && t.dueDate && t.dueDate < today))
+      }
+    } catch {}
+    // Load returns
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem('iade-requests') : null
+      if (raw) {
+        const all = JSON.parse(raw) as Array<{ status: string }>
+        setPendingReturns(all.filter(r => r.status === 'beklemede' || r.status === 'inceleniyor').length)
+      }
+    } catch {}
+    // Load quotes
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem('crm-teklifler') : null
+      if (raw) {
+        const all = JSON.parse(raw) as Array<{ status: string; items: Array<{ quantity: number; unitPrice: number; discountPercent: number }>; taxRate: number }>
+        const active = all.filter(q => q.status === 'gönderildi' || q.status === 'görüldü')
+        setActiveQuotes(active.length)
+        setActiveQuotesValue(active.reduce((s, q) => {
+          const sub = q.items.reduce((is, i) => is + i.quantity * i.unitPrice * (1 - i.discountPercent / 100), 0)
+          return s + sub * (1 + q.taxRate / 100)
+        }, 0))
+      }
+    } catch {}
+    // Load expenses (current month)
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem('business-expenses') : null
+      const monthKey = new Date().toISOString().slice(0, 7)
+      if (raw) {
+        const all = JSON.parse(raw) as Array<{ date: string; amount: number }>
+        setMonthlyExpense(all.filter(e => e.date.startsWith(monthKey)).reduce((s, e) => s + e.amount, 0))
+      }
+    } catch {}
+    // Load supplier unpaid
+    try {
+      const rawO = typeof window !== 'undefined' ? localStorage.getItem('tedarik-purchase-orders') : null
+      if (rawO) {
+        const all = JSON.parse(rawO) as Array<{ isPaid: boolean; status: string; items: Array<{ quantity: number; unitCost: number }> }>
+        const unpaid = all.filter(o => !o.isPaid && o.status !== 'iptal')
+          .reduce((s, o) => s + o.items.reduce((is, i) => is + i.quantity * i.unitCost, 0), 0)
+        setUnpaidSupplier(unpaid)
       }
     } catch {}
   }, [])
@@ -933,6 +980,48 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
+
+      {/* ── Platform Modül Özeti ───────────────────────────────────────── */}
+      {(pendingReturns > 0 || activeQuotes > 0 || monthlyExpense > 0 || unpaidSupplier > 0) && (
+        <div className="premium-card p-5 border border-border/80 bg-slate-900/40">
+          <h3 className="text-sm font-black text-foreground uppercase tracking-wider flex items-center gap-2 mb-4">
+            <div className="w-6 h-6 rounded-lg bg-violet-500/10 flex items-center justify-center">
+              <Store className="w-3.5 h-3.5 text-violet-400" />
+            </div>
+            Platform Özeti
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {pendingReturns > 0 && (
+              <Link href="/dashboard/iadeler" className="p-3 rounded-xl bg-amber-500/8 border border-amber-500/20 hover:border-amber-500/40 transition-all block">
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Bekl. İadeler</p>
+                <p className="text-xl font-black text-amber-400 font-mono">{pendingReturns}</p>
+                <p className="text-[10px] text-amber-400/60 mt-0.5">yanıt bekliyor</p>
+              </Link>
+            )}
+            {activeQuotes > 0 && (
+              <Link href="/dashboard/teklifler" className="p-3 rounded-xl bg-primary/8 border border-primary/20 hover:border-primary/40 transition-all block">
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Açık Teklifler</p>
+                <p className="text-xl font-black text-primary font-mono">{activeQuotes}</p>
+                <p className="text-[10px] text-primary/60 mt-0.5 font-mono">₺{Math.round(activeQuotesValue / 1000)}k bekliyor</p>
+              </Link>
+            )}
+            {unpaidSupplier > 0 && (
+              <Link href="/dashboard/tedarik" className="p-3 rounded-xl bg-red-500/8 border border-red-500/20 hover:border-red-500/40 transition-all block">
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Tedarikçi Borcu</p>
+                <p className="text-sm font-black text-red-400 font-mono">₺{Math.round(unpaidSupplier).toLocaleString('tr-TR')}</p>
+                <p className="text-[10px] text-red-400/60 mt-0.5">ödenmemiş</p>
+              </Link>
+            )}
+            {monthlyExpense > 0 && (
+              <Link href="/dashboard/giderler" className="p-3 rounded-xl bg-slate-800/40 border border-border/60 hover:border-border transition-all block">
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Bu Ay Gider</p>
+                <p className="text-sm font-black text-foreground font-mono">₺{Math.round(monthlyExpense).toLocaleString('tr-TR')}</p>
+                <p className="text-[10px] text-slate-500 mt-0.5">toplam</p>
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* ── Bugünün Görevleri ───────────────────────────────────────────── */}
       <div className="premium-card p-5 border border-border/80 bg-slate-900/40">
