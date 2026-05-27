@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {
   TrendingUp, TrendingDown, ShoppingBag, DollarSign, Package,
   AlertTriangle, BookOpen, Plus, ArrowRight, CheckCircle2,
-  Clock, Warehouse, Store, Target, Edit3, Check, X, Users
+  Clock, Warehouse, Store, Target, Edit3, Check, X, Users, ListTodo
 } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
@@ -111,9 +111,24 @@ export default function DashboardPage() {
   const [targetInput, setTargetInput] = useState('')
   const [editingTarget, setEditingTarget] = useState(false)
 
+  // Today's tasks from localStorage
+  interface DashTask { id: string; title: string; priority: string; dueDate: string; completed: boolean; category: string }
+  const [todayTasks, setTodayTasks] = useState<DashTask[]>([])
+  const [overdueTasks, setOverdueTasks] = useState<DashTask[]>([])
+
   useEffect(() => {
     const saved = typeof window !== 'undefined' ? Number(localStorage.getItem('monthly-target')) || 0 : 0
     setMonthlyTarget(saved)
+    // Load tasks from localStorage
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem('crm-gorevler') : null
+      if (raw) {
+        const all = JSON.parse(raw) as DashTask[]
+        const today = new Date().toISOString().slice(0, 10)
+        setTodayTasks(all.filter(t => !t.completed && t.dueDate === today))
+        setOverdueTasks(all.filter(t => !t.completed && t.dueDate && t.dueDate < today))
+      }
+    } catch {}
   }, [])
 
   useEffect(() => {
@@ -915,6 +930,85 @@ export default function DashboardPage() {
                 )
               })
             }
+          </div>
+        )}
+      </div>
+
+      {/* ── Bugünün Görevleri ───────────────────────────────────────────── */}
+      <div className="premium-card p-5 border border-border/80 bg-slate-900/40">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-black text-foreground uppercase tracking-wider flex items-center gap-2">
+            <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center">
+              <ListTodo className="w-3.5 h-3.5 text-primary" />
+            </div>
+            Bugünün Görevleri
+            {todayTasks.length > 0 && (
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-black border border-primary/20">
+                {todayTasks.length}
+              </span>
+            )}
+          </h3>
+          <Link href="/dashboard/gorevler" className="text-xs text-primary hover:text-primary/80 font-bold flex items-center gap-1">
+            Tümünü Gör <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        {/* Overdue alert */}
+        {overdueTasks.length > 0 && (
+          <div className="flex items-center gap-2 p-2.5 rounded-xl bg-red-500/8 border border-red-500/20 mb-3">
+            <AlertTriangle className="w-3.5 h-3.5 text-red-400 shrink-0" />
+            <p className="text-xs text-red-400 font-bold">
+              {overdueTasks.length} gecikmiş görev — hemen ilgilenin
+            </p>
+            <Link href="/dashboard/gorevler" className="ml-auto text-[10px] text-red-400 underline font-black">Gör</Link>
+          </div>
+        )}
+
+        {todayTasks.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-8 text-slate-500 gap-2">
+            <CheckCircle2 className="w-8 h-8 text-emerald-500/40" />
+            <p className="text-xs font-bold text-slate-500">
+              {overdueTasks.length === 0 ? 'Bugün için görev yok 🎉' : 'Bugüne atanmış görev yok'}
+            </p>
+            <Link href="/dashboard/gorevler" className="text-[10px] text-primary font-bold hover:underline">Görev Ekle →</Link>
+          </div>
+        ) : (
+          <div className="space-y-1.5">
+            {todayTasks.slice(0, 6).map((task) => {
+              const dotCls =
+                task.priority === 'acil' ? 'bg-red-400' :
+                task.priority === 'yüksek' ? 'bg-amber-400' :
+                task.priority === 'normal' ? 'bg-primary' : 'bg-slate-500'
+              const badgeCls =
+                task.priority === 'acil' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
+                task.priority === 'yüksek' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                task.priority === 'normal' ? 'bg-primary/10 text-primary border-primary/20' :
+                'bg-slate-700/40 text-slate-400 border-slate-600/20'
+              const priorityLabel =
+                task.priority === 'acil' ? 'Acil' :
+                task.priority === 'yüksek' ? 'Yüksek' :
+                task.priority === 'normal' ? 'Normal' : 'Düşük'
+              return (
+                <Link
+                  key={task.id}
+                  href="/dashboard/gorevler"
+                  className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-800/20 border border-transparent hover:border-border/30 transition-all duration-200 group"
+                >
+                  <div className={`w-2 h-2 rounded-full shrink-0 ${dotCls}`} />
+                  <p className="text-xs font-semibold text-foreground truncate flex-1 group-hover:text-primary transition-colors">
+                    {task.title}
+                  </p>
+                  <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-black border shrink-0 ${badgeCls}`}>
+                    {priorityLabel}
+                  </span>
+                </Link>
+              )
+            })}
+            {todayTasks.length > 6 && (
+              <Link href="/dashboard/gorevler" className="block text-center text-[10px] text-slate-500 hover:text-primary font-bold py-1.5 transition-colors">
+                +{todayTasks.length - 6} görev daha
+              </Link>
+            )}
           </div>
         )}
       </div>
