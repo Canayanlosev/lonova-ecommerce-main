@@ -11,7 +11,8 @@
       "Bash(grep -E \"^/home.*\\\\.\\(tsx|ts\\)$\")",
       "Bash(NEXT_TELEMETRY_DISABLED=1 npm run build)",
       "Bash(node -e ' *)",
-      "Bash(grep -o \".\\\\{0,60\\\\}location.\\\\{0,60\\\\}\" /home/canayan/Downloads/lonova-ecommerce-main-main/src/mega-erp-web/.next/server/chunks/ssr/02h~_07r_6cr._.js)"
+      "Bash(grep -o \".\\\\{0,60\\\\}location.\\\\{0,60\\\\}\" /home/canayan/Downloads/lonova-ecommerce-main-main/src/mega-erp-web/.next/server/chunks/ssr/02h~_07r_6cr._.js)",
+      "Bash(./node_modules/.bin/tsc --noEmit)"
     ]
   }
 }
