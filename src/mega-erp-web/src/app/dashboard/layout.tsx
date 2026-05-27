@@ -6,7 +6,7 @@ import {
   Package, Truck, Settings, LogOut, Bell, Menu, X, Receipt,
   Store, Warehouse, Layout, CheckSquare, BarChart2, ShoppingBag, Tag, Star, Layers, Globe,
   AlertTriangle, ShoppingBag as OrderIcon, Search, Zap, ArrowRight, Command, FileBarChart, UserCheck,
-  ListTodo
+  ListTodo, Megaphone
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -111,6 +111,7 @@ const navItems = [
   { icon: Tag, label: "Kuponlar", href: "/dashboard/coupons" },
   { icon: Star, label: "Yorumlar", href: "/dashboard/reviews" },
   { icon: ListTodo, label: "Görevler", href: "/dashboard/gorevler" },
+  { icon: Megaphone, label: "Pazarlama", href: "/dashboard/pazarlama" },
   { icon: CheckSquare, label: "Kurulum Rehberi", href: "/dashboard/setup", badge: true },
 ];
 
@@ -177,6 +178,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { label: 'Müşteriler', desc: 'CRM — müşteri analizi ve segmentasyon', href: '/dashboard/musteriler', icon: UserCheck, group: 'Sayfalar' },
     { label: 'Uyarı Merkezi', desc: 'Tüm modüllerin kritik uyarıları', href: '/dashboard/bildirimler', icon: Bell, group: 'Sayfalar' },
     { label: 'Görevler', desc: 'Günlük görevler ve hatırlatıcılar', href: '/dashboard/gorevler', icon: ListTodo, group: 'Sayfalar' },
+    { label: 'Pazarlama', desc: 'SMS, e-posta ve bildirim kampanyaları', href: '/dashboard/pazarlama', icon: Megaphone, group: 'Sayfalar' },
     { label: 'Kurulum Rehberi', desc: '5 adımlı kurulum sihirbazı', href: '/dashboard/setup', icon: CheckSquare, group: 'Sayfalar' },
     { label: 'Marketplace\'e Git', desc: 'Alışveriş sayfasını aç', href: '/', icon: Globe, group: 'Dış Bağlantılar' },
   ], [])
