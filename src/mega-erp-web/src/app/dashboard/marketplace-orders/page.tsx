@@ -3,8 +3,8 @@
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import {
   Truck, CheckCircle, Clock, XCircle, Package,
-  RefreshCw, X, AlertCircle, Search, ChevronDown, Download, ExternalLink,
-  TrendingUp, ShoppingBag
+  RefreshCw, X, AlertCircle, AlertTriangle, Search, ChevronDown, Download, ExternalLink,
+  TrendingUp, ShoppingBag, CheckSquare, Square, Layers, Loader2 as SpinnerIcon
 } from 'lucide-react'
 import Link from 'next/link'
 import api from '@/lib/api'
@@ -70,6 +70,67 @@ export default function MarketplaceOrdersPage() {
 
   // Action states
   const [actionId, setActionId] = useState<string | null>(null)
+
+  // ── Bulk selection ───────────────────────────────────────────────────────
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [bulkProcessing, setBulkProcessing] = useState(false)
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+  }
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filtered.length) {
+      setSelectedIds(new Set())
+    } else {
+      setSelectedIds(new Set(filtered.map(o => o.id)))
+    }
+  }
+
+  const handleBulkAction = async (newStatus: 'Confirmed' | 'Processing' | 'Cancelled') => {
+    if (selectedIds.size === 0) return
+    setBulkProcessing(true)
+    const endpoint: Record<string, string> = {
+      Confirmed: 'confirm',
+      Processing: 'process',
+      Cancelled: 'cancel',
+    }
+    const ep = endpoint[newStatus]
+    try {
+      await Promise.allSettled(
+        [...selectedIds].map(id => api.put(`/api/marketplace/admin/orders/${id}/${ep}`, {}))
+      )
+      setSelectedIds(new Set())
+      await load(page)
+    } catch { /* handled per-request */ }
+    finally { setBulkProcessing(false) }
+  }
+
+  const handleBulkExportAddresses = () => {
+    const selected = filtered.filter(o => selectedIds.has(o.id))
+    const rows = [
+      ['Sipariş ID', 'Alıcı', 'Telefon', 'Şehir', 'İlçe', 'Adres', 'Tutar'],
+      ...selected.map(o => [
+        o.id.slice(0, 8).toUpperCase(),
+        o.recipientName,
+        o.phone ?? '',
+        o.city ?? '',
+        o.district ?? '',
+        o.addressLine ?? '',
+        `₺${o.totalAmount.toFixed(2)}`,
+      ])
+    ]
+    const csv = rows.map(r => r.map(v => `"${v.replace(/"/g, '""')}"`).join(',')).join('\n')
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a'); a.href = url
+    a.download = `adresler-${new Date().toISOString().slice(0, 10)}.csv`; a.click()
+    URL.revokeObjectURL(url)
+  }
 
   const load = useCallback(async (p = 1, st = statusFilter) => {
     setLoading(true)
@@ -168,6 +229,15 @@ export default function MarketplaceOrdersPage() {
     }
   }, [orders, filtered])
 
+  // ── Stale orders: Pending > 24h ──────────────────────────────────────────
+  const staleOrders = useMemo(() => {
+    const threshold = new Date()
+    threshold.setHours(threshold.getHours() - 24)
+    return orders
+      .filter(o => o.status === 'Pending' && new Date(o.createdAt) < threshold)
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+  }, [orders])
+
   const handleExportCsv = () => {
     const rows = [
       ['Sipariş ID', 'Alıcı', 'Şehir', 'Tutar (₺)', 'Durum', 'Ödeme', 'Ödeme Yöntemi', 'Ürün Adedi', 'Takip No', 'Tarih'],
@@ -260,6 +330,44 @@ export default function MarketplaceOrdersPage() {
         </div>
       )}
 
+      {/* Stale orders warning */}
+      {!loading && staleOrders.length > 0 && (
+        <div className="premium-card p-4 border-l-4 border-amber-500 bg-amber-500/5">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" aria-label="Uyarı" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-black text-amber-300">
+                {staleOrders.length} sipariş 24+ saattir işlem bekliyor
+              </p>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {staleOrders.slice(0, 5).map(o => {
+                  const hoursWaiting = Math.floor((Date.now() - new Date(o.createdAt).getTime()) / 3600000)
+                  return (
+                    <button
+                      key={o.id}
+                      onClick={() => setDetailOrder(o)}
+                      className="flex items-center gap-1.5 text-[10px] font-black px-2 py-1 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 rounded-lg text-amber-300 transition-colors"
+                    >
+                      <Clock className="w-3 h-3" />
+                      #{o.id.slice(0, 6).toUpperCase()} — {hoursWaiting}s önce
+                    </button>
+                  )
+                })}
+                {staleOrders.length > 5 && (
+                  <span className="text-[10px] text-amber-500 font-bold py-1">+{staleOrders.length - 5} daha</span>
+                )}
+              </div>
+            </div>
+            <button
+              onClick={() => { setStatusFilter('Pending'); setPage(1) }}
+              className="shrink-0 text-[10px] font-black text-amber-300 hover:text-amber-200 underline whitespace-nowrap"
+            >
+              Hepsini Gör
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Filters */}
       <div className="flex gap-3 flex-wrap">
         {/* Search */}
@@ -310,12 +418,61 @@ export default function MarketplaceOrdersPage() {
         </div>
       )}
 
+      {/* Bulk action bar */}
+      {selectedIds.size > 0 && (
+        <div className="flex items-center gap-3 p-4 rounded-xl border border-primary/20 bg-primary/5 flex-wrap">
+          <span className="text-xs font-black text-primary">{selectedIds.size} sipariş seçildi</span>
+          <div className="flex items-center gap-2 ml-auto flex-wrap">
+            <button
+              onClick={() => handleBulkAction('Confirmed')}
+              disabled={bulkProcessing}
+              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-all font-bold disabled:opacity-50"
+            >
+              {bulkProcessing ? <SpinnerIcon className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3" />}
+              Onayla
+            </button>
+            <button
+              onClick={() => handleBulkAction('Processing')}
+              disabled={bulkProcessing}
+              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl border border-primary/20 bg-primary/10 text-primary hover:bg-primary/20 transition-all font-bold disabled:opacity-50"
+            >
+              {bulkProcessing ? <SpinnerIcon className="w-3 h-3 animate-spin" /> : <Layers className="w-3 h-3" />}
+              İşleme Al
+            </button>
+            <button
+              onClick={handleBulkExportAddresses}
+              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl border border-border/80 text-slate-400 hover:text-foreground hover:border-border transition-all font-bold"
+            >
+              <Download className="w-3 h-3" /> Adresleri İndir
+            </button>
+            <button
+              onClick={() => setSelectedIds(new Set())}
+              className="p-2 rounded-xl border border-border/80 text-slate-500 hover:text-foreground transition-all"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Table */}
       <div className="premium-card overflow-hidden border border-border/80 bg-slate-900/40">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border/60 text-xs text-slate-400">
+                <th className="px-4 py-3 w-10">
+                  <button
+                    onClick={toggleSelectAll}
+                    className="text-slate-400 hover:text-primary transition-colors"
+                    title="Tümünü Seç/Kaldır"
+                  >
+                    {selectedIds.size > 0 && selectedIds.size === filtered.length
+                      ? <CheckSquare className="w-4 h-4 text-primary" />
+                      : <Square className="w-4 h-4" />
+                    }
+                  </button>
+                </th>
                 <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Sipariş</th>
                 <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider hidden md:table-cell">Tarih</th>
                 <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Alıcı</th>
@@ -329,7 +486,7 @@ export default function MarketplaceOrdersPage() {
               {loading
                 ? Array.from({ length: 6 }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
-                    {Array.from({ length: 7 }).map((__, j) => (
+                    {Array.from({ length: 8 }).map((__, j) => (
                       <td key={j} className="px-4 py-3"><div className="h-4 bg-slate-800 rounded w-full" /></td>
                     ))}
                   </tr>
@@ -347,13 +504,22 @@ export default function MarketplaceOrdersPage() {
                   const canShip = o.status === 'Processing' || o.status === 'Confirmed' || o.status === 'Pending'
                   const canDeliver = o.status === 'Shipped'
                   const hasRefund = o.refundStatus === 'Requested'
+                  const isSelected = selectedIds.has(o.id)
 
                   return (
                     <tr
                       key={o.id}
-                      className="hover:bg-slate-800/10 transition-colors cursor-pointer"
+                      className={`hover:bg-slate-800/10 transition-colors cursor-pointer ${isSelected ? 'bg-primary/5' : ''}`}
                       onClick={(e) => { if ((e.target as HTMLElement).closest('button,a')) return; setDetailOrder(o) }}
                     >
+                      <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
+                        <button onClick={() => toggleSelect(o.id)} className="text-slate-400 hover:text-primary transition-colors">
+                          {isSelected
+                            ? <CheckSquare className="w-4 h-4 text-primary" />
+                            : <Square className="w-4 h-4" />
+                          }
+                        </button>
+                      </td>
                       <td className="px-4 py-3">
                         <div className="space-y-1">
                           <span className="font-mono text-[10px] text-primary bg-primary/10 px-1.5 py-0.5 rounded border border-primary/20">{o.id.slice(0, 8).toUpperCase()}</span>

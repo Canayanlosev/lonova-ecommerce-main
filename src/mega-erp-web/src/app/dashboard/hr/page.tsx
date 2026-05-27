@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import {
   Users, Building2, CalendarDays, Check, X, Plus, Trash2, Edit2,
-  AlertCircle, DollarSign, Mail, Phone, RefreshCw, FileSpreadsheet, Download, Info,
+  AlertCircle, AlertTriangle, DollarSign, Mail, Phone, RefreshCw, FileSpreadsheet, Download, Info,
   ChevronLeft, ChevronRight, Gift, Award
 } from 'lucide-react'
 import { hrService } from '@/lib/services/hr.service'
@@ -270,6 +270,49 @@ export default function HRPage() {
     }
     return cells
   }, [calendarDate, leaveRequests])
+
+  // ─── Leave balance per employee (Türk İş Kanunu Md. 53) ─────────────────────
+  const leaveBalances = useMemo(() => {
+    const thisYear = new Date().getFullYear()
+    return employees.map(e => {
+      const years = getServiceYears(e.hireDate)
+      // Entitlement: <1yr no right, 1-5yr: 14 days, 5-15yr: 20 days, 15+yr: 26 days
+      const entitlement = years < 1 ? 0 : years < 5 ? 14 : years < 15 ? 20 : 26
+      const usedDays = leaveRequests
+        .filter(r =>
+          r.employeeId === e.id &&
+          r.status === 'Approved' &&
+          new Date(r.startDate).getFullYear() === thisYear
+        )
+        .reduce((s, r) => {
+          const start = new Date(r.startDate)
+          const end = new Date(r.endDate)
+          const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
+          return s + Math.max(0, days)
+        }, 0)
+      const remaining = Math.max(0, entitlement - usedDays)
+      const pct = entitlement > 0 ? Math.round((usedDays / entitlement) * 100) : 0
+      return { employee: e, entitlement, usedDays, remaining, pct, years }
+    }).sort((a, b) => a.remaining - b.remaining)
+  }, [employees, leaveRequests])
+
+  const lowBalanceCount = leaveBalances.filter(b => b.remaining <= 3 && b.entitlement > 0).length
+
+  // ─── Kıdem Tazminatı (Severance pay — Türk İş Kanunu Md. 14) ────────────────
+  // 2025 kıdem tazminatı tavanı (H1): ₺47,085.30 (her yıl için 30 günlük brüt maaş, tavan ile sınırlı)
+  const KIDEM_TAVANI = 47_085.30
+  const kidemRows = useMemo(() => {
+    return employees.map(e => {
+      const years = getServiceYears(e.hireDate)
+      if (years < 1) return { employee: e, years, kidemTazminati: 0, eligible: false }
+      const gunlukBrut = e.salary / 30
+      const yillikHak = Math.min(gunlukBrut * 30, KIDEM_TAVANI)
+      const toplamKidem = Math.round(yillikHak * years)
+      return { employee: e, years, kidemTazminati: toplamKidem, eligible: true }
+    }).sort((a, b) => b.kidemTazminati - a.kidemTazminati)
+  }, [employees])
+
+  const toplamKidem = kidemRows.reduce((s, r) => s + r.kidemTazminati, 0)
 
   // ─── Payroll computation ───────────────────────────────────────────────────
   const bordroRows: BordroRow[] = employees.map(e => {
@@ -611,6 +654,113 @@ export default function HRPage() {
       {/* ═══ Leave Tab ══════════════════════════════════════════════════════ */}
       {tab === 'leave' && (
         <div className="space-y-6">
+
+          {/* ── İzin Bakiyesi Özeti ── */}
+          {lowBalanceCount > 0 && (
+            <div className="flex items-start gap-3 p-4 rounded-xl border border-amber-500/20 bg-amber-500/5 text-amber-400 text-xs leading-relaxed">
+              <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+              <span>
+                <strong className="font-bold">{lowBalanceCount} çalışanın</strong> bu yıl kullanabileceği izin günü{' '}
+                <strong className="font-bold">3 güne eşit veya daha az.</strong> Yıllık izin haklarının zamanında kullandırılması İş Kanunu Md. 53 gereğidir.
+              </span>
+            </div>
+          )}
+
+          {/* ── İzin Bakiyesi Tablosu ── */}
+          {leaveBalances.length > 0 && (
+            <div className="premium-card overflow-hidden">
+              <div className="px-6 py-4 border-b border-border/80 bg-slate-900/40 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-black text-foreground uppercase tracking-wider">İzin Bakiyeleri</p>
+                  <p className="text-[11px] text-slate-500 font-semibold mt-0.5">
+                    {new Date().getFullYear()} yılı · İş Kanunu Md. 53 hak tablosu
+                  </p>
+                </div>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border/70 text-[10px] text-slate-400 font-black uppercase tracking-wider bg-slate-950/20">
+                      <th className="text-left px-6 py-4 font-bold">Çalışan</th>
+                      <th className="text-left px-6 py-4 font-bold hidden md:table-cell">Hizmet</th>
+                      <th className="text-center px-4 py-4 font-bold">Hak</th>
+                      <th className="text-center px-4 py-4 font-bold">Kullanılan</th>
+                      <th className="text-center px-4 py-4 font-bold">Kalan</th>
+                      <th className="text-left px-6 py-4 font-bold hidden lg:table-cell">Kullanım</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/40">
+                    {leaveBalances.map(({ employee: e, entitlement, usedDays, remaining, pct, years }) => {
+                      const isLow = remaining <= 3 && entitlement > 0
+                      const isVeryLow = remaining === 0 && entitlement > 0
+                      return (
+                        <tr
+                          key={e.id}
+                          className={`transition-colors ${
+                            isVeryLow ? 'bg-red-500/5 hover:bg-red-500/8' :
+                            isLow     ? 'bg-amber-500/5 hover:bg-amber-500/8' :
+                                        'hover:bg-slate-800/30'
+                          }`}
+                        >
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/15 shrink-0">
+                                <span className="text-[10px] font-black text-primary">
+                                  {e.firstName[0]}{e.lastName[0]}
+                                </span>
+                              </div>
+                              <div>
+                                <p className="font-bold text-foreground text-xs">{e.firstName} {e.lastName}</p>
+                                <p className="text-[10px] text-slate-500 font-semibold">{e.departmentName ?? '—'}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 hidden md:table-cell">
+                            <span className="text-xs font-semibold text-slate-400 font-mono">{years} yıl</span>
+                          </td>
+                          <td className="px-4 py-4 text-center">
+                            <span className="text-xs font-black text-foreground font-mono">
+                              {entitlement > 0 ? `${entitlement}g` : <span className="text-slate-600">—</span>}
+                            </span>
+                          </td>
+                          <td className="px-4 py-4 text-center">
+                            <span className="text-xs font-bold text-slate-400 font-mono">{usedDays}g</span>
+                          </td>
+                          <td className="px-4 py-4 text-center">
+                            <span className={`text-xs font-black font-mono ${
+                              isVeryLow ? 'text-red-400' : isLow ? 'text-amber-400' : 'text-emerald-400'
+                            }`}>
+                              {entitlement > 0 ? `${remaining}g` : <span className="text-slate-600 font-semibold">Hak yok</span>}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 hidden lg:table-cell">
+                            {entitlement > 0 ? (
+                              <div className="flex items-center gap-2.5 min-w-[120px]">
+                                <div className="flex-1 h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                                  <div
+                                    className={`h-full rounded-full transition-all ${
+                                      pct >= 100 ? 'bg-red-500' : pct >= 75 ? 'bg-amber-500' : 'bg-emerald-500'
+                                    }`}
+                                    style={{ width: `${Math.min(100, pct)}%` }}
+                                  />
+                                </div>
+                                <span className="text-[10px] font-bold text-slate-500 w-8 text-right font-mono shrink-0">
+                                  {pct}%
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-[10px] text-slate-600">—</span>
+                            )}
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
           {/* ── Leave Calendar ── */}
           <div className="premium-card p-6">
             <div className="flex items-center justify-between mb-4.5">
@@ -892,6 +1042,83 @@ export default function HRPage() {
               </div>
             )}
           </div>
+
+          {/* ── Kıdem Tazminatı ── */}
+          {employees.length > 0 && (
+            <div className="premium-card overflow-hidden">
+              <div className="px-6 py-4 border-b border-border/80 bg-slate-900/40 flex items-center justify-between flex-wrap gap-3">
+                <div>
+                  <p className="text-sm font-black text-foreground uppercase tracking-wider">Kıdem Tazminatı Karşılığı</p>
+                  <p className="text-[11px] text-slate-500 font-semibold mt-0.5">
+                    İş Kanunu Md. 14 · 2025 tavanı ₺{KIDEM_TAVANI.toLocaleString('tr-TR')} · 1+ yıl hizmet şartı
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Toplam Yükümlülük</p>
+                  <p className="text-lg font-black text-red-400 font-mono">₺{toplamKidem.toLocaleString('tr-TR')}</p>
+                </div>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-border/70 text-[10px] text-slate-400 font-black uppercase tracking-wider bg-slate-950/20">
+                      <th className="text-left px-6 py-4 font-bold">Çalışan</th>
+                      <th className="text-center px-4 py-4 font-bold hidden md:table-cell">Hizmet Yılı</th>
+                      <th className="text-right px-6 py-4 font-bold">Brüt Maaş</th>
+                      <th className="text-right px-6 py-4 font-bold">Kıdem Tazminatı</th>
+                      <th className="text-center px-4 py-4 font-bold hidden lg:table-cell">Durum</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/40">
+                    {kidemRows.map(({ employee: e, years, kidemTazminati, eligible }) => (
+                      <tr key={e.id} className="hover:bg-slate-800/30 transition-colors">
+                        <td className="px-6 py-4">
+                          <p className="font-bold text-foreground">{e.firstName} {e.lastName}</p>
+                          <p className="text-slate-500 text-[10px] font-semibold">{e.departmentName ?? '—'}</p>
+                        </td>
+                        <td className="px-4 py-4 text-center hidden md:table-cell">
+                          <span className="text-slate-400 font-mono font-semibold">{years}y</span>
+                        </td>
+                        <td className="px-6 py-4 text-right font-mono text-slate-400">
+                          ₺{e.salary.toLocaleString('tr-TR')}
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <span className={`font-black font-mono ${eligible ? 'text-foreground' : 'text-slate-600'}`}>
+                            {eligible ? `₺${kidemTazminati.toLocaleString('tr-TR')}` : '—'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4 text-center hidden lg:table-cell">
+                          {eligible ? (
+                            <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                              Hak kazandı
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-slate-800 text-slate-500 border border-border/60">
+                              1 yıl dolmadı
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="border-t-2 border-border/80 bg-slate-950/40">
+                      <td colSpan={3} className="px-6 py-4 font-black text-foreground text-xs">TOPLAM YÜKÜMLÜLÜK</td>
+                      <td className="px-6 py-4 text-right font-black text-red-400 font-mono text-sm">
+                        ₺{toplamKidem.toLocaleString('tr-TR')}
+                      </td>
+                      <td className="hidden lg:table-cell" />
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              <div className="px-6 py-3 border-t border-border/40 bg-slate-950/10">
+                <p className="text-[10px] text-slate-600 font-semibold leading-relaxed">
+                  * Hesaplamalar yaklaşık değerdir. Gerçek kıdem tazminatı; tam kısmi yıllar, fazla mesai, ikramiye ve diğer yan ödemeler dahil edildiğinde değişebilir. Mali müşavirinize danışınız.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

@@ -5,7 +5,7 @@ import {
   LayoutDashboard, ShoppingCart, Users, CreditCard,
   Package, Truck, Settings, LogOut, Bell, Menu, X, Receipt,
   Store, Warehouse, Layout, CheckSquare, BarChart2, ShoppingBag, Tag, Star, Layers, Globe,
-  AlertTriangle, ShoppingBag as OrderIcon, Search, Zap, ArrowRight, Command
+  AlertTriangle, ShoppingBag as OrderIcon, Search, Zap, ArrowRight, Command, FileBarChart, UserCheck
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -102,6 +102,9 @@ const navItems = [
   { icon: Layout, label: "Site Builder", href: "/dashboard/site-builder" },
   { icon: ShoppingBag, label: "Mağaza Siparişleri", href: "/dashboard/marketplace-orders" },
   { icon: BarChart2, label: "Analitik", href: "/dashboard/analytics" },
+  { icon: FileBarChart, label: "Raporlar", href: "/dashboard/raporlar" },
+  { icon: UserCheck, label: "Müşteriler", href: "/dashboard/musteriler" },
+  { icon: Bell, label: "Uyarı Merkezi", href: "/dashboard/bildirimler" },
   { icon: Layers, label: "Kategoriler", href: "/dashboard/categories" },
   { icon: Globe, label: "Katalog", href: "/dashboard/catalog" },
   { icon: Tag, label: "Kuponlar", href: "/dashboard/coupons" },
@@ -168,6 +171,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { label: 'Yorumlar', desc: 'Müşteri yorumları', href: '/dashboard/reviews', icon: Star, group: 'Sayfalar' },
     { label: 'Site Builder', desc: 'Mağaza sayfaları', href: '/dashboard/site-builder', icon: Layout, group: 'Sayfalar' },
     { label: 'Kategoriler', desc: 'Ürün kategorileri', href: '/dashboard/categories', icon: Layers, group: 'Sayfalar' },
+    { label: 'Raporlar', desc: 'Çapraz modül finansal özet raporu', href: '/dashboard/raporlar', icon: FileBarChart, group: 'Sayfalar' },
+    { label: 'Müşteriler', desc: 'CRM — müşteri analizi ve segmentasyon', href: '/dashboard/musteriler', icon: UserCheck, group: 'Sayfalar' },
+    { label: 'Uyarı Merkezi', desc: 'Tüm modüllerin kritik uyarıları', href: '/dashboard/bildirimler', icon: Bell, group: 'Sayfalar' },
     { label: 'Kurulum Rehberi', desc: '5 adımlı kurulum sihirbazı', href: '/dashboard/setup', icon: CheckSquare, group: 'Sayfalar' },
     { label: 'Marketplace\'e Git', desc: 'Alışveriş sayfasını aç', href: '/', icon: Globe, group: 'Dış Bağlantılar' },
   ], [])

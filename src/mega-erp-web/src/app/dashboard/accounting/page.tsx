@@ -8,13 +8,13 @@ import {
 
 import { SkeletonRow } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { CreditCard, BookOpen, RefreshCw, CheckCircle2, AlertTriangle, TrendingUp, Plus, X, Check, Target, Edit3 } from "lucide-react";
+import { CreditCard, BookOpen, RefreshCw, CheckCircle2, AlertTriangle, TrendingUp, Plus, X, Check, Target, Edit3, CalendarDays, Clock, CheckSquare } from "lucide-react";
 import api from "@/lib/api";
 import { ordersService } from "@/lib/services/orders.service";
 import { useToast } from "@/store/ui.store";
 import type { AccountingAccount, JournalEntry } from "@/types/api.types";
 
-type Tab = "accounts" | "journal" | "rapor" | "bütçe";
+type Tab = "accounts" | "journal" | "rapor" | "bütçe" | "takvim";
 
 const BOOKED_STATUSES = ['Paid', 'Shipped', 'Delivered'];
 
@@ -208,6 +208,93 @@ export default function AccountingPage() {
       }))
   }, [entries])
 
+  // ─── SGK / Vergi Takvimi ─────────────────────────────────────────────────────
+  const upcomingDeadlines = useMemo(() => {
+    const today = new Date()
+    const todayISO = today.toISOString().slice(0, 10)
+    const year = today.getFullYear()
+
+    type DeadlineStatus = 'overdue' | 'today' | 'soon' | 'upcoming'
+
+    const items: { title: string; desc: string; dateISO: string; daysLeft: number; category: string; status: DeadlineStatus }[] = []
+
+    const addDeadline = (title: string, desc: string, dateISO: string, category: string) => {
+      const d = new Date(dateISO)
+      const daysLeft = Math.round((d.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+      let status: DeadlineStatus = 'upcoming'
+      if (daysLeft < 0) status = 'overdue'
+      else if (daysLeft === 0) status = 'today'
+      else if (daysLeft <= 7) status = 'soon'
+      items.push({ title, desc, dateISO, daysLeft, category, status })
+    }
+
+    // Monthly recurring deadlines for the current and next 2 months
+    for (let m = 0; m < 3; m++) {
+      const targetDate = new Date(today.getFullYear(), today.getMonth() + m, 1)
+      const y = targetDate.getFullYear()
+      const mo = targetDate.getMonth() + 1
+      const pad = (n: number) => String(n).padStart(2, '0')
+
+      addDeadline(
+        'KDV Beyannamesi',
+        `${y}/${pad(mo)} dönemi KDV beyanname son günü`,
+        `${y}-${pad(mo)}-26`,
+        'KDV'
+      )
+      addDeadline(
+        'Muhtasar Beyanname',
+        `${y}/${pad(mo)} dönemi muhtasar beyanname`,
+        `${y}-${pad(mo)}-23`,
+        'Muhtasar'
+      )
+      addDeadline(
+        'SGK Bildirge',
+        `${y}/${pad(mo)} dönemi SGK aylık bildirge`,
+        `${y}-${pad(mo)}-23`,
+        'SGK'
+      )
+    }
+
+    // Quarterly: Geçici Vergi deadlines (2025)
+    const quarterly = [
+      { title: 'Geçici Vergi (Q1)', desc: `${year} Ocak–Mart dönemi geçici vergi`, dateISO: `${year}-05-17`, category: 'Geçici Vergi' },
+      { title: 'Geçici Vergi (Q2)', desc: `${year} Nisan–Haziran dönemi geçici vergi`, dateISO: `${year}-08-17`, category: 'Geçici Vergi' },
+      { title: 'Geçici Vergi (Q3)', desc: `${year} Temmuz–Eylül dönemi geçici vergi`, dateISO: `${year}-11-17`, category: 'Geçici Vergi' },
+      { title: 'Yıllık Kurumlar Vergisi', desc: `${year} yılı kurumlar vergisi beyannamesi`, dateISO: `${year + 1}-04-30`, category: 'Kurumlar' },
+      { title: 'Yıllık Gelir Vergisi', desc: `${year} yılı gelir vergisi beyannamesi`, dateISO: `${year + 1}-03-31`, category: 'Gelir Vergisi' },
+    ]
+    quarterly.forEach(q => addDeadline(q.title, q.desc, q.dateISO, q.category))
+
+    return items
+      .filter(i => i.daysLeft >= -30) // keep up to 30 days overdue
+      .sort((a, b) => a.dateISO.localeCompare(b.dateISO))
+  }, [])
+
+  const CATEGORY_COLORS: Record<string, string> = {
+    KDV:            'bg-primary/10 text-primary border-primary/20',
+    Muhtasar:       'bg-violet-500/10 text-violet-400 border-violet-500/20',
+    SGK:            'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
+    'Geçici Vergi': 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+    Kurumlar:       'bg-red-500/10 text-red-400 border-red-500/20',
+    'Gelir Vergisi':'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+  }
+
+  // ─── Deadline completion tracking (localStorage) ─────────────────────────
+  const DONE_KEY = 'accounting-done-deadlines'
+  const [doneDeadlines, setDoneDeadlines] = useState<Set<string>>(() => {
+    try { return new Set(JSON.parse(localStorage.getItem(DONE_KEY) ?? '[]') as string[]) }
+    catch { return new Set<string>() }
+  })
+
+  const toggleDone = (key: string) => {
+    setDoneDeadlines(prev => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key); else next.add(key)
+      try { localStorage.setItem(DONE_KEY, JSON.stringify([...next])) } catch { /* */ }
+      return next
+    })
+  }
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-border/30">
@@ -228,7 +315,7 @@ export default function AccountingPage() {
       {/* Tab bar + import button */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="flex flex-wrap gap-1.5 p-1 bg-slate-900/40 border border-border/80 rounded-xl w-fit">
-          {([["accounts", "Hesaplar", CreditCard], ["journal", "Yevmiye", BookOpen], ["rapor", "Kâr-Zarar", TrendingUp], ["bütçe", "Bütçe Takibi", Target]] as const).map(([id, label, Icon]) => (
+          {([["accounts", "Hesaplar", CreditCard], ["journal", "Yevmiye", BookOpen], ["rapor", "Kâr-Zarar", TrendingUp], ["bütçe", "Bütçe Takibi", Target], ["takvim", "Vergi Takvimi", CalendarDays]] as const).map(([id, label, Icon]) => (
             <button
               key={id}
               onClick={() => setTab(id)}
@@ -655,6 +742,116 @@ export default function AccountingPage() {
               )}
             </div>
           )}
+        </div>
+      )}
+
+      {/* ═══ Vergi Takvimi Tab ══════════════════════════════════════════════ */}
+      {tab === "takvim" && (
+        <div className="space-y-6 animate-fade-in">
+          <div className="flex items-start gap-3 p-4 rounded-xl border border-primary/20 bg-primary/5 text-primary text-xs leading-relaxed">
+            <CalendarDays className="w-4 h-4 mt-0.5 shrink-0" />
+            <span>
+              Yaklaşan vergi ve SGK beyan/bildirim tarihleri. Tamamladığınız beyanları işaretleyebilirsiniz.
+              <strong className="font-bold ml-1">Kesin tarihler için vergi dairenizi ve mali müşavirinizi doğrulayın.</strong>
+            </span>
+          </div>
+
+          {/* Stats row */}
+          <div className="grid grid-cols-3 gap-4">
+            {(() => {
+              const overdue = upcomingDeadlines.filter(d => d.status === 'overdue' && !doneDeadlines.has(d.dateISO + d.title)).length
+              const dueSoon = upcomingDeadlines.filter(d => (d.status === 'soon' || d.status === 'today') && !doneDeadlines.has(d.dateISO + d.title)).length
+              const completed = [...doneDeadlines].length
+              return [
+                { label: 'Gecikmiş', value: overdue, color: overdue > 0 ? 'text-red-400' : 'text-slate-500', bg: overdue > 0 ? 'bg-red-500/10 border-red-500/20' : 'bg-slate-800/40 border-border/60' },
+                { label: 'Bu Hafta', value: dueSoon, color: dueSoon > 0 ? 'text-amber-400' : 'text-slate-500', bg: dueSoon > 0 ? 'bg-amber-500/10 border-amber-500/20' : 'bg-slate-800/40 border-border/60' },
+                { label: 'Tamamlanan', value: completed, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
+              ].map(({ label, value, color, bg }) => (
+                <div key={label} className={`premium-card p-4 border ${bg}`}>
+                  <p className="text-[10px] text-slate-400 font-black uppercase tracking-wider mb-1">{label}</p>
+                  <p className={`text-2xl font-black font-mono ${color}`}>{value}</p>
+                </div>
+              ))
+            })()}
+          </div>
+
+          {/* Deadline list */}
+          <div className="space-y-3">
+            {upcomingDeadlines.map((dl) => {
+              const key = dl.dateISO + dl.title
+              const isDone = doneDeadlines.has(key)
+              const catCls = CATEGORY_COLORS[dl.category] ?? 'bg-slate-800 text-slate-400 border-border/60'
+              const statusIcon = dl.status === 'overdue'
+                ? <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+                : dl.status === 'today'
+                ? <Clock className="w-4 h-4 text-amber-300 shrink-0" />
+                : dl.status === 'soon'
+                ? <Clock className="w-4 h-4 text-amber-400 shrink-0" />
+                : <CalendarDays className="w-4 h-4 text-slate-500 shrink-0" />
+
+              return (
+                <div
+                  key={key}
+                  className={`premium-card p-4 flex items-center gap-4 border transition-all duration-300 ${
+                    isDone ? 'border-emerald-500/15 bg-emerald-500/3 opacity-60' :
+                    dl.status === 'overdue' ? 'border-red-500/20 bg-red-500/5' :
+                    dl.status === 'today' ? 'border-amber-400/25 bg-amber-500/8' :
+                    dl.status === 'soon' ? 'border-amber-500/15 bg-amber-500/5' :
+                    'border-border/60 bg-slate-900/20'
+                  }`}
+                >
+                  {/* Check button */}
+                  <button
+                    onClick={() => toggleDone(key)}
+                    className={`w-7 h-7 rounded-lg border flex items-center justify-center shrink-0 transition-all duration-200 ${
+                      isDone
+                        ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
+                        : 'bg-slate-800/60 border-border/80 text-slate-500 hover:border-emerald-500/30 hover:text-emerald-400'
+                    }`}
+                    title={isDone ? 'İşareti kaldır' : 'Tamamlandı olarak işaretle'}
+                  >
+                    <CheckSquare className="w-3.5 h-3.5" />
+                  </button>
+
+                  {statusIcon}
+
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className={`text-sm font-black ${isDone ? 'line-through text-slate-500' : 'text-foreground'}`}>
+                        {dl.title}
+                      </p>
+                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${catCls}`}>
+                        {dl.category}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 font-semibold mt-0.5">{dl.desc}</p>
+                  </div>
+
+                  {/* Date + countdown */}
+                  <div className="text-right shrink-0">
+                    <p className="text-xs font-black text-foreground font-mono">
+                      {new Date(dl.dateISO).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
+                    </p>
+                    <p className={`text-[10px] font-bold mt-0.5 ${
+                      dl.status === 'overdue' ? 'text-red-400' :
+                      dl.status === 'today'   ? 'text-amber-300' :
+                      dl.status === 'soon'    ? 'text-amber-400' : 'text-slate-500'
+                    }`}>
+                      {dl.status === 'overdue' ? `${Math.abs(dl.daysLeft)}g gecikti`
+                        : dl.status === 'today' ? 'Bugün!'
+                        : `${dl.daysLeft}g kaldı`}
+                    </p>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          <p className="text-[10px] text-slate-600 font-semibold text-center leading-relaxed">
+            Yukarıdaki tarihler genel rehber niteliğindedir. Gerçek son günler tatil/hafta sonu durumuna göre değişebilir.
+            Mali müşavirinizi ve Gelir İdaresi Başkanlığı (gib.gov.tr) ile GİB Dijital Vergi Dairesi'ni takip edin.
+          </p>
         </div>
       )}
 
