@@ -5,7 +5,8 @@ import Link from 'next/link'
 import {
   Warehouse, Package, TrendingDown, Plus, RefreshCw,
   Loader2, AlertTriangle, ExternalLink, Truck,
-  ShoppingBag, Check, X, Edit2, Trash2, ChevronDown, ChevronUp, DollarSign
+  ShoppingBag, Check, X, Edit2, Trash2, ChevronDown, ChevronUp, DollarSign,
+  ClipboardList, CheckCircle2, XCircle, ArrowUp, ArrowDown
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import api from '@/lib/api'
@@ -100,6 +101,59 @@ export default function WMSPage() {
   const [showSupplierForm, setShowSupplierForm] = useState(false)
   const [supplierSaving, setSupplierSaving] = useState(false)
   const [supplierError, setSupplierError] = useState('')
+
+  // ─ Stock Count (Stok Sayımı) ─────────────────────────────────────────────
+  const [stockCountMode, setStockCountMode] = useState(false)
+  const [stockCountValues, setStockCountValues] = useState<Record<string, string>>({})
+  const [stockCountSaving, setStockCountSaving] = useState(false)
+  const [stockCountResult, setStockCountResult] = useState<{ surplusCount: number; deficitCount: number; noChangeCount: number } | null>(null)
+
+  const startStockCount = () => {
+    const initial: Record<string, string> = {}
+    for (const s of stock) initial[s.productId] = String(s.quantity)
+    setStockCountValues(initial)
+    setStockCountResult(null)
+    setStockCountMode(true)
+  }
+
+  const stockCountVariances = useMemo(() => {
+    return stock.map(s => {
+      const actual = Number(stockCountValues[s.productId] ?? s.quantity)
+      const diff = actual - s.quantity
+      return { productId: s.productId, systemQty: s.quantity, actualQty: actual, diff }
+    })
+  }, [stock, stockCountValues])
+
+  const variantStats = useMemo(() => ({
+    surplus: stockCountVariances.filter(v => v.diff > 0).length,
+    deficit: stockCountVariances.filter(v => v.diff < 0).length,
+    noChange: stockCountVariances.filter(v => v.diff === 0).length,
+    netChange: stockCountVariances.reduce((s, v) => s + v.diff, 0),
+  }), [stockCountVariances])
+
+  const handleConfirmStockCount = async () => {
+    const toAdjust = stockCountVariances.filter(v => v.diff !== 0)
+    if (toAdjust.length === 0) { setStockCountMode(false); return }
+    setStockCountSaving(true)
+    let ok = 0
+    for (const v of toAdjust) {
+      try {
+        await api.post('/api/wms/stock-movements', {
+          movementType: v.diff > 0 ? 'In' : 'Out',
+          productId: v.productId,
+          quantity: Math.abs(v.diff),
+          note: `Stok sayımı — fiziksel: ${v.actualQty}, sistem: ${v.systemQty}`,
+        })
+        ok++
+      } catch { /* continue other items */ }
+    }
+    // Refresh stock data
+    const updated = await api.get('/api/wms/stock').then(r => r.data as StockDto[]).catch(() => stock)
+    setStock(updated)
+    setStockCountResult({ surplusCount: toAdjust.filter(v => v.diff > 0).length, deficitCount: toAdjust.filter(v => v.diff < 0).length, noChangeCount: stockCountVariances.filter(v => v.diff === 0).length })
+    setStockCountSaving(false)
+    setStockCountMode(false)
+  }
 
   // ─ Purchase Orders ──
   const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrderDto[]>([])
@@ -463,97 +517,192 @@ export default function WMSPage() {
         </div>
 
       ) : tab === 'stock' ? (
-        <div>
+        <div className="space-y-4">
+          {/* Stock Count Result Banner */}
+          {stockCountResult && (
+            <div className="flex items-start gap-3 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 animate-fade-in">
+              <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="font-bold text-sm">Stok sayımı tamamlandı!</p>
+                <p className="text-xs text-emerald-400/70 mt-0.5 font-semibold">
+                  {stockCountResult.surplusCount} ürün fazlası eklendi · {stockCountResult.deficitCount} ürün eksiği çıkarıldı · {stockCountResult.noChangeCount} ürün değişmedi
+                </p>
+              </div>
+              <button onClick={() => setStockCountResult(null)} className="p-1 rounded-lg hover:bg-emerald-500/20 transition-colors">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
+          {/* Stock Count Mode Active — floating action bar */}
+          {stockCountMode && (
+            <div className="flex items-center gap-4 p-4 rounded-xl bg-primary/10 border border-primary/25 flex-wrap">
+              <ClipboardList className="w-5 h-5 text-primary shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-foreground">Stok Sayımı Aktif</p>
+                <p className="text-xs text-slate-400 font-semibold mt-0.5">
+                  {variantStats.surplus} fazla · {variantStats.deficit} eksik · {variantStats.noChange} değişmedi
+                  {variantStats.netChange !== 0 && (
+                    <span className={`ml-2 font-black ${variantStats.netChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                      net {variantStats.netChange > 0 ? '+' : ''}{variantStats.netChange}
+                    </span>
+                  )}
+                </p>
+              </div>
+              <div className="flex gap-2 shrink-0">
+                <button
+                  onClick={handleConfirmStockCount}
+                  disabled={stockCountSaving || stockCountVariances.every(v => v.diff === 0)}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary/95 transition-all disabled:opacity-50 shadow-md shadow-primary/20"
+                >
+                  {stockCountSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                  Farkları Uygula {stockCountVariances.filter(v => v.diff !== 0).length > 0 && `(${stockCountVariances.filter(v => v.diff !== 0).length})`}
+                </button>
+                <button
+                  onClick={() => setStockCountMode(false)}
+                  className="px-3 py-2 rounded-xl border border-border text-slate-400 hover:text-white text-xs font-semibold transition-colors"
+                >
+                  İptal
+                </button>
+              </div>
+            </div>
+          )}
+
           {stock.length === 0 ? (
             <EmptyState icon={<Package className="w-8 h-8" />} title="Stok kaydı yok" description="Stok hareketi oluşturduktan sonra burada görünecek." />
           ) : (
             <div className="premium-card overflow-hidden">
+              {/* Stock count start button */}
+              {!stockCountMode && (
+                <div className="flex items-center justify-between px-4 py-3 border-b border-border/60 bg-slate-950/10">
+                  <p className="text-xs text-slate-400 font-semibold">{stock.length} ürün stokta</p>
+                  <button
+                    onClick={startStockCount}
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold border border-border/80 text-slate-400 hover:text-foreground hover:border-primary/50 transition-all"
+                  >
+                    <ClipboardList className="w-3.5 h-3.5" /> Stok Sayımı Başlat
+                  </button>
+                </div>
+              )}
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border text-xs text-slate-400">
                     <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Ürün</th>
-                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Miktar</th>
-                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Min Seviye</th>
-                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Durum</th>
-                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">İşlem</th>
+                    <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Sistem Stoğu</th>
+                    {stockCountMode && <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider text-primary">Fiziksel Sayım</th>}
+                    {stockCountMode && <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Fark</th>}
+                    {!stockCountMode && <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Min Seviye</th>}
+                    {!stockCountMode && <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">Durum</th>}
+                    {!stockCountMode && <th className="text-left px-4 py-3 font-semibold uppercase tracking-wider">İşlem</th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {stock.map((s, i) => (
-                    <tr key={i} className={`transition-colors ${s.isLowStock ? 'bg-amber-500/5 hover:bg-amber-500/10' : 'hover:bg-primary/5'}`}>
+                  {stock.map((s, i) => {
+                    const variance = stockCountMode ? stockCountVariances.find(v => v.productId === s.productId) : null
+                    const hasVariance = variance && variance.diff !== 0
+                    return (
+                    <tr key={i} className={`transition-colors ${hasVariance ? (variance.diff > 0 ? 'bg-emerald-500/5' : 'bg-red-500/5') : s.isLowStock ? 'bg-amber-500/5 hover:bg-amber-500/10' : 'hover:bg-primary/5'}`}>
                       <td className="px-4 py-3 font-semibold text-foreground">{resolveProductName(s.productId)}</td>
                       <td className={`px-4 py-3 font-black ${s.isLowStock ? 'text-amber-400' : 'text-foreground'}`}>{s.quantity}</td>
-                      <td className="px-4 py-3">
-                        {editingMinStock === s.productId ? (
+                      {stockCountMode && (
+                        <td className="px-4 py-3">
                           <input
                             type="number"
-                            value={editMinValue}
-                            onChange={e => setEditMinValue(e.target.value)}
-                            onBlur={() => handleSaveMinStock(s.productId)}
-                            onKeyDown={e => e.key === 'Enter' && handleSaveMinStock(s.productId)}
-                            className="w-20 px-2 py-1 rounded-lg bg-slate-950 border border-primary/50 text-foreground text-sm font-semibold focus:outline-none"
-                            autoFocus
+                            min={0}
+                            value={stockCountValues[s.productId] ?? String(s.quantity)}
+                            onChange={e => setStockCountValues(prev => ({ ...prev, [s.productId]: e.target.value }))}
+                            className="w-24 px-2.5 py-1.5 rounded-lg bg-slate-950 border border-primary/50 text-foreground text-sm font-bold font-mono focus:outline-none focus:ring-2 focus:ring-primary/30"
                           />
-                        ) : (
-                          <button
-                            onClick={() => { setEditingMinStock(s.productId); setEditMinValue(String(s.minStockLevel)) }}
-                            className="text-slate-400 hover:text-white font-semibold transition-colors cursor-text border-b border-dashed border-slate-600 hover:border-white"
-                            title="Düzenlemek için tıkla"
-                          >
-                            {s.minStockLevel}
-                          </button>
-                        )}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold border ${s.isLowStock ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
-                          {s.isLowStock ? 'Düşük Stok' : 'Normal'}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          {/* Quick adjust */}
-                          <div className="flex items-center gap-1">
-                            <button
-                              onClick={() => handleQuickAdjust(s.productId, -5)}
-                              disabled={!!quickAdjusting[s.productId] || s.quantity < 1}
-                              title="Stoktan 5 çıkar"
-                              className="px-2 py-0.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 disabled:opacity-40 text-xs font-bold transition-colors"
-                            >−5</button>
-                            <button
-                              onClick={() => handleQuickAdjust(s.productId, 5)}
-                              disabled={!!quickAdjusting[s.productId]}
-                              title="Stoğa 5 ekle"
-                              className="px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 disabled:opacity-40 text-xs font-bold transition-colors"
-                            >+5</button>
-                          </div>
-                          {/* Low-stock specific actions */}
-                          {s.isLowStock && (
-                            <>
-                              <Link
-                                href="/dashboard/ecommerce"
-                                className="inline-flex items-center gap-1 text-xs text-primary hover:underline transition-colors font-bold"
-                              >
-                                Ürün <ExternalLink className="w-3 h-3" />
-                              </Link>
-                              <button
-                                onClick={() => {
-                                  setTab('purchase-orders')
-                                  setShowPOForm(true)
-                                  setPoForm(f => ({
-                                    ...f,
-                                    lines: [{ productId: s.productId, quantity: s.minStockLevel * 2, unitPrice: 0 }]
-                                  }))
-                                }}
-                                className="text-xs text-amber-400 hover:text-amber-300 font-bold transition-colors underline underline-offset-2"
-                              >
-                                Sipariş Et
-                              </button>
-                            </>
+                        </td>
+                      )}
+                      {stockCountMode && (
+                        <td className="px-4 py-3">
+                          {variance && variance.diff !== 0 ? (
+                            <span className={`inline-flex items-center gap-1 text-xs font-black px-2 py-0.5 rounded-full border ${variance.diff > 0 ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 'text-red-400 bg-red-500/10 border-red-500/20'}`}>
+                              {variance.diff > 0 ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
+                              {variance.diff > 0 ? '+' : ''}{variance.diff}
+                            </span>
+                          ) : (
+                            <span className="text-xs text-slate-500 font-semibold">—</span>
                           )}
-                        </div>
-                      </td>
+                        </td>
+                      )}
+                      {!stockCountMode && (
+                        <>
+                          <td className="px-4 py-3">
+                            {editingMinStock === s.productId ? (
+                              <input
+                                type="number"
+                                value={editMinValue}
+                                onChange={e => setEditMinValue(e.target.value)}
+                                onBlur={() => handleSaveMinStock(s.productId)}
+                                onKeyDown={e => e.key === 'Enter' && handleSaveMinStock(s.productId)}
+                                className="w-20 px-2 py-1 rounded-lg bg-slate-950 border border-primary/50 text-foreground text-sm font-semibold focus:outline-none"
+                                autoFocus
+                              />
+                            ) : (
+                              <button
+                                onClick={() => { setEditingMinStock(s.productId); setEditMinValue(String(s.minStockLevel)) }}
+                                className="text-slate-400 hover:text-white font-semibold transition-colors cursor-text border-b border-dashed border-slate-600 hover:border-white"
+                                title="Düzenlemek için tıkla"
+                              >
+                                {s.minStockLevel}
+                              </button>
+                            )}
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold border ${s.isLowStock ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
+                              {s.isLowStock ? 'Düşük Stok' : 'Normal'}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              {/* Quick adjust */}
+                              <div className="flex items-center gap-1">
+                                <button
+                                  onClick={() => handleQuickAdjust(s.productId, -5)}
+                                  disabled={!!quickAdjusting[s.productId] || s.quantity < 1}
+                                  title="Stoktan 5 çıkar"
+                                  className="px-2 py-0.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 disabled:opacity-40 text-xs font-bold transition-colors"
+                                >−5</button>
+                                <button
+                                  onClick={() => handleQuickAdjust(s.productId, 5)}
+                                  disabled={!!quickAdjusting[s.productId]}
+                                  title="Stoğa 5 ekle"
+                                  className="px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 disabled:opacity-40 text-xs font-bold transition-colors"
+                                >+5</button>
+                              </div>
+                              {/* Low-stock specific actions */}
+                              {s.isLowStock && (
+                                <>
+                                  <Link
+                                    href="/dashboard/ecommerce"
+                                    className="inline-flex items-center gap-1 text-xs text-primary hover:underline transition-colors font-bold"
+                                  >
+                                    Ürün <ExternalLink className="w-3 h-3" />
+                                  </Link>
+                                  <button
+                                    onClick={() => {
+                                      setTab('purchase-orders')
+                                      setShowPOForm(true)
+                                      setPoForm(f => ({
+                                        ...f,
+                                        lines: [{ productId: s.productId, quantity: s.minStockLevel * 2, unitPrice: 0 }]
+                                      }))
+                                    }}
+                                    className="text-xs text-amber-400 hover:text-amber-300 font-bold transition-colors underline underline-offset-2"
+                                  >
+                                    Sipariş Et
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        </>
+                      )}
                     </tr>
-                  ))}
+                  )
+                  })}
                 </tbody>
               </table>
             </div>
