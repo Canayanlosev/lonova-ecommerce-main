@@ -4,10 +4,14 @@ import React, { useEffect, useState, useMemo } from "react";
 
 import { SkeletonRow } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { Package, AlertCircle, Search, Download, CheckSquare, Square, Layers, Loader2, TrendingUp, Clock, CheckCircle2, XCircle } from "lucide-react";
+import { Package, AlertCircle, Search, Download, CheckSquare, Square, Layers, Loader2, TrendingUp, Clock, CheckCircle2, XCircle, Plus, X, Trash2 } from "lucide-react";
 import { ordersService } from "@/lib/services/orders.service";
-import type { Order } from "@/types/api.types";
+import type { CreateOrderLine } from "@/lib/services/orders.service";
+import { productsService } from "@/lib/services/products.service";
+import type { Order, Product } from "@/types/api.types";
 import Link from "next/link";
+import { useToast } from "@/store/ui.store";
+import { motion, AnimatePresence } from "framer-motion";
 
 const statusConfig: Record<string, { label: string; className: string }> = {
   Pending:   { label: "Beklemede",     className: "bg-amber-500/10 text-amber-450 border border-amber-500/20" },
@@ -18,7 +22,10 @@ const statusConfig: Record<string, { label: string; className: string }> = {
   Cancelled: { label: "İptal",         className: "bg-red-500/10 text-red-450 border border-red-500/20" },
 };
 
+const EMPTY_LINE: CreateOrderLine = { productId: '', quantity: 1, unitPrice: 0 }
+
 export default function OrdersPage() {
+  const toast = useToast();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -29,12 +36,66 @@ export default function OrdersPage() {
   const [bulkUpdating, setBulkUpdating] = useState(false);
   const [bulkMsg, setBulkMsg] = useState("");
 
-  useEffect(() => {
+  // New order form
+  const [showCreate, setShowCreate] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [productsLoading, setProductsLoading] = useState(false);
+  const [createLines, setCreateLines] = useState<CreateOrderLine[]>([{ ...EMPTY_LINE }]);
+  const [createNotes, setCreateNotes] = useState('');
+  const [createLoading, setCreateLoading] = useState(false);
+
+  const loadOrders = () => {
+    setLoading(true);
     ordersService.getAll()
       .then(setOrders)
       .catch(() => setError("Siparişler yüklenemedi."))
       .finally(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => { loadOrders(); }, []);
+
+  const openCreate = async () => {
+    setShowCreate(true);
+    setCreateLines([{ ...EMPTY_LINE }]);
+    setCreateNotes('');
+    if (products.length === 0 && !productsLoading) {
+      setProductsLoading(true);
+      productsService.getAll()
+        .then(setProducts)
+        .catch(() => {})
+        .finally(() => setProductsLoading(false));
+    }
+  };
+
+  const addLine = () => setCreateLines(prev => [...prev, { ...EMPTY_LINE }]);
+  const removeLine = (i: number) => setCreateLines(prev => prev.filter((_, idx) => idx !== i));
+  const updateLine = (i: number, field: keyof CreateOrderLine, value: string | number) => {
+    setCreateLines(prev => prev.map((l, idx) => idx !== i ? l : { ...l, [field]: value }));
+  };
+  const selectProduct = (i: number, productId: string) => {
+    const p = products.find(p => p.id === productId);
+    setCreateLines(prev => prev.map((l, idx) =>
+      idx !== i ? l : { ...l, productId, unitPrice: p?.basePrice ?? 0 }
+    ));
+  };
+
+  const createTotal = createLines.reduce((s, l) => s + l.quantity * l.unitPrice, 0);
+
+  const handleCreateOrder = async () => {
+    const validLines = createLines.filter(l => l.productId && l.quantity > 0);
+    if (validLines.length === 0) { toast.error('En az bir ürün satırı ekleyin.'); return; }
+    setCreateLoading(true);
+    try {
+      await ordersService.create(validLines, createNotes || undefined);
+      toast.success('Sipariş oluşturuldu.');
+      setShowCreate(false);
+      loadOrders();
+    } catch {
+      toast.error('Sipariş oluşturulamadı.');
+    } finally {
+      setCreateLoading(false);
+    }
+  };
 
   const filtered = useMemo(() => orders
     .filter((o) => filter === "all" || o.status === filter)
@@ -110,14 +171,150 @@ export default function OrdersPage() {
           <h1 className="text-3xl font-black tracking-tight text-foreground uppercase">Siparişler</h1>
           <p className="text-sm text-slate-500 font-semibold mt-1">B2B sipariş geçmişi ve işlem durumları</p>
         </div>
-        <button
-          onClick={handleExportCsv}
-          disabled={filtered.length === 0}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold border border-border/80 hover:bg-emerald-500/10 hover:text-emerald-455 transition-all shadow-md shadow-emerald-500/5 disabled:opacity-40"
-        >
-          <Download className="w-4 h-4" /> CSV İndir
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={openCreate}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-primary hover:bg-primary/95 text-white transition-all shadow-md shadow-primary/20 hover:-translate-y-0.5"
+          >
+            <Plus className="w-4 h-4" /> Yeni Sipariş
+          </button>
+          <button
+            onClick={handleExportCsv}
+            disabled={filtered.length === 0}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold border border-border/80 hover:bg-emerald-500/10 hover:text-emerald-455 transition-all shadow-md shadow-emerald-500/5 disabled:opacity-40"
+          >
+            <Download className="w-4 h-4" /> CSV İndir
+          </button>
+        </div>
       </div>
+
+      {/* Create Order Form */}
+      <AnimatePresence>
+        {showCreate && (
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="premium-card p-6 border border-primary/25 bg-slate-900/60 backdrop-blur-md space-y-5"
+          >
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-black text-foreground uppercase tracking-wider flex items-center gap-2">
+                <Plus className="w-4 h-4 text-primary" /> Yeni B2B Sipariş Oluştur
+              </h3>
+              <button
+                onClick={() => setShowCreate(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Line items */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-black text-slate-400 uppercase tracking-wider">Ürün Satırları</label>
+                <button
+                  onClick={addLine}
+                  className="text-xs text-primary hover:text-primary/80 flex items-center gap-1 font-bold transition-colors"
+                >
+                  <Plus className="w-3 h-3" /> Satır Ekle
+                </button>
+              </div>
+
+              {productsLoading ? (
+                <div className="flex items-center gap-2 text-xs text-slate-400 font-semibold p-3">
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" /> Ürünler yükleniyor…
+                </div>
+              ) : (
+                <div className="space-y-2.5">
+                  {createLines.map((line, i) => (
+                    <div key={i} className="grid grid-cols-[1fr_80px_110px_36px] gap-2.5 items-end">
+                      <div>
+                        {i === 0 && <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 block">Ürün</label>}
+                        <select
+                          value={line.productId}
+                          onChange={e => selectProduct(i, e.target.value)}
+                          className="w-full px-3 py-2.5 rounded-xl bg-slate-950/40 border border-border/80 text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all cursor-pointer font-semibold"
+                        >
+                          <option value="">Ürün seçin…</option>
+                          {products.map(p => (
+                            <option key={p.id} value={p.id}>{p.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        {i === 0 && <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 block">Adet</label>}
+                        <input
+                          type="number"
+                          min={1}
+                          value={line.quantity}
+                          onChange={e => updateLine(i, 'quantity', Number(e.target.value))}
+                          className="w-full px-3 py-2.5 rounded-xl bg-slate-950/40 border border-border/80 text-foreground text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
+                        />
+                      </div>
+                      <div>
+                        {i === 0 && <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 block">Birim Fiyat ₺</label>}
+                        <input
+                          type="number"
+                          min={0}
+                          step={0.01}
+                          value={line.unitPrice}
+                          onChange={e => updateLine(i, 'unitPrice', Number(e.target.value))}
+                          className="w-full px-3 py-2.5 rounded-xl bg-slate-950/40 border border-border/80 text-foreground text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
+                        />
+                      </div>
+                      <button
+                        onClick={() => removeLine(i)}
+                        disabled={createLines.length === 1}
+                        className="p-2.5 rounded-xl text-slate-400 hover:text-red-400 bg-slate-950/20 hover:bg-red-500/10 transition-colors disabled:opacity-30"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Notes */}
+            <div>
+              <label className="text-xs font-black text-slate-400 uppercase tracking-wider mb-1.5 block">Not (isteğe bağlı)</label>
+              <input
+                value={createNotes}
+                onChange={e => setCreateNotes(e.target.value)}
+                placeholder="Sipariş notu, müşteri referansı…"
+                className="w-full px-3 py-2.5 rounded-xl bg-slate-950/40 border border-border/80 text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
+              />
+            </div>
+
+            {/* Total + Actions */}
+            <div className="flex items-center justify-between pt-2 border-t border-border/80">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">Toplam:</span>
+                <span className="text-lg font-black text-foreground font-mono">
+                  ₺{createTotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleCreateOrder}
+                  disabled={createLoading || productsLoading}
+                  className="flex items-center gap-2 px-4.5 py-2.5 rounded-xl text-xs font-bold bg-primary hover:bg-primary/95 text-white transition-all shadow-md shadow-primary/20 disabled:opacity-50"
+                >
+                  {createLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
+                  Siparişi Oluştur
+                </button>
+                <button
+                  onClick={() => setShowCreate(false)}
+                  className="px-4 py-2.5 rounded-xl border border-border/80 text-slate-400 hover:text-white text-xs font-semibold transition-colors"
+                >
+                  İptal
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">

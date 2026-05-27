@@ -397,14 +397,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         </Link>
                       ))}
                     </div>
-                    {notifications.length > 0 && (
-                      <div className="px-4 py-2.5 border-t border-border">
-                        <Link href="/dashboard/marketplace-orders" onClick={() => setBellOpen(false)}
-                          className="text-xs text-primary hover:underline">
-                          Tüm siparişleri gör →
-                        </Link>
-                      </div>
-                    )}
+                    <div className="px-4 py-2.5 border-t border-border flex items-center justify-between">
+                      <Link href="/dashboard/marketplace-orders" onClick={() => setBellOpen(false)}
+                        className="text-xs text-slate-500 hover:text-foreground transition-colors">
+                        Siparişler →
+                      </Link>
+                      <Link href="/dashboard/bildirimler" onClick={() => setBellOpen(false)}
+                        className="text-xs text-primary hover:text-primary/80 font-bold transition-colors">
+                        Uyarı Merkezi →
+                      </Link>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>

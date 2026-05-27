@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Skeleton, SkeletonRow } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
-import { Package, Search, PencilLine, Trash2, Plus, AlertCircle, Eye, EyeOff, CheckSquare, Square, X, Copy, Percent, DollarSign, Filter } from "lucide-react";
+import { Package, Search, PencilLine, Trash2, Plus, AlertCircle, Eye, EyeOff, CheckSquare, Square, X, Copy, Percent, DollarSign, Filter, Upload, Download, FileText, CheckCircle2, Loader2 } from "lucide-react";
 import { productsService } from "@/lib/services/products.service";
 import { useToast } from "@/store/ui.store";
 import type { Product, Category } from "@/types/api.types";
@@ -28,6 +28,75 @@ export default function EcommercePage() {
   const [priceModal, setPriceModal] = useState(false);
   const [priceType, setPriceType] = useState<'Percent' | 'Fixed'>('Percent');
   const [priceValue, setPriceValue] = useState('');
+
+  // CSV Import
+  const [csvModal, setCsvModal] = useState(false);
+  const [csvRows, setCsvRows] = useState<Array<{ name: string; sku: string; basePrice: number; categoryId: string; description: string; imageUrl: string; status: 'pending' | 'ok' | 'error'; error?: string }>>([]);
+  const [csvImporting, setCsvImporting] = useState(false);
+  const [csvDone, setCsvDone] = useState(false);
+
+  const handleCsvFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const text = ev.target?.result as string;
+      const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+      if (lines.length < 2) { toast.error('CSV dosyası boş veya geçersiz.'); return; }
+      // Skip header line; expected columns: name;sku;basePrice;categoryId;description;imageUrl
+      const parsed = lines.slice(1).map(line => {
+        const parts = line.split(/[;,]/).map(p => p.trim().replace(/^"|"$/g, ''));
+        const [name = '', sku = '', priceRaw = '0', categoryId = '', description = '', imageUrl = ''] = parts;
+        const basePrice = parseFloat(priceRaw.replace(',', '.')) || 0;
+        return { name, sku, basePrice, categoryId, description, imageUrl, status: 'pending' as const };
+      }).filter(r => r.name && r.sku);
+      setCsvRows(parsed);
+      setCsvDone(false);
+    };
+    reader.readAsText(file, 'utf-8');
+    e.target.value = '';
+  };
+
+  const handleCsvImport = async () => {
+    if (csvRows.length === 0) return;
+    setCsvImporting(true);
+    const api = (await import('@/lib/api')).default;
+    const updated = [...csvRows];
+    for (let i = 0; i < updated.length; i++) {
+      const r = updated[i];
+      if (r.status === 'ok') continue;
+      try {
+        await api.post('/api/ecommerce/products', {
+          name: r.name,
+          sku: r.sku,
+          basePrice: r.basePrice,
+          categoryId: r.categoryId || undefined,
+          description: r.description || undefined,
+          imageUrl: r.imageUrl || undefined,
+        });
+        updated[i] = { ...r, status: 'ok' };
+      } catch {
+        updated[i] = { ...r, status: 'error', error: 'API hatası' };
+      }
+      setCsvRows([...updated]);
+    }
+    setCsvImporting(false);
+    setCsvDone(true);
+    const successCount = updated.filter(r => r.status === 'ok').length;
+    toast.success(`${successCount} ürün içe aktarıldı.`);
+    if (successCount > 0) load();
+  };
+
+  const handleDownloadTemplate = () => {
+    const csv = `name;sku;basePrice;categoryId;description;imageUrl
+Örnek Ürün;SKU-001;99.90;;Ürün açıklaması;https://
+Başka Ürün;SKU-002;149.90;;;`;
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'urun-import-sablonu.csv'; a.click();
+    URL.revokeObjectURL(url);
+  };
   const [priceApplying, setPriceApplying] = useState(false);
 
   const load = async () => {
@@ -83,6 +152,26 @@ export default function EcommercePage() {
     } else {
       setSelectedIds(new Set(filtered.map(p => p.id)));
     }
+  };
+
+  const handleExportCsv = () => {
+    const rows = [
+      ['name', 'sku', 'basePrice', 'categoryId', 'description', 'imageUrl'],
+      ...filtered.map(p => [
+        p.name,
+        p.sku,
+        String(p.basePrice),
+        p.categoryId ?? '',
+        p.description ?? '',
+        p.imageUrl ?? '',
+      ])
+    ];
+    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(';')).join('\n');
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `urunler-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+    URL.revokeObjectURL(url);
   };
 
   const handleBulkDelete = async () => {
@@ -174,11 +263,26 @@ export default function EcommercePage() {
           <h1 className="text-3xl font-black tracking-tight">Ürünler</h1>
           <p className="text-slate-500">Ürün kataloğunu yönetin</p>
         </div>
-        <Link href="/dashboard/ecommerce/new">
-          <Button className="flex items-center gap-2">
-            <Plus size={16} /> Yeni Ürün
-          </Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleExportCsv}
+            disabled={products.length === 0}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border/80 bg-slate-950/20 text-slate-400 hover:text-white hover:border-primary/45 transition-all text-xs font-bold disabled:opacity-40"
+          >
+            <Download size={14} /> CSV Dışa Aktar
+          </button>
+          <button
+            onClick={() => { setCsvRows([]); setCsvDone(false); setCsvModal(true) }}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border/80 bg-slate-950/20 text-slate-400 hover:text-white hover:border-primary/45 transition-all text-xs font-bold"
+          >
+            <Upload size={14} /> CSV İçe Aktar
+          </button>
+          <Link href="/dashboard/ecommerce/new">
+            <Button className="flex items-center gap-2">
+              <Plus size={16} /> Yeni Ürün
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Quick stats */}
@@ -492,6 +596,115 @@ export default function EcommercePage() {
                 {priceApplying ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Percent size={14} />}
                 Uygula
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CSV Import Modal */}
+      {csvModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+          <div className="w-full max-w-2xl bg-slate-900 border border-border/80 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border/80 bg-slate-950/20 shrink-0">
+              <div>
+                <h2 className="text-sm font-black text-foreground uppercase tracking-wider flex items-center gap-2">
+                  <Upload className="w-4 h-4 text-primary" /> CSV Ürün İçe Aktar
+                </h2>
+                <p className="text-[11px] text-slate-500 font-semibold mt-0.5">
+                  Sütunlar: name;sku;basePrice;categoryId;description;imageUrl
+                </p>
+              </div>
+              <button onClick={() => setCsvModal(false)} className="p-1.5 rounded-xl border border-border text-slate-400 hover:text-white hover:bg-slate-800 transition-all">
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="px-6 py-5 space-y-4 overflow-y-auto flex-1">
+              {/* Format help */}
+              <div className="flex items-start gap-3 p-3.5 rounded-xl border border-primary/20 bg-primary/5 text-xs text-primary leading-relaxed">
+                <FileText className="w-4 h-4 mt-0.5 shrink-0" />
+                <div>
+                  <strong className="font-bold">CSV Formatı:</strong> İlk satır başlık (atlanır).
+                  Sütunlar: <code className="bg-slate-800 px-1 rounded font-mono">name;sku;basePrice;categoryId;description;imageUrl</code>
+                  <br />
+                  <strong className="font-bold">Not:</strong> categoryId boş bırakılabilir. Ondalık için nokta kullanın (99.90).
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-3">
+                <label className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border/80 bg-primary hover:bg-primary/90 text-white text-xs font-bold cursor-pointer transition-all">
+                  <Upload className="w-3.5 h-3.5" /> CSV Dosyası Seç
+                  <input type="file" accept=".csv,text/csv" onChange={handleCsvFile} className="hidden" />
+                </label>
+                <button
+                  onClick={handleDownloadTemplate}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border/80 text-slate-400 hover:text-white text-xs font-bold transition-all"
+                >
+                  <Download className="w-3.5 h-3.5" /> Şablon İndir
+                </button>
+              </div>
+
+              {/* Preview table */}
+              {csvRows.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-xs font-black text-slate-400 uppercase tracking-wider">
+                    {csvRows.length} Ürün Önizleme
+                  </p>
+                  <div className="overflow-x-auto max-h-48 overflow-y-auto rounded-xl border border-border/80">
+                    <table className="w-full text-xs">
+                      <thead className="bg-slate-950/40 text-[10px] text-slate-400 font-black uppercase">
+                        <tr>
+                          <th className="text-left px-3 py-2">Ad</th>
+                          <th className="text-left px-3 py-2">SKU</th>
+                          <th className="text-right px-3 py-2">Fiyat</th>
+                          <th className="text-center px-3 py-2">Durum</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/30">
+                        {csvRows.map((r, i) => (
+                          <tr key={i} className={r.status === 'ok' ? 'bg-emerald-500/5' : r.status === 'error' ? 'bg-red-500/5' : ''}>
+                            <td className="px-3 py-2 font-semibold text-foreground truncate max-w-[160px]">{r.name}</td>
+                            <td className="px-3 py-2 font-mono text-slate-400">{r.sku}</td>
+                            <td className="px-3 py-2 text-right font-mono">₺{r.basePrice.toFixed(2)}</td>
+                            <td className="px-3 py-2 text-center">
+                              {r.status === 'ok' && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 mx-auto" />}
+                              {r.status === 'error' && <AlertCircle className="w-3.5 h-3.5 text-red-400 mx-auto" />}
+                              {r.status === 'pending' && <div className="w-2 h-2 rounded-full bg-slate-600 mx-auto" />}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {csvDone && (
+                    <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold">
+                      <CheckCircle2 className="w-4 h-4 shrink-0" />
+                      İçe aktarma tamamlandı. {csvRows.filter(r => r.status === 'ok').length} ürün eklendi
+                      {csvRows.filter(r => r.status === 'error').length > 0 && `, ${csvRows.filter(r => r.status === 'error').length} hata`}.
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end gap-3 px-6 py-4 border-t border-border/80 shrink-0">
+              <button onClick={() => setCsvModal(false)} className="px-4 py-2 text-sm font-bold text-slate-500 hover:text-foreground transition-colors">
+                {csvDone ? 'Kapat' : 'İptal'}
+              </button>
+              {csvRows.length > 0 && !csvDone && (
+                <button
+                  onClick={handleCsvImport}
+                  disabled={csvImporting}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-white text-xs font-bold transition-all disabled:opacity-60"
+                >
+                  {csvImporting
+                    ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Aktarılıyor…</>
+                    : <><Upload className="w-3.5 h-3.5" /> {csvRows.length} Ürün Aktar</>
+                  }
+                </button>
+              )}
             </div>
           </div>
         </div>

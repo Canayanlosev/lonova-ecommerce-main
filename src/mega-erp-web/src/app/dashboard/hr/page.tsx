@@ -4,13 +4,40 @@ import { useEffect, useState, useMemo } from 'react'
 import {
   Users, Building2, CalendarDays, Check, X, Plus, Trash2, Edit2,
   AlertCircle, AlertTriangle, DollarSign, Mail, Phone, RefreshCw, FileSpreadsheet, Download, Info,
-  ChevronLeft, ChevronRight, Gift, Award
+  ChevronLeft, ChevronRight, Gift, Award, Star, Target, MessageSquare, TrendingUp, TrendingDown
 } from 'lucide-react'
 import { hrService } from '@/lib/services/hr.service'
 import { useToast } from '@/store/ui.store'
 import type { Employee, Department, LeaveRequest } from '@/types/api.types'
 
-type Tab = 'employees' | 'departments' | 'leave' | 'bordro'
+type Tab = 'employees' | 'departments' | 'leave' | 'bordro' | 'performans'
+
+// ─── Performance Review Types ──────────────────────────────────────────────
+interface PerformanceReview {
+  id: string
+  employeeId: string
+  quarter: string  // e.g. "2026-Q2"
+  rating: number   // 1–5
+  notes: string
+  goals: string[]
+  reviewedAt: string
+}
+
+const PERF_KEY = 'hr-performance-reviews'
+const currentQuarter = (): string => {
+  const now = new Date()
+  const q = Math.ceil((now.getMonth() + 1) / 3)
+  return `${now.getFullYear()}-Q${q}`
+}
+const RATING_LABELS: Record<number, { label: string; color: string }> = {
+  1: { label: 'Yetersiz',   color: 'text-red-400' },
+  2: { label: 'Gelişmeli',  color: 'text-amber-400' },
+  3: { label: 'Yeterli',    color: 'text-yellow-400' },
+  4: { label: 'İyi',        color: 'text-emerald-400' },
+  5: { label: 'Mükemmel',   color: 'text-violet-400' },
+}
+
+const EMPTY_GOALS = ['', '', '']
 
 // ─── Turkish Payroll Calculation (2024 approximate rates) ──────────────────
 // SGK İşçi: %14 SSK + %1 İşsizlik = %15
@@ -314,6 +341,78 @@ export default function HRPage() {
 
   const toplamKidem = kidemRows.reduce((s, r) => s + r.kidemTazminati, 0)
 
+  // ─── Performance Reviews ─────────────────────────────────────────────────
+  const [reviews, setReviews] = useState<PerformanceReview[]>([])
+  const [revModal, setRevModal] = useState(false)
+  const [revEmpId, setRevEmpId] = useState('')
+  const [revForm, setRevForm] = useState({ quarter: currentQuarter(), rating: 3, notes: '', goals: [...EMPTY_GOALS] })
+  const [revEditId, setRevEditId] = useState<string | null>(null)
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(PERF_KEY) ?? '[]') as PerformanceReview[]
+      setReviews(saved)
+    } catch { /* */ }
+  }, [])
+
+  const saveReviews = (next: PerformanceReview[]) => {
+    setReviews(next)
+    try { localStorage.setItem(PERF_KEY, JSON.stringify(next)) } catch { /* */ }
+  }
+
+  const openRevModal = (empId: string) => {
+    const existing = reviews.filter(r => r.employeeId === empId).sort((a, b) => b.quarter.localeCompare(a.quarter))[0]
+    if (existing) {
+      setRevEditId(existing.id)
+      setRevForm({ quarter: existing.quarter, rating: existing.rating, notes: existing.notes, goals: [...existing.goals, '', '', ''].slice(0, 3) })
+    } else {
+      setRevEditId(null)
+      setRevForm({ quarter: currentQuarter(), rating: 3, notes: '', goals: [...EMPTY_GOALS] })
+    }
+    setRevEmpId(empId)
+    setRevModal(true)
+  }
+
+  const handleSaveReview = () => {
+    const review: PerformanceReview = {
+      id: revEditId ?? `rev-${Date.now()}`,
+      employeeId: revEmpId,
+      quarter: revForm.quarter,
+      rating: revForm.rating,
+      notes: revForm.notes.trim(),
+      goals: revForm.goals.filter(g => g.trim()),
+      reviewedAt: new Date().toISOString(),
+    }
+    const next = revEditId
+      ? reviews.map(r => r.id === revEditId ? review : r)
+      : [...reviews, review]
+    saveReviews(next)
+    setRevModal(false)
+  }
+
+  const handleDeleteReview = (id: string) => {
+    saveReviews(reviews.filter(r => r.id !== id))
+  }
+
+  const latestReviewByEmployee = useMemo(() => {
+    const map: Record<string, PerformanceReview> = {}
+    for (const r of reviews) {
+      if (!map[r.employeeId] || r.quarter > map[r.employeeId].quarter) {
+        map[r.employeeId] = r
+      }
+    }
+    return map
+  }, [reviews])
+
+  const avgRating = useMemo(() => {
+    const all = Object.values(latestReviewByEmployee)
+    if (all.length === 0) return 0
+    return Math.round((all.reduce((s, r) => s + r.rating, 0) / all.length) * 10) / 10
+  }, [latestReviewByEmployee])
+
+  const reviewedCount = Object.keys(latestReviewByEmployee).length
+  const pendingReviewCount = employees.length - reviewedCount
+
   // ─── Payroll computation ───────────────────────────────────────────────────
   const bordroRows: BordroRow[] = employees.map(e => {
     const brut = e.salary
@@ -362,6 +461,7 @@ export default function HRPage() {
     { id: 'departments', label: 'Departmanlar',     icon: Building2,        badge: departments.length },
     { id: 'leave',       label: 'İzin Talepleri',   icon: CalendarDays,     badge: pendingLeaveCount },
     { id: 'bordro',      label: 'Bordro',            icon: FileSpreadsheet },
+    { id: 'performans',  label: 'Performans',        icon: Star,             badge: pendingReviewCount > 0 ? pendingReviewCount : undefined },
   ]
 
   return (
@@ -1239,6 +1339,270 @@ export default function HRPage() {
                 className="flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white rounded-xl text-sm font-bold transition-all shadow-sm shadow-primary/20 hover:shadow-primary/30">
                 {deptSaving ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Check className="w-4 h-4" />}
                 {editDeptId ? 'Güncelle' : 'Oluştur'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ Performans Tab ═══════════════════════════════════════════════════ */}
+      {tab === 'performans' && (
+        <div className="space-y-6 animate-fade-in">
+          {/* Summary stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {[
+              { label: 'Toplam Çalışan', value: employees.length, icon: Users, color: 'text-primary bg-primary/10 border-primary/20' },
+              { label: 'Değerlendirilen', value: reviewedCount, icon: Star, color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' },
+              { label: 'Değerlendirilmemiş', value: pendingReviewCount, icon: AlertTriangle, color: pendingReviewCount > 0 ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 'text-slate-400 bg-slate-800/40 border-border/80' },
+              { label: 'Ort. Performans', value: avgRating > 0 ? `${avgRating}/5` : '—', icon: TrendingUp, color: avgRating >= 4 ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : avgRating >= 3 ? 'text-primary bg-primary/10 border-primary/20' : 'text-amber-400 bg-amber-500/10 border-amber-500/20', isText: true },
+            ].map(({ label, value, icon: Icon, color, isText }) => (
+              <div key={label} className="premium-card p-5 hover:-translate-y-0.5 transition-all duration-300">
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 border ${color}`}>
+                  <Icon className="w-4 h-4" />
+                </div>
+                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">{label}</p>
+                <p className={`font-black text-foreground ${isText ? 'text-base' : 'text-2xl'} font-mono`}>{value}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Current quarter note */}
+          <div className="flex items-center gap-2.5 p-3.5 rounded-xl bg-primary/5 border border-primary/20 text-xs text-slate-400 font-semibold">
+            <Target className="w-4 h-4 text-primary shrink-0" />
+            <span>Aktif dönem: <strong className="text-foreground font-bold">{currentQuarter()}</strong>. Çalışanların performans değerlendirmelerini bu çeyrekte tamamlayın.</span>
+          </div>
+
+          {/* Employee review grid */}
+          {employees.length === 0 ? (
+            <div className="premium-card p-16 text-center">
+              <Star className="w-12 h-12 text-slate-700 mx-auto mb-4" />
+              <p className="text-slate-400 font-semibold">Değerlendirmek için önce çalışan ekleyin.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {employees.map(emp => {
+                const rev = latestReviewByEmployee[emp.id]
+                const rl = rev ? RATING_LABELS[rev.rating] : null
+                const isCurrentQuarter = rev?.quarter === currentQuarter()
+                return (
+                  <div key={emp.id} className={`premium-card p-5 border transition-all hover:-translate-y-0.5 ${rev ? (isCurrentQuarter ? 'border-emerald-500/20 bg-emerald-500/3' : 'border-border/80 bg-slate-900/40') : 'border-amber-500/15 bg-amber-500/3'}`}>
+                    {/* Employee header */}
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                        <span className="text-xs font-black text-primary">{emp.firstName[0]}{emp.lastName[0]}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-foreground text-sm truncate">{emp.firstName} {emp.lastName}</p>
+                        <p className="text-[10px] text-slate-400 font-semibold truncate">{emp.departmentName ?? '—'}</p>
+                      </div>
+                      {rev && (
+                        <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${isCurrentQuarter ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-slate-800/60 text-slate-400 border-border/80'}`}>
+                          {rev.quarter}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Rating display */}
+                    {rev ? (
+                      <div className="space-y-3 mb-4">
+                        <div className="flex items-center gap-2">
+                          <div className="flex gap-0.5">
+                            {[1,2,3,4,5].map(s => (
+                              <Star key={s} className={`w-4 h-4 ${s <= rev.rating ? 'text-amber-400 fill-amber-400' : 'text-slate-700 fill-slate-800'}`} />
+                            ))}
+                          </div>
+                          <span className={`text-xs font-black ${rl?.color ?? 'text-slate-400'}`}>{rl?.label}</span>
+                        </div>
+                        {rev.notes && (
+                          <div className="flex items-start gap-2 p-2.5 rounded-lg bg-slate-950/30 border border-border/40">
+                            <MessageSquare className="w-3 h-3 text-slate-400 shrink-0 mt-0.5" />
+                            <p className="text-[10px] text-slate-400 font-semibold leading-relaxed line-clamp-2">{rev.notes}</p>
+                          </div>
+                        )}
+                        {rev.goals.length > 0 && (
+                          <div className="space-y-1">
+                            {rev.goals.slice(0, 2).map((g, i) => (
+                              <div key={i} className="flex items-center gap-2 text-[10px] text-slate-400 font-semibold">
+                                <div className="w-3.5 h-3.5 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center shrink-0">
+                                  <span className="text-[8px] font-black text-primary">{i + 1}</span>
+                                </div>
+                                <span className="truncate">{g}</span>
+                              </div>
+                            ))}
+                            {rev.goals.length > 2 && (
+                              <p className="text-[9px] text-slate-500 font-semibold pl-5">+{rev.goals.length - 2} hedef daha</p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 p-3 rounded-xl bg-amber-500/8 border border-amber-500/15 mb-4">
+                        <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                        <p className="text-[10px] text-amber-400 font-semibold">Bu dönem için değerlendirme yapılmadı</p>
+                      </div>
+                    )}
+
+                    {/* Action buttons */}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => openRevModal(emp.id)}
+                        className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all border ${
+                          rev
+                            ? 'border-border/80 text-slate-400 hover:text-foreground hover:border-primary/40 bg-slate-950/20'
+                            : 'bg-primary text-white border-transparent hover:bg-primary/95 shadow-md shadow-primary/15'
+                        }`}
+                      >
+                        <Star className="w-3.5 h-3.5" />
+                        {rev ? 'Güncelle' : 'Değerlendir'}
+                      </button>
+                      {rev && (
+                        <button
+                          onClick={() => handleDeleteReview(rev.id)}
+                          className="p-2 rounded-xl border border-red-500/10 bg-red-500/5 text-slate-400 hover:text-red-400 hover:border-red-500/25 transition-all"
+                          title="Değerlendirmeyi sil"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+
+          {/* Rating distribution */}
+          {reviews.length > 0 && (
+            <div className="premium-card p-5 border border-border/80 bg-slate-900/40">
+              <h3 className="text-sm font-black text-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-primary" /> Puan Dağılımı
+              </h3>
+              <div className="space-y-2.5">
+                {[5,4,3,2,1].map(r => {
+                  const count = Object.values(latestReviewByEmployee).filter(rev => rev.rating === r).length
+                  const total = Object.values(latestReviewByEmployee).length
+                  const pct = total > 0 ? Math.round((count / total) * 100) : 0
+                  const rl = RATING_LABELS[r]
+                  return (
+                    <div key={r} className="flex items-center gap-3">
+                      <div className="flex gap-0.5 shrink-0">
+                        {[1,2,3,4,5].map(s => <Star key={s} className={`w-3 h-3 ${s <= r ? 'text-amber-400 fill-amber-400' : 'text-slate-700'}`} />)}
+                      </div>
+                      <span className={`text-xs font-bold w-20 shrink-0 ${rl.color}`}>{rl.label}</span>
+                      <div className="flex-1 h-2 bg-slate-950/60 border border-border/40 rounded-full overflow-hidden">
+                        <div className={`h-full rounded-full transition-all duration-700 ${r >= 4 ? 'bg-emerald-500' : r === 3 ? 'bg-amber-500' : 'bg-red-500'}`} style={{ width: `${pct}%` }} />
+                      </div>
+                      <span className="text-xs font-black text-foreground font-mono w-12 text-right shrink-0">{count} kişi</span>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ═══ Performance Review Modal ════════════════════════════════════════ */}
+      {revModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-lg bg-slate-900 border border-border/80 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.55)]">
+            <div className="flex items-center justify-between px-6 py-4.5 border-b border-border/80 bg-slate-950/20">
+              <div>
+                <h2 className="text-base font-bold text-foreground">Performans Değerlendirmesi</h2>
+                {revEmpId && (() => { const e = employees.find(e => e.id === revEmpId); return e ? <p className="text-xs text-slate-400 font-semibold mt-0.5">{e.firstName} {e.lastName}</p> : null })()}
+              </div>
+              <button onClick={() => setRevModal(false)} className="p-1.5 rounded-xl border border-border bg-slate-950/20 hover:bg-slate-800 text-slate-400 hover:text-white transition-all">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="px-6 py-5 space-y-5">
+              {/* Quarter */}
+              <div>
+                <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Dönem (Çeyrek)</label>
+                <select
+                  value={revForm.quarter}
+                  onChange={e => setRevForm(f => ({ ...f, quarter: e.target.value }))}
+                  className={inputCls}
+                >
+                  {(() => {
+                    const opts: string[] = []
+                    const now = new Date()
+                    for (let i = 0; i < 6; i++) {
+                      const d = new Date(now.getFullYear(), now.getMonth() - i * 3, 1)
+                      const q = Math.ceil((d.getMonth() + 1) / 3)
+                      opts.push(`${d.getFullYear()}-Q${q}`)
+                    }
+                    return [...new Set(opts)].map(o => <option key={o} value={o}>{o}</option>)
+                  })()}
+                </select>
+              </div>
+
+              {/* Star rating */}
+              <div>
+                <label className="block text-xs font-bold text-slate-400 mb-2.5 uppercase tracking-wider">Performans Puanı</label>
+                <div className="flex items-center gap-4">
+                  <div className="flex gap-1.5">
+                    {[1,2,3,4,5].map(s => (
+                      <button
+                        key={s}
+                        onClick={() => setRevForm(f => ({ ...f, rating: s }))}
+                        className="group p-0.5 rounded transition-transform hover:scale-110 active:scale-95"
+                      >
+                        <Star className={`w-8 h-8 transition-colors ${s <= revForm.rating ? 'text-amber-400 fill-amber-400' : 'text-slate-700 hover:text-amber-400/50'}`} />
+                      </button>
+                    ))}
+                  </div>
+                  <div>
+                    <p className={`text-sm font-black ${RATING_LABELS[revForm.rating]?.color}`}>{RATING_LABELS[revForm.rating]?.label}</p>
+                    <p className="text-[10px] text-slate-500 font-semibold">{revForm.rating}/5 puan</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Notes */}
+              <div>
+                <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider flex items-center gap-1.5">
+                  <MessageSquare className="w-3.5 h-3.5" /> Değerlendirme Notu
+                </label>
+                <textarea
+                  value={revForm.notes}
+                  onChange={e => setRevForm(f => ({ ...f, notes: e.target.value }))}
+                  rows={3}
+                  placeholder="Çalışanın bu dönemdeki performansı hakkında notlarınız…"
+                  className={`${inputCls} resize-none`}
+                />
+              </div>
+
+              {/* Goals */}
+              <div>
+                <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider flex items-center gap-1.5">
+                  <Target className="w-3.5 h-3.5" /> Hedefler (sonraki dönem için)
+                </label>
+                <div className="space-y-2">
+                  {revForm.goals.map((g, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <div className="w-5 h-5 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center shrink-0">
+                        <span className="text-[9px] font-black text-primary">{i + 1}</span>
+                      </div>
+                      <input
+                        value={g}
+                        onChange={e => setRevForm(f => ({ ...f, goals: f.goals.map((gg, ii) => ii === i ? e.target.value : gg) }))}
+                        placeholder={`Hedef ${i + 1} (opsiyonel)`}
+                        className={inputCls}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 px-6 py-4.5 border-t border-border bg-slate-950/20">
+              <button onClick={() => setRevModal(false)} className="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white transition-colors">İptal</button>
+              <button
+                onClick={handleSaveReview}
+                className="flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl text-sm font-bold transition-all shadow-sm shadow-primary/20"
+              >
+                <Check className="w-4 h-4" />
+                {revEditId ? 'Güncelle' : 'Kaydet'}
               </button>
             </div>
           </div>
