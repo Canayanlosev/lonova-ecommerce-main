@@ -6,7 +6,7 @@ import {
   Package, Truck, Settings, LogOut, Bell, Menu, X, Receipt,
   Store, Warehouse, Layout, CheckSquare, BarChart2, ShoppingBag, Tag, Star, Layers, Globe,
   AlertTriangle, ShoppingBag as OrderIcon, Search, Zap, ArrowRight, Command, FileBarChart, UserCheck,
-  ListTodo, Megaphone, RotateCcw, FileText, TrendingDown
+  ListTodo, Megaphone, RotateCcw, FileText, TrendingDown, Calendar
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -117,6 +117,7 @@ const navItems = [
   { icon: RotateCcw, label: "İade Yönetimi", href: "/dashboard/iadeler" },
   { icon: FileText, label: "Teklifler", href: "/dashboard/teklifler" },
   { icon: TrendingDown, label: "Gider Takibi", href: "/dashboard/giderler" },
+  { icon: Calendar, label: "Takvim", href: "/dashboard/takvim" },
   { icon: Settings, label: "Ayarlar", href: "/dashboard/ayarlar" },
 ];
 
@@ -189,6 +190,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { label: 'İade Yönetimi', desc: 'Müşteri iade taleplerini takip edin', href: '/dashboard/iadeler', icon: RotateCcw, group: 'Sayfalar' },
     { label: 'Teklifler', desc: 'B2B fiyat teklifi oluştur, yazdır, takip et', href: '/dashboard/teklifler', icon: FileText, group: 'Sayfalar' },
     { label: 'Gider Takibi', desc: 'İşletme giderlerini kategorilere göre izle', href: '/dashboard/giderler', icon: TrendingDown, group: 'Sayfalar' },
+    { label: 'Takvim', desc: 'Tüm modülleri tek takvimde gör', href: '/dashboard/takvim', icon: Calendar, group: 'Sayfalar' },
     { label: 'Ayarlar', desc: 'İşletme profili, bildirimler, API anahtarı', href: '/dashboard/ayarlar', icon: Settings, group: 'Sayfalar' },
     { label: 'Marketplace\'e Git', desc: 'Alışveriş sayfasını aç', href: '/', icon: Globe, group: 'Dış Bağlantılar' },
   ], [])
