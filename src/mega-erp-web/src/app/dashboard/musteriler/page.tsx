@@ -1,13 +1,15 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import {
   Users, Search, TrendingUp, ShoppingBag, Crown, ArrowUpDown,
   ArrowUp, ArrowDown, RefreshCw, Mail, Phone, MapPin, Package,
-  Star, Clock, Award, Filter
+  Star, Clock, Award, Filter, X, StickyNote, ChevronRight,
+  CheckCircle2, ExternalLink, MessageSquare, CalendarDays, Repeat
 } from 'lucide-react'
+import Link from 'next/link'
 import api from '@/lib/api'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -43,6 +45,28 @@ type SortKey = 'name' | 'orderCount' | 'totalSpent' | 'avgOrderValue' | 'lastOrd
 type SortDir = 'asc' | 'desc'
 type SegmentFilter = 'all' | 'vip' | 'returning' | 'new'
 
+const CRM_NOTES_KEY = 'crm-customer-notes'
+const CRM_TAGS_KEY  = 'crm-customer-tags'
+
+const CUSTOMER_TAGS = ['VIP', 'Sorunlu', 'Potansiyel', 'Toptan', 'Sadık', 'Yeni']
+const TAG_COLORS: Record<string, string> = {
+  VIP:        'bg-amber-500/10 text-amber-400 border-amber-500/25',
+  Sorunlu:    'bg-red-500/10 text-red-400 border-red-500/25',
+  Potansiyel: 'bg-violet-500/10 text-violet-400 border-violet-500/25',
+  Toptan:     'bg-cyan-500/10 text-cyan-400 border-cyan-500/25',
+  Sadık:      'bg-primary/10 text-primary border-primary/25',
+  Yeni:       'bg-emerald-500/10 text-emerald-400 border-emerald-500/25',
+}
+
+const ORDER_STATUS_TR: Record<string, { label: string; cls: string }> = {
+  Pending:   { label: 'Beklemede',  cls: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
+  Paid:      { label: 'Ödendi',     cls: 'bg-primary/10 text-primary border-primary/20' },
+  Shipped:   { label: 'Kargoda',    cls: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' },
+  Delivered: { label: 'Teslim',     cls: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
+  Cancelled: { label: 'İptal',      cls: 'bg-red-500/10 text-red-400 border-red-500/20' },
+  Refunded:  { label: 'İade',       cls: 'bg-slate-800 text-slate-400 border-border/80' },
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function MusterilerPage() {
@@ -52,6 +76,13 @@ export default function MusterilerPage() {
   const [sortKey, setSortKey] = useState<SortKey>('totalSpent')
   const [sortDir, setSortDir] = useState<SortDir>('desc')
   const [segment, setSegment] = useState<SegmentFilter>('all')
+
+  // CRM detail panel
+  const [selectedCustomer, setSelectedCustomer] = useState<CustomerRow | null>(null)
+  const [crmNotes, setCrmNotes] = useState<Record<string, string>>({})
+  const [crmTags, setCrmTags] = useState<Record<string, string[]>>({})
+  const [noteInput, setNoteInput] = useState('')
+  const [noteSaved, setNoteSaved] = useState(false)
 
   useEffect(() => {
     setLoading(true)
@@ -63,6 +94,40 @@ export default function MusterilerPage() {
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
+
+  // Load CRM data from localStorage
+  useEffect(() => {
+    try {
+      const notes = JSON.parse(localStorage.getItem(CRM_NOTES_KEY) ?? '{}') as Record<string, string>
+      const tags  = JSON.parse(localStorage.getItem(CRM_TAGS_KEY)  ?? '{}') as Record<string, string[]>
+      setCrmNotes(notes)
+      setCrmTags(tags)
+    } catch {}
+  }, [])
+
+  const openCustomer = useCallback((c: CustomerRow) => {
+    setSelectedCustomer(c)
+    setNoteInput(crmNotes[c.userId] ?? '')
+    setNoteSaved(false)
+  }, [crmNotes])
+
+  const handleSaveNote = useCallback(() => {
+    if (!selectedCustomer) return
+    const next = { ...crmNotes, [selectedCustomer.userId]: noteInput }
+    setCrmNotes(next)
+    localStorage.setItem(CRM_NOTES_KEY, JSON.stringify(next))
+    setNoteSaved(true)
+    setTimeout(() => setNoteSaved(false), 2000)
+  }, [selectedCustomer, crmNotes, noteInput])
+
+  const handleToggleTag = useCallback((tag: string) => {
+    if (!selectedCustomer) return
+    const current = crmTags[selectedCustomer.userId] ?? []
+    const next = current.includes(tag) ? current.filter(t => t !== tag) : [...current, tag]
+    const nextMap = { ...crmTags, [selectedCustomer.userId]: next }
+    setCrmTags(nextMap)
+    localStorage.setItem(CRM_TAGS_KEY, JSON.stringify(nextMap))
+  }, [selectedCustomer, crmTags])
 
   // ── Aggregate per customer ────────────────────────────────────────────────
   const customers = useMemo<CustomerRow[]>(() => {
@@ -163,6 +228,15 @@ export default function MusterilerPage() {
 
     return rows
   }, [customers, segment, search, sortKey, sortDir])
+
+  // Customer order history for panel
+  const customerOrders = useMemo<MktOrder[]>(() => {
+    if (!selectedCustomer) return []
+    return orders.filter(o =>
+      o.buyerUserId === selectedCustomer.userId ||
+      o.recipientName === selectedCustomer.name
+    ).sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+  }, [orders, selectedCustomer])
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
@@ -338,13 +412,17 @@ export default function MusterilerPage() {
                   const daysSinceLast = c.lastOrderISO
                     ? Math.floor((Date.now() - new Date(c.lastOrderISO).getTime()) / (1000 * 60 * 60 * 24))
                     : null
+                  const hasCrmNote = !!crmNotes[c.userId]
+                  const hasCrmTags = (crmTags[c.userId]?.length ?? 0) > 0
+                  const isSelected = selectedCustomer?.userId === c.userId
 
                   return (
                     <motion.tr
                       key={c.userId}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="hover:bg-slate-800/30 transition-colors"
+                      onClick={() => openCustomer(c)}
+                      className={`cursor-pointer transition-colors ${isSelected ? 'bg-primary/8 border-l-2 border-l-primary' : 'hover:bg-slate-800/30'}`}
                     >
                       {/* Customer info */}
                       <td className="px-6 py-4">
@@ -360,11 +438,13 @@ export default function MusterilerPage() {
                             }
                           </div>
                           <div className="min-w-0">
-                            <div className="flex items-center gap-2">
-                              <p className="font-bold text-foreground text-xs truncate max-w-[160px]">{c.name}</p>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p className="font-bold text-foreground text-xs truncate max-w-[140px]">{c.name}</p>
                               <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${seg.cls} shrink-0`}>
                                 {seg.label}
                               </span>
+                              {hasCrmNote && <StickyNote className="w-3 h-3 text-amber-400 shrink-0" aria-label="Not var" />}
+                              {hasCrmTags && <MessageSquare className="w-3 h-3 text-violet-400 shrink-0" aria-label="Etiket var" />}
                             </div>
                             <div className="flex items-center gap-3 mt-0.5">
                               {c.phone && (
@@ -415,7 +495,7 @@ export default function MusterilerPage() {
                       </td>
 
                       {/* Last order */}
-                      <td className="px-6 py-4 text-right hidden lg:table-cell">
+                      <td className="px-4 py-4 text-right hidden lg:table-cell">
                         <div>
                           <p className="text-xs font-semibold text-slate-400 font-mono">
                             {c.lastOrderISO ? new Date(c.lastOrderISO).toLocaleDateString('tr-TR') : '—'}
@@ -429,6 +509,10 @@ export default function MusterilerPage() {
                             </p>
                           )}
                         </div>
+                      </td>
+                      {/* Open detail arrow */}
+                      <td className="px-4 py-4 text-right">
+                        <ChevronRight className={`w-4 h-4 ml-auto transition-colors ${isSelected ? 'text-primary' : 'text-slate-600 group-hover:text-slate-400'}`} />
                       </td>
                     </motion.tr>
                   )
@@ -455,6 +539,245 @@ export default function MusterilerPage() {
           </div>
         </div>
       )}
+
+      {/* ── CRM Detail Panel ── */}
+      <AnimatePresence>
+        {selectedCustomer && (() => {
+          const c = selectedCustomer
+          const seg = SEGMENT_CONFIG[c.segment]
+          const initials = c.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
+          const tags = crmTags[c.userId] ?? []
+          const noteVal = crmNotes[c.userId] ?? ''
+
+          return (
+            <>
+              {/* Backdrop */}
+              <motion.div
+                key="crm-backdrop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setSelectedCustomer(null)}
+                className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+              />
+
+              {/* Panel */}
+              <motion.div
+                key="crm-panel"
+                initial={{ x: '100%', opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: '100%', opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                className="fixed top-0 right-0 h-full z-50 w-full max-w-md bg-slate-900 border-l border-border/80 shadow-2xl flex flex-col overflow-hidden"
+              >
+                {/* Panel header */}
+                <div className="flex items-start justify-between px-6 py-5 border-b border-border/60 bg-slate-950/60 shrink-0">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-11 h-11 rounded-xl flex items-center justify-center border text-sm font-black shrink-0 ${
+                      c.segment === 'vip'       ? 'bg-amber-500/15 border-amber-500/25 text-amber-400' :
+                      c.segment === 'returning' ? 'bg-primary/12 border-primary/25 text-primary' :
+                                                  'bg-emerald-500/10 border-emerald-500/25 text-emerald-400'
+                    }`}>
+                      {c.segment === 'vip' ? <Crown className="w-5 h-5" /> : initials}
+                    </div>
+                    <div>
+                      <p className="font-black text-foreground text-sm">{c.name}</p>
+                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${seg.cls}`}>
+                        {seg.label}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setSelectedCustomer(null)}
+                    className="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-slate-800 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Scrollable content */}
+                <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+
+                  {/* Contact info */}
+                  <div className="space-y-2">
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500">İletişim</h3>
+                    <div className="space-y-1.5">
+                      {c.phone ? (
+                        <a href={`tel:${c.phone}`} className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-slate-800/40 hover:bg-slate-800/70 transition-colors group">
+                          <Phone className="w-3.5 h-3.5 text-slate-500 group-hover:text-primary transition-colors" />
+                          <span className="text-xs font-semibold text-foreground">{c.phone}</span>
+                          <ExternalLink className="w-3 h-3 text-slate-600 ml-auto group-hover:text-primary transition-colors" />
+                        </a>
+                      ) : (
+                        <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-slate-800/20">
+                          <Phone className="w-3.5 h-3.5 text-slate-700" />
+                          <span className="text-xs text-slate-600">Telefon yok</span>
+                        </div>
+                      )}
+                      {c.email ? (
+                        <a href={`mailto:${c.email}`} className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-slate-800/40 hover:bg-slate-800/70 transition-colors group">
+                          <Mail className="w-3.5 h-3.5 text-slate-500 group-hover:text-primary transition-colors" />
+                          <span className="text-xs font-semibold text-foreground truncate">{c.email}</span>
+                          <ExternalLink className="w-3 h-3 text-slate-600 ml-auto group-hover:text-primary transition-colors" />
+                        </a>
+                      ) : (
+                        <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-slate-800/20">
+                          <Mail className="w-3.5 h-3.5 text-slate-700" />
+                          <span className="text-xs text-slate-600">E-posta yok</span>
+                        </div>
+                      )}
+                      {c.city && (
+                        <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-slate-800/20">
+                          <MapPin className="w-3.5 h-3.5 text-slate-600" />
+                          <span className="text-xs text-slate-400 font-semibold">{c.city}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Stats strip */}
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { label: 'Sipariş', value: c.orderCount, icon: Package, color: 'text-primary' },
+                      { label: 'Toplam', value: `₺${Math.round(c.totalSpent).toLocaleString('tr-TR')}`, icon: ShoppingBag, color: 'text-emerald-400' },
+                      { label: 'Ort. Sipariş', value: `₺${c.avgOrderValue.toLocaleString('tr-TR')}`, icon: TrendingUp, color: 'text-cyan-400' },
+                    ].map(({ label, value, icon: Icon, color }) => (
+                      <div key={label} className="premium-card p-3 text-center border border-border/60">
+                        <Icon className={`w-4 h-4 ${color} mx-auto mb-1`} />
+                        <p className={`text-sm font-black ${color}`}>{value}</p>
+                        <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wide mt-0.5">{label}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Date info */}
+                  <div className="flex gap-3">
+                    <div className="flex-1 px-3 py-2 rounded-xl bg-slate-800/30 space-y-0.5">
+                      <p className="text-[9px] font-black uppercase tracking-wider text-slate-600">İlk Sipariş</p>
+                      <p className="text-xs font-bold text-slate-400">
+                        {c.firstOrderISO ? new Date(c.firstOrderISO).toLocaleDateString('tr-TR') : '—'}
+                      </p>
+                    </div>
+                    <div className="flex-1 px-3 py-2 rounded-xl bg-slate-800/30 space-y-0.5">
+                      <p className="text-[9px] font-black uppercase tracking-wider text-slate-600">Son Sipariş</p>
+                      <p className="text-xs font-bold text-slate-400">
+                        {c.lastOrderISO ? new Date(c.lastOrderISO).toLocaleDateString('tr-TR') : '—'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* CRM Tags */}
+                  <div className="space-y-2.5">
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Etiketler</h3>
+                    <div className="flex flex-wrap gap-1.5">
+                      {CUSTOMER_TAGS.map(tag => {
+                        const active = tags.includes(tag)
+                        return (
+                          <button
+                            key={tag}
+                            onClick={() => handleToggleTag(tag)}
+                            className={`px-2.5 py-1 rounded-full text-[10px] font-bold border transition-all ${
+                              active
+                                ? (TAG_COLORS[tag] ?? 'bg-primary/10 text-primary border-primary/25')
+                                : 'bg-transparent text-slate-500 border-border/60 hover:border-border hover:text-slate-300'
+                            }`}
+                          >
+                            {active ? '✓ ' : ''}{tag}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                  {/* CRM Notes */}
+                  <div className="space-y-2.5">
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1.5">
+                      <StickyNote className="w-3 h-3" /> Müşteri Notları
+                    </h3>
+                    <textarea
+                      value={noteInput}
+                      onChange={e => { setNoteInput(e.target.value); setNoteSaved(false) }}
+                      placeholder="Bu müşteri hakkında not ekle… (ör. tercihler, özel indirim, kargo notu)"
+                      rows={4}
+                      className="w-full px-3 py-2.5 rounded-xl bg-slate-950/60 border border-border/70 text-foreground text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/25 resize-none placeholder:text-slate-600 transition-all"
+                    />
+                    <button
+                      onClick={handleSaveNote}
+                      className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                        noteSaved
+                          ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25'
+                          : 'bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20'
+                      }`}
+                    >
+                      {noteSaved ? <CheckCircle2 className="w-3.5 h-3.5" /> : <StickyNote className="w-3.5 h-3.5" />}
+                      {noteSaved ? 'Kaydedildi!' : 'Notu Kaydet'}
+                    </button>
+                    {noteVal && noteVal !== noteInput && (
+                      <p className="text-[10px] text-slate-600 font-semibold">
+                        Son kayıt: {noteVal.slice(0, 60)}{noteVal.length > 60 ? '…' : ''}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Order history */}
+                  <div className="space-y-2.5">
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center justify-between">
+                      <span className="flex items-center gap-1.5">
+                        <Repeat className="w-3 h-3" /> Sipariş Geçmişi
+                      </span>
+                      <span className="text-slate-600 normal-case font-semibold">{customerOrders.length} sipariş</span>
+                    </h3>
+                    {customerOrders.length === 0 ? (
+                      <div className="py-6 text-center">
+                        <Package className="w-8 h-8 text-slate-700 mx-auto mb-2" />
+                        <p className="text-xs text-slate-600 font-semibold">Sipariş geçmişi bulunamadı.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-1.5 max-h-64 overflow-y-auto pr-1">
+                        {customerOrders.map(o => {
+                          const st = ORDER_STATUS_TR[o.status] ?? { label: o.status, cls: 'bg-slate-800 text-slate-400 border-border/80' }
+                          return (
+                            <div key={o.id} className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-slate-800/30 hover:bg-slate-800/50 transition-colors">
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <CalendarDays className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+                                <div className="min-w-0">
+                                  <p className="text-[10px] font-bold text-slate-400">
+                                    {new Date(o.createdAt).toLocaleDateString('tr-TR')}
+                                  </p>
+                                  <p className="text-[10px] text-slate-600 font-mono truncate max-w-[120px]">#{o.id.slice(0, 8)}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2 shrink-0">
+                                <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-black uppercase border ${st.cls}`}>
+                                  {st.label}
+                                </span>
+                                <span className="text-xs font-black text-foreground font-mono">
+                                  ₺{(o.totalAmount ?? 0).toLocaleString('tr-TR', { maximumFractionDigits: 0 })}
+                                </span>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Panel footer */}
+                <div className="px-6 py-4 border-t border-border/60 bg-slate-950/40 shrink-0">
+                  <Link
+                    href="/dashboard/marketplace-orders"
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-xs font-bold border border-primary/20"
+                  >
+                    <Package className="w-3.5 h-3.5" /> Tüm Siparişleri Gör
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </motion.div>
+            </>
+          )
+        })()}
+      </AnimatePresence>
     </div>
   )
 }
