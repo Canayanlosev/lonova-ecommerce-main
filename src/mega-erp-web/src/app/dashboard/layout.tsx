@@ -6,7 +6,7 @@ import {
   Package, Truck, Settings, LogOut, Bell, Menu, X, Receipt,
   Store, Warehouse, Layout, CheckSquare, BarChart2, ShoppingBag, Tag, Star, Layers, Globe,
   AlertTriangle, ShoppingBag as OrderIcon, Search, Zap, ArrowRight, Command, FileBarChart, UserCheck,
-  ListTodo, Megaphone
+  ListTodo, Megaphone, RotateCcw
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -114,6 +114,7 @@ const navItems = [
   { icon: Megaphone, label: "Pazarlama", href: "/dashboard/pazarlama" },
   { icon: CheckSquare, label: "Kurulum Rehberi", href: "/dashboard/setup", badge: true },
   { icon: Truck, label: "Tedarik & Satın Alma", href: "/dashboard/tedarik" },
+  { icon: RotateCcw, label: "İade Yönetimi", href: "/dashboard/iadeler" },
   { icon: Settings, label: "Ayarlar", href: "/dashboard/ayarlar" },
 ];
 
@@ -183,6 +184,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { label: 'Pazarlama', desc: 'SMS, e-posta ve bildirim kampanyaları', href: '/dashboard/pazarlama', icon: Megaphone, group: 'Sayfalar' },
     { label: 'Kurulum Rehberi', desc: '5 adımlı kurulum sihirbazı', href: '/dashboard/setup', icon: CheckSquare, group: 'Sayfalar' },
     { label: 'Tedarik & Satın Alma', desc: 'Tedarikçiler ve satın alma siparişleri', href: '/dashboard/tedarik', icon: Truck, group: 'Sayfalar' },
+    { label: 'İade Yönetimi', desc: 'Müşteri iade taleplerini takip edin', href: '/dashboard/iadeler', icon: RotateCcw, group: 'Sayfalar' },
     { label: 'Ayarlar', desc: 'İşletme profili, bildirimler, API anahtarı', href: '/dashboard/ayarlar', icon: Settings, group: 'Sayfalar' },
     { label: 'Marketplace\'e Git', desc: 'Alışveriş sayfasını aç', href: '/', icon: Globe, group: 'Dış Bağlantılar' },
   ], [])
