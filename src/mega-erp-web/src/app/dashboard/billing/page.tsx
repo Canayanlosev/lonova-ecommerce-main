@@ -4,9 +4,10 @@ import { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link'
 import {
   Receipt, CheckCircle, RefreshCw, FileText, Clock, XCircle,
-  Download, Filter, Printer, X as CloseIcon, Calculator, ChevronDown, ChevronUp
+  Download, Filter, Printer, X as CloseIcon, Calculator, ChevronDown, ChevronUp,
+  Plus, Trash2, AlertCircle, Loader2, User, Mail, Calendar
 } from 'lucide-react'
-import { billingService } from '@/lib/services/billing.service'
+import { billingService, type CreateInvoiceItem } from '@/lib/services/billing.service'
 import { useToast } from '@/store/ui.store'
 import type { Invoice } from '@/types/api.types'
 
@@ -27,6 +28,19 @@ export default function BillingPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [printInv, setPrintInv] = useState<Invoice | null>(null)
   const [kdvExpanded, setKdvExpanded] = useState(false)
+
+  // Create invoice form
+  const [showCreate, setShowCreate] = useState(false)
+  const [creating, setCreating] = useState(false)
+  const [createError, setCreateError] = useState('')
+  const EMPTY_ITEM: CreateInvoiceItem = { description: '', quantity: 1, unitPrice: 0, taxRate: 18 }
+  const [invForm, setInvForm] = useState({
+    customerName: '', customerEmail: '',
+    invoiceDate: new Date().toISOString().slice(0, 10),
+    dueDate: new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
+    notes: '',
+    items: [{ ...EMPTY_ITEM }],
+  })
 
   const load = () => {
     setLoading(true)
@@ -101,6 +115,51 @@ export default function BillingPage() {
     statusFilter === 'all' ? invoices : invoices.filter(i => i.status === statusFilter),
     [invoices, statusFilter])
 
+  // Create invoice handlers
+  const invTotals = useMemo(() => {
+    const subtotal = invForm.items.reduce((s, it) => s + it.quantity * it.unitPrice, 0)
+    const tax = invForm.items.reduce((s, it) => s + it.quantity * it.unitPrice * (it.taxRate / 100), 0)
+    return { subtotal, tax, total: subtotal + tax }
+  }, [invForm.items])
+
+  const handleCreateInvoice = async () => {
+    if (!invForm.customerName.trim()) { setCreateError('Müşteri adı gerekli.'); return }
+    if (invForm.items.some(it => !it.description.trim() || it.unitPrice <= 0)) {
+      setCreateError('Tüm kalemlerin açıklama ve birim fiyatı girilmeli.')
+      return
+    }
+    setCreating(true)
+    setCreateError('')
+    try {
+      await billingService.create({
+        customerName: invForm.customerName.trim(),
+        customerEmail: invForm.customerEmail.trim() || undefined,
+        invoiceDate: invForm.invoiceDate,
+        dueDate: invForm.dueDate,
+        items: invForm.items.map(it => ({
+          description: it.description.trim(),
+          quantity: it.quantity,
+          unitPrice: it.unitPrice,
+          taxRate: it.taxRate,
+        })),
+        notes: invForm.notes.trim() || undefined,
+      })
+      toast.success('Fatura oluşturuldu.')
+      setShowCreate(false)
+      setInvForm({
+        customerName: '', customerEmail: '',
+        invoiceDate: new Date().toISOString().slice(0, 10),
+        dueDate: new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
+        notes: '', items: [{ ...EMPTY_ITEM }],
+      })
+      load()
+    } catch {
+      setCreateError('Fatura oluşturulamadı. Lütfen tekrar deneyin.')
+    } finally {
+      setCreating(false)
+    }
+  }
+
   // CSV export
   const handleExport = () => {
     const rows = [
@@ -140,6 +199,12 @@ export default function BillingPage() {
           </p>
         </div>
         <div className="flex gap-2">
+          <button
+            onClick={() => { setShowCreate(true); setCreateError('') }}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary/95 transition-all hover:-translate-y-0.5 shadow-md shadow-primary/20"
+          >
+            <Plus className="w-3.5 h-3.5" /> Yeni Fatura
+          </button>
           <button onClick={load} className="p-2 rounded-lg border border-border text-slate-400 hover:text-foreground hover:bg-slate-800 transition-all" title="Yenile">
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
@@ -503,6 +568,205 @@ export default function BillingPage() {
               <div className="mt-8 pt-6 border-t border-slate-200 dark:border-border text-xs text-slate-400 text-center">
                 Bu fatura CanayanWeb KOBİ Platformu tarafından oluşturulmuştur.
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Create Invoice Modal ───────────────────────────────────────────── */}
+      {showCreate && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center p-4 overflow-y-auto bg-black/60 backdrop-blur-sm">
+          <div
+            className="bg-slate-900 border border-border/80 rounded-2xl shadow-2xl w-full max-w-2xl my-8 p-6 space-y-5"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between">
+              <h2 className="font-black text-foreground text-sm flex items-center gap-2">
+                <Receipt className="w-4 h-4 text-primary" /> Yeni Fatura Oluştur
+              </h2>
+              <button onClick={() => setShowCreate(false)} className="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">
+                <CloseIcon className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Customer info */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">
+                  <User className="w-3 h-3 inline mr-1" />Müşteri Adı *
+                </label>
+                <input
+                  value={invForm.customerName}
+                  onChange={e => setInvForm(f => ({ ...f, customerName: e.target.value }))}
+                  placeholder="Firma veya kişi adı"
+                  autoFocus
+                  className="w-full px-3 py-2.5 rounded-xl bg-slate-950/40 border border-border/80 text-foreground text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all placeholder:text-slate-600"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">
+                  <Mail className="w-3 h-3 inline mr-1" />E-posta (isteğe bağlı)
+                </label>
+                <input
+                  value={invForm.customerEmail}
+                  onChange={e => setInvForm(f => ({ ...f, customerEmail: e.target.value }))}
+                  placeholder="musteri@firma.com"
+                  type="email"
+                  className="w-full px-3 py-2.5 rounded-xl bg-slate-950/40 border border-border/80 text-foreground text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all placeholder:text-slate-600"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">
+                  <Calendar className="w-3 h-3 inline mr-1" />Fatura Tarihi
+                </label>
+                <input
+                  type="date"
+                  value={invForm.invoiceDate}
+                  onChange={e => setInvForm(f => ({ ...f, invoiceDate: e.target.value }))}
+                  className="w-full px-3 py-2.5 rounded-xl bg-slate-950/40 border border-border/80 text-foreground text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all cursor-pointer"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">
+                  <Clock className="w-3 h-3 inline mr-1" />Vade Tarihi
+                </label>
+                <input
+                  type="date"
+                  value={invForm.dueDate}
+                  onChange={e => setInvForm(f => ({ ...f, dueDate: e.target.value }))}
+                  className="w-full px-3 py-2.5 rounded-xl bg-slate-950/40 border border-border/80 text-foreground text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all cursor-pointer"
+                />
+              </div>
+            </div>
+
+            {/* Line items */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Fatura Kalemleri *</label>
+                <button
+                  onClick={() => setInvForm(f => ({ ...f, items: [...f.items, { ...EMPTY_ITEM }] }))}
+                  className="flex items-center gap-1 text-[10px] font-bold text-primary hover:text-primary/80 transition-colors"
+                >
+                  <Plus className="w-3 h-3" /> Kalem Ekle
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                {/* Column headers */}
+                <div className="grid grid-cols-12 gap-2 px-1">
+                  <div className="col-span-5 text-[9px] font-black uppercase tracking-wider text-slate-600">Açıklama</div>
+                  <div className="col-span-2 text-[9px] font-black uppercase tracking-wider text-slate-600">Miktar</div>
+                  <div className="col-span-2 text-[9px] font-black uppercase tracking-wider text-slate-600">Birim ₺</div>
+                  <div className="col-span-2 text-[9px] font-black uppercase tracking-wider text-slate-600">KDV %</div>
+                  <div className="col-span-1" />
+                </div>
+
+                {invForm.items.map((item, idx) => (
+                  <div key={idx} className="grid grid-cols-12 gap-2 items-center">
+                    <div className="col-span-5">
+                      <input
+                        value={item.description}
+                        onChange={e => setInvForm(f => ({ ...f, items: f.items.map((it, i) => i === idx ? { ...it, description: e.target.value } : it) }))}
+                        placeholder="Ürün/Hizmet açıklaması"
+                        className="w-full px-2.5 py-2 rounded-xl bg-slate-950/40 border border-border/80 text-foreground text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-slate-600 transition-all"
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <input
+                        type="number" min={1}
+                        value={item.quantity}
+                        onChange={e => setInvForm(f => ({ ...f, items: f.items.map((it, i) => i === idx ? { ...it, quantity: Number(e.target.value) } : it) }))}
+                        className="w-full px-2.5 py-2 rounded-xl bg-slate-950/40 border border-border/80 text-foreground text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 text-center transition-all"
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <input
+                        type="number" min={0} step="0.01"
+                        value={item.unitPrice || ''}
+                        onChange={e => setInvForm(f => ({ ...f, items: f.items.map((it, i) => i === idx ? { ...it, unitPrice: Number(e.target.value) } : it) }))}
+                        placeholder="0.00"
+                        className="w-full px-2.5 py-2 rounded-xl bg-slate-950/40 border border-border/80 text-foreground text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 text-right transition-all"
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <select
+                        value={item.taxRate}
+                        onChange={e => setInvForm(f => ({ ...f, items: f.items.map((it, i) => i === idx ? { ...it, taxRate: Number(e.target.value) } : it) }))}
+                        className="w-full px-2 py-2 rounded-xl bg-slate-950/40 border border-border/80 text-foreground text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer transition-all"
+                      >
+                        <option value={0}>%0</option>
+                        <option value={1}>%1</option>
+                        <option value={8}>%8</option>
+                        <option value={18}>%18</option>
+                        <option value={20}>%20</option>
+                      </select>
+                    </div>
+                    <div className="col-span-1 flex justify-center">
+                      <button
+                        onClick={() => setInvForm(f => ({ ...f, items: f.items.filter((_, i) => i !== idx) }))}
+                        disabled={invForm.items.length === 1}
+                        className="p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-30"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Totals */}
+            <div className="flex justify-end pt-1">
+              <div className="w-56 space-y-1.5">
+                <div className="flex justify-between text-xs text-slate-400 font-semibold">
+                  <span>Ara Toplam</span>
+                  <span className="font-mono">₺{invTotals.subtotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}</span>
+                </div>
+                <div className="flex justify-between text-xs text-slate-400 font-semibold">
+                  <span>KDV</span>
+                  <span className="font-mono">₺{invTotals.tax.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}</span>
+                </div>
+                <div className="flex justify-between text-sm font-black text-foreground border-t border-border/60 pt-1.5">
+                  <span>Toplam</span>
+                  <span className="font-mono text-primary">₺{invTotals.total.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Notes */}
+            <div>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Not (isteğe bağlı)</label>
+              <textarea
+                value={invForm.notes}
+                onChange={e => setInvForm(f => ({ ...f, notes: e.target.value }))}
+                placeholder="Ödeme bilgileri, banka IBAN, özel şartlar…"
+                rows={2}
+                className="w-full px-3 py-2.5 rounded-xl bg-slate-950/40 border border-border/80 text-foreground text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all placeholder:text-slate-600 resize-none"
+              />
+            </div>
+
+            {/* Error */}
+            {createError && (
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <p className="text-xs font-semibold">{createError}</p>
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="flex gap-3 pt-1">
+              <button onClick={() => setShowCreate(false)} className="flex-1 px-4 py-2.5 rounded-xl border border-border/80 text-slate-400 hover:text-white text-xs font-bold transition-colors">
+                İptal
+              </button>
+              <button
+                onClick={handleCreateInvoice}
+                disabled={creating || !invForm.customerName.trim()}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary/95 transition-all disabled:opacity-50 shadow-md shadow-primary/20 flex items-center justify-center gap-2"
+              >
+                {creating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Receipt className="w-3.5 h-3.5" />}
+                {creating ? 'Oluşturuluyor…' : 'Fatura Oluştur'}
+              </button>
             </div>
           </div>
         </div>
