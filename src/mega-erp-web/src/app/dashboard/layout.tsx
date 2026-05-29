@@ -6,7 +6,7 @@ import {
   Package, Truck, Settings, LogOut, Bell, Menu, X, Receipt,
   Store, Warehouse, Layout, CheckSquare, BarChart2, ShoppingBag, Tag, Star, Layers, Globe,
   AlertTriangle, ShoppingBag as OrderIcon, Search, Zap, ArrowRight, Command, FileBarChart, UserCheck,
-  ListTodo, Megaphone, RotateCcw, FileText, TrendingDown, Calendar, LifeBuoy, GitMerge, Landmark, Plug, Target
+  ListTodo, Megaphone, RotateCcw, FileText, TrendingDown, Calendar, LifeBuoy, GitMerge, Landmark, Plug, Target, CalendarDays
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -123,6 +123,7 @@ const navItems = [
   { icon: Landmark, label: "Banka Hesapları", href: "/dashboard/banka" },
   { icon: Plug, label: "Entegrasyonlar", href: "/dashboard/entegrasyonlar" },
   { icon: Target, label: "KPI & Hedefler", href: "/dashboard/hedefler" },
+  { icon: CalendarDays, label: "Vardiya Takvimi", href: "/dashboard/vardiya" },
   { icon: Settings, label: "Ayarlar", href: "/dashboard/ayarlar" },
 ];
 
@@ -201,6 +202,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { label: 'Banka Hesapları', desc: 'Hesap bakiyeleri, nakit akışı ve mutabakat', href: '/dashboard/banka', icon: Landmark, group: 'Sayfalar' },
     { label: 'Entegrasyonlar', desc: 'Trendyol, HepsiBurada, kargo ve ödeme bağlantıları', href: '/dashboard/entegrasyonlar', icon: Plug, group: 'Sayfalar' },
     { label: 'KPI & Hedefler', desc: 'İşletme hedefleri ve KPI takibi', href: '/dashboard/hedefler', icon: Target, group: 'Sayfalar' },
+    { label: 'Vardiya Takvimi', desc: 'Haftalık personel vardiya planlama', href: '/dashboard/vardiya', icon: CalendarDays, group: 'Sayfalar' },
     { label: 'Ayarlar', desc: 'İşletme profili, bildirimler, API anahtarı', href: '/dashboard/ayarlar', icon: Settings, group: 'Sayfalar' },
     { label: 'Marketplace\'e Git', desc: 'Alışveriş sayfasını aç', href: '/', icon: Globe, group: 'Dış Bağlantılar' },
   ], [])
