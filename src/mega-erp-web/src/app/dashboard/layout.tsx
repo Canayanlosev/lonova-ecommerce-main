@@ -6,7 +6,7 @@ import {
   Package, Truck, Settings, LogOut, Bell, Menu, X, Receipt,
   Store, Warehouse, Layout, CheckSquare, BarChart2, ShoppingBag, Tag, Star, Layers, Globe,
   AlertTriangle, ShoppingBag as OrderIcon, Search, Zap, ArrowRight, Command, FileBarChart, UserCheck,
-  ListTodo, Megaphone, RotateCcw, FileText, TrendingDown, Calendar, LifeBuoy, GitMerge
+  ListTodo, Megaphone, RotateCcw, FileText, TrendingDown, Calendar, LifeBuoy, GitMerge, Landmark
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -120,6 +120,7 @@ const navItems = [
   { icon: Calendar, label: "Takvim", href: "/dashboard/takvim" },
   { icon: LifeBuoy, label: "Destek Talepleri", href: "/dashboard/destek" },
   { icon: GitMerge, label: "Satış Hattı", href: "/dashboard/pipeline" },
+  { icon: Landmark, label: "Banka Hesapları", href: "/dashboard/banka" },
   { icon: Settings, label: "Ayarlar", href: "/dashboard/ayarlar" },
 ];
 
@@ -195,6 +196,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { label: 'Takvim', desc: 'Tüm modülleri tek takvimde gör', href: '/dashboard/takvim', icon: Calendar, group: 'Sayfalar' },
     { label: 'Destek Talepleri', desc: 'Müşteri destek taleplerini yönet, önceliklendir, yanıtla', href: '/dashboard/destek', icon: LifeBuoy, group: 'Sayfalar' },
     { label: 'Satış Hattı', desc: 'Kanban pipeline — fırsatları aşama aşama takip et', href: '/dashboard/pipeline', icon: GitMerge, group: 'Sayfalar' },
+    { label: 'Banka Hesapları', desc: 'Hesap bakiyeleri, nakit akışı ve mutabakat', href: '/dashboard/banka', icon: Landmark, group: 'Sayfalar' },
     { label: 'Ayarlar', desc: 'İşletme profili, bildirimler, API anahtarı', href: '/dashboard/ayarlar', icon: Settings, group: 'Sayfalar' },
     { label: 'Marketplace\'e Git', desc: 'Alışveriş sayfasını aç', href: '/', icon: Globe, group: 'Dış Bağlantılar' },
   ], [])
