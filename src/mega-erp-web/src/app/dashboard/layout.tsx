@@ -6,7 +6,7 @@ import {
   Package, Truck, Settings, LogOut, Bell, Menu, X, Receipt,
   Store, Warehouse, Layout, CheckSquare, BarChart2, ShoppingBag, Tag, Star, Layers, Globe,
   AlertTriangle, ShoppingBag as OrderIcon, Search, Zap, ArrowRight, Command, FileBarChart, UserCheck,
-  ListTodo, Megaphone, RotateCcw, FileText, TrendingDown, Calendar, LifeBuoy, GitMerge, Landmark, Plug, Target, CalendarDays, ReceiptText, Percent, FileSignature, Wallet, Trophy, ClipboardList
+  ListTodo, Megaphone, RotateCcw, FileText, TrendingDown, Calendar, LifeBuoy, GitMerge, Landmark, Plug, Target, CalendarDays, ReceiptText, Percent, FileSignature, Wallet, Trophy, ClipboardList, BellRing
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -130,6 +130,7 @@ const navItems = [
   { icon: Wallet, label: "Bütçe Takibi", href: "/dashboard/butce" },
   { icon: Trophy, label: "Prim & Komisyon", href: "/dashboard/prim" },
   { icon: ClipboardList, label: "Stok Sayım", href: "/dashboard/stok-sayim" },
+  { icon: BellRing, label: "İç Duyurular", href: "/dashboard/duyurular" },
   { icon: Settings, label: "Ayarlar", href: "/dashboard/ayarlar" },
 ];
 
@@ -215,6 +216,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { label: 'Bütçe Takibi', desc: 'Yıllık bütçe planlaması, gerçekleşen vs hedef analizi', href: '/dashboard/butce', icon: Wallet, group: 'Sayfalar' },
     { label: 'Prim & Komisyon', desc: 'Satış temsilcisi komisyon hesaplama ve liderlik tablosu', href: '/dashboard/prim', icon: Trophy, group: 'Sayfalar' },
     { label: 'Stok Sayım', desc: 'Fiziksel stok sayım oturumları ve fark analizi', href: '/dashboard/stok-sayim', icon: ClipboardList, group: 'Sayfalar' },
+    { label: 'İç Duyurular', desc: 'Ekip geneli duyurular, uyarılar ve etkinlik bildirimleri', href: '/dashboard/duyurular', icon: BellRing, group: 'Sayfalar' },
     { label: 'Ayarlar', desc: 'İşletme profili, bildirimler, API anahtarı', href: '/dashboard/ayarlar', icon: Settings, group: 'Sayfalar' },
     { label: 'Marketplace\'e Git', desc: 'Alışveriş sayfasını aç', href: '/', icon: Globe, group: 'Dış Bağlantılar' },
   ], [])
