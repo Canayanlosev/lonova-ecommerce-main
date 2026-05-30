@@ -6,7 +6,7 @@ import {
   Package, Truck, Settings, LogOut, Bell, Menu, X, Receipt,
   Store, Warehouse, Layout, CheckSquare, BarChart2, ShoppingBag, Tag, Star, Layers, Globe,
   AlertTriangle, ShoppingBag as OrderIcon, Search, Zap, ArrowRight, Command, FileBarChart, UserCheck,
-  ListTodo, Megaphone, RotateCcw, FileText, TrendingDown, Calendar, LifeBuoy, GitMerge, Landmark, Plug, Target, CalendarDays, ReceiptText, Percent, FileSignature, Wallet, Trophy, ClipboardList, BellRing
+  ListTodo, Megaphone, RotateCcw, FileText, TrendingDown, Calendar, LifeBuoy, GitMerge, Landmark, Plug, Target, CalendarDays, ReceiptText, Percent, FileSignature, Wallet, Trophy, ClipboardList, BellRing, RefreshCw
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -131,6 +131,7 @@ const navItems = [
   { icon: Trophy, label: "Prim & Komisyon", href: "/dashboard/prim" },
   { icon: ClipboardList, label: "Stok Sayım", href: "/dashboard/stok-sayim" },
   { icon: BellRing, label: "İç Duyurular", href: "/dashboard/duyurular" },
+  { icon: RefreshCw, label: "Abonelik Yönetimi", href: "/dashboard/abonelikler" },
   { icon: Settings, label: "Ayarlar", href: "/dashboard/ayarlar" },
 ];
 
@@ -217,6 +218,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { label: 'Prim & Komisyon', desc: 'Satış temsilcisi komisyon hesaplama ve liderlik tablosu', href: '/dashboard/prim', icon: Trophy, group: 'Sayfalar' },
     { label: 'Stok Sayım', desc: 'Fiziksel stok sayım oturumları ve fark analizi', href: '/dashboard/stok-sayim', icon: ClipboardList, group: 'Sayfalar' },
     { label: 'İç Duyurular', desc: 'Ekip geneli duyurular, uyarılar ve etkinlik bildirimleri', href: '/dashboard/duyurular', icon: BellRing, group: 'Sayfalar' },
+    { label: 'Abonelik Yönetimi', desc: 'MRR/ARR takibi, yenileme planlaması ve müşteri abonelik yönetimi', href: '/dashboard/abonelikler', icon: RefreshCw, group: 'Sayfalar' },
     { label: 'Ayarlar', desc: 'İşletme profili, bildirimler, API anahtarı', href: '/dashboard/ayarlar', icon: Settings, group: 'Sayfalar' },
     { label: 'Marketplace\'e Git', desc: 'Alışveriş sayfasını aç', href: '/', icon: Globe, group: 'Dış Bağlantılar' },
   ], [])
