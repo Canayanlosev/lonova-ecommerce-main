@@ -6,7 +6,7 @@ import {
   Package, Truck, Settings, LogOut, Bell, Menu, X, Receipt,
   Store, Warehouse, Layout, CheckSquare, BarChart2, ShoppingBag, Tag, Star, Layers, Globe,
   AlertTriangle, ShoppingBag as OrderIcon, Search, Zap, ArrowRight, Command, FileBarChart, UserCheck,
-  ListTodo, Megaphone, RotateCcw, FileText, TrendingDown, Calendar, LifeBuoy, GitMerge, Landmark, Plug, Target, CalendarDays, ReceiptText, Percent, FileSignature, Wallet, Trophy, ClipboardList, BellRing, RefreshCw, Tags, FolderKanban, StarHalf
+  ListTodo, Megaphone, RotateCcw, FileText, TrendingDown, Calendar, LifeBuoy, GitMerge, Landmark, Plug, Target, CalendarDays, ReceiptText, Percent, FileSignature, Wallet, Trophy, ClipboardList, BellRing, RefreshCw, Tags, FolderKanban, StarHalf, GraduationCap
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -135,6 +135,7 @@ const navItems = [
   { icon: Tags, label: "Fiyat Listeleri", href: "/dashboard/fiyat-listesi" },
   { icon: FolderKanban, label: "Proje Takibi", href: "/dashboard/projeler" },
   { icon: StarHalf, label: "Performans", href: "/dashboard/performans" },
+  { icon: GraduationCap, label: "Eğitim & Sertifika", href: "/dashboard/egitim" },
   { icon: Settings, label: "Ayarlar", href: "/dashboard/ayarlar" },
 ];
 
@@ -225,6 +226,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { label: 'Fiyat Listeleri', desc: 'B2B müşteri segmentlerine göre özel fiyat listeleri', href: '/dashboard/fiyat-listesi', icon: Tags, group: 'Sayfalar' },
     { label: 'Proje Takibi', desc: 'İşletme projeleri, ekipler, bütçe ve kilometre taşları', href: '/dashboard/projeler', icon: FolderKanban, group: 'Sayfalar' },
     { label: 'Performans Değerlendirme', desc: 'Çalışan yetkinlik değerlendirmesi ve hedef takibi', href: '/dashboard/performans', icon: StarHalf, group: 'Sayfalar' },
+    { label: 'Eğitim & Sertifikasyon', desc: 'Personel eğitim programları ve sertifika takibi', href: '/dashboard/egitim', icon: GraduationCap, group: 'Sayfalar' },
     { label: 'Ayarlar', desc: 'İşletme profili, bildirimler, API anahtarı', href: '/dashboard/ayarlar', icon: Settings, group: 'Sayfalar' },
     { label: 'Marketplace\'e Git', desc: 'Alışveriş sayfasını aç', href: '/', icon: Globe, group: 'Dış Bağlantılar' },
   ], [])
