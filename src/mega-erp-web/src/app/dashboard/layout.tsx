@@ -6,7 +6,7 @@ import {
   Package, Truck, Settings, LogOut, Bell, Menu, X, Receipt,
   Store, Warehouse, Layout, CheckSquare, BarChart2, ShoppingBag, Tag, Star, Layers, Globe,
   AlertTriangle, ShoppingBag as OrderIcon, Search, Zap, ArrowRight, Command, FileBarChart, UserCheck,
-  ListTodo, Megaphone, RotateCcw, FileText, TrendingDown, Calendar, LifeBuoy, GitMerge, Landmark, Plug, Target, CalendarDays, ReceiptText, Percent, FileSignature
+  ListTodo, Megaphone, RotateCcw, FileText, TrendingDown, Calendar, LifeBuoy, GitMerge, Landmark, Plug, Target, CalendarDays, ReceiptText, Percent, FileSignature, Wallet
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -127,6 +127,7 @@ const navItems = [
   { icon: ReceiptText, label: "E-Fatura / E-Arşiv", href: "/dashboard/efatura" },
   { icon: Percent, label: "Vergi Takvimi", href: "/dashboard/vergi" },
   { icon: FileSignature, label: "Sözleşmeler", href: "/dashboard/sozlesmeler" },
+  { icon: Wallet, label: "Bütçe Takibi", href: "/dashboard/butce" },
   { icon: Settings, label: "Ayarlar", href: "/dashboard/ayarlar" },
 ];
 
@@ -209,6 +210,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { label: 'E-Fatura / E-Arşiv', desc: 'Elektronik fatura oluştur, gönder ve takip et', href: '/dashboard/efatura', icon: ReceiptText, group: 'Sayfalar' },
     { label: 'Vergi Takvimi', desc: 'KDV, SGK, Muhtasar beyanname vadeleri', href: '/dashboard/vergi', icon: Percent, group: 'Sayfalar' },
     { label: 'Sözleşmeler', desc: 'B2B sözleşme yönetimi ve imza takibi', href: '/dashboard/sozlesmeler', icon: FileSignature, group: 'Sayfalar' },
+    { label: 'Bütçe Takibi', desc: 'Yıllık bütçe planlaması, gerçekleşen vs hedef analizi', href: '/dashboard/butce', icon: Wallet, group: 'Sayfalar' },
     { label: 'Ayarlar', desc: 'İşletme profili, bildirimler, API anahtarı', href: '/dashboard/ayarlar', icon: Settings, group: 'Sayfalar' },
     { label: 'Marketplace\'e Git', desc: 'Alışveriş sayfasını aç', href: '/', icon: Globe, group: 'Dış Bağlantılar' },
   ], [])
