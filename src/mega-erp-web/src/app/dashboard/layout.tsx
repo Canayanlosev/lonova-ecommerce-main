@@ -6,7 +6,7 @@ import {
   Package, Truck, Settings, LogOut, Bell, Menu, X, Receipt,
   Store, Warehouse, Layout, CheckSquare, BarChart2, ShoppingBag, Tag, Star, Layers, Globe,
   AlertTriangle, ShoppingBag as OrderIcon, Search, Zap, ArrowRight, Command, FileBarChart, UserCheck,
-  ListTodo, Megaphone, RotateCcw, FileText, TrendingDown, Calendar, LifeBuoy, GitMerge, Landmark, Plug, Target, CalendarDays, ReceiptText, Percent, FileSignature, Wallet, Trophy, ClipboardList, BellRing, RefreshCw, Tags, FolderKanban, StarHalf, GraduationCap, Vault
+  ListTodo, Megaphone, RotateCcw, FileText, TrendingDown, Calendar, LifeBuoy, GitMerge, Landmark, Plug, Target, CalendarDays, ReceiptText, Percent, FileSignature, Wallet, Trophy, ClipboardList, BellRing, RefreshCw, Tags, FolderKanban, StarHalf, GraduationCap, Vault, ShieldCheck, Wrench
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -137,6 +137,7 @@ const navItems = [
   { icon: StarHalf, label: "Performans", href: "/dashboard/performans" },
   { icon: GraduationCap, label: "Eğitim & Sertifika", href: "/dashboard/egitim" },
   { icon: Vault, label: "Kasa Yönetimi", href: "/dashboard/kasa" },
+  { icon: ShieldCheck, label: "Kalite & İş Emri", href: "/dashboard/kalite" },
   { icon: Settings, label: "Ayarlar", href: "/dashboard/ayarlar" },
 ];
 
@@ -229,6 +230,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { label: 'Performans Değerlendirme', desc: 'Çalışan yetkinlik değerlendirmesi ve hedef takibi', href: '/dashboard/performans', icon: StarHalf, group: 'Sayfalar' },
     { label: 'Eğitim & Sertifikasyon', desc: 'Personel eğitim programları ve sertifika takibi', href: '/dashboard/egitim', icon: GraduationCap, group: 'Sayfalar' },
     { label: 'Kasa Yönetimi', desc: 'Çoklu kasa nakit takibi ve günlük hareket raporu', href: '/dashboard/kasa', icon: Vault, group: 'Sayfalar' },
+    { label: 'Kalite & İş Emirleri', desc: 'Kalite muayenesi ve bakım/onarım iş emirleri takibi', href: '/dashboard/kalite', icon: ShieldCheck, group: 'Sayfalar' },
     { label: 'Ayarlar', desc: 'İşletme profili, bildirimler, API anahtarı', href: '/dashboard/ayarlar', icon: Settings, group: 'Sayfalar' },
     { label: 'Marketplace\'e Git', desc: 'Alışveriş sayfasını aç', href: '/', icon: Globe, group: 'Dış Bağlantılar' },
   ], [])
