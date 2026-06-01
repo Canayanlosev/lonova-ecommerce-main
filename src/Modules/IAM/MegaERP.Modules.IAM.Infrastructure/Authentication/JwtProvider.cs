@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using MegaERP.Modules.IAM.Core.Entities;
 using MegaERP.Modules.IAM.Core.Interfaces;
@@ -43,5 +44,16 @@ public class JwtProvider : IJwtProvider
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public RefreshToken GenerateRefreshToken(string userId)
+    {
+        var tokenBytes = RandomNumberGenerator.GetBytes(64);
+        return new RefreshToken
+        {
+            UserId = userId,
+            Token = Convert.ToBase64String(tokenBytes),
+            ExpiresAt = DateTime.UtcNow.AddDays(30)
+        };
     }
 }

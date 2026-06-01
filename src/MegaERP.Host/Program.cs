@@ -135,6 +135,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+// RBAC — Policy-Based Authorization
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CanManageProducts",  p => p.RequireRole("Admin", "Manager"));
+    options.AddPolicy("CanViewReports",     p => p.RequireRole("Admin", "Manager"));
+    options.AddPolicy("CanManageEmployees", p => p.RequireRole("Admin", "Manager"));
+    options.AddPolicy("CanManageFinance",   p => p.RequireRole("Admin"));
+    options.AddPolicy("CanManageOrders",    p => p.RequireRole("Admin", "Manager", "Employee"));
+    options.AddPolicy("CanManageWMS",       p => p.RequireRole("Admin", "Manager", "Employee"));
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -210,6 +221,21 @@ using (var scope = app.Services.CreateScope())
     {
         var iamContext = services.GetRequiredService<IAMDbContext>();
         iamContext.Database.EnsureCreated();
+
+        // Ensure RefreshTokens table exists (added after initial schema creation)
+        await iamContext.Database.ExecuteSqlRawAsync(@"
+            CREATE TABLE IF NOT EXISTS iam.""RefreshTokens"" (
+                ""Id""               uuid NOT NULL DEFAULT gen_random_uuid(),
+                ""UserId""           text NOT NULL,
+                ""Token""            varchar(256) NOT NULL,
+                ""ExpiresAt""        timestamptz NOT NULL,
+                ""IsRevoked""        boolean NOT NULL DEFAULT false,
+                ""CreatedAt""        timestamptz NOT NULL DEFAULT now(),
+                ""ReplacedByToken""  varchar(256),
+                CONSTRAINT ""PK_RefreshTokens"" PRIMARY KEY (""Id""),
+                CONSTRAINT ""UQ_RefreshTokens_Token"" UNIQUE (""Token"")
+            );
+        ");
 
         // Seed Roles
         var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();

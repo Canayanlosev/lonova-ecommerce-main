@@ -9,4 +9,6 @@ public record RegisterRequest(
     string LastName, 
     Guid? TenantId);
 
-public record AuthResponse(string Token, string Email, string FirstName, string LastName);
+public record AuthResponse(string Token, string RefreshToken, string Email, string FirstName, string LastName);
+public record RefreshTokenRequest(string RefreshToken);
+public record RevokeTokenRequest(string RefreshToken);

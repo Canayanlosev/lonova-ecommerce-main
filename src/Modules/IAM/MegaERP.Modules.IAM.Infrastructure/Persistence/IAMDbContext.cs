@@ -17,6 +17,7 @@ public class IAMDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     }
 
     public DbSet<Tenant> Tenants => Set<Tenant>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,9 +34,17 @@ public class IAMDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             entity.HasIndex(e => e.Identifier).IsUnique();
         });
 
-        // Identity table names customization if needed
         modelBuilder.Entity<ApplicationUser>(entity => { entity.ToTable("Users"); });
         modelBuilder.Entity<ApplicationRole>(entity => { entity.ToTable("Roles"); });
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.ToTable("RefreshTokens");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Token).IsRequired().HasMaxLength(256);
+            entity.Property(e => e.UserId).IsRequired();
+            entity.HasIndex(e => e.Token).IsUnique();
+        });
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
