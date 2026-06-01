@@ -6,7 +6,7 @@ import {
   Package, Truck, Settings, LogOut, Bell, Menu, X, Receipt,
   Store, Warehouse, Layout, CheckSquare, BarChart2, ShoppingBag, Tag, Star, Layers, Globe,
   AlertTriangle, ShoppingBag as OrderIcon, Search, Zap, ArrowRight, Command, FileBarChart, UserCheck,
-  ListTodo, Megaphone, RotateCcw, FileText, TrendingDown, Calendar, LifeBuoy, GitMerge, Landmark, Plug, Target, CalendarDays, ReceiptText, Percent, FileSignature, Wallet, Trophy, ClipboardList, BellRing, RefreshCw, Tags, FolderKanban, StarHalf, GraduationCap, Vault, ShieldCheck, Wrench, MessageSquare
+  ListTodo, Megaphone, RotateCcw, FileText, TrendingDown, Calendar, LifeBuoy, GitMerge, Landmark, Plug, Target, CalendarDays, ReceiptText, Percent, FileSignature, Wallet, Trophy, ClipboardList, BellRing, RefreshCw, Tags, FolderKanban, StarHalf, GraduationCap, Vault, ShieldCheck, Wrench, MessageSquare, ChevronDown
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -90,56 +90,102 @@ function useNotifications() {
   return { notifications, unreadCount, loaded, markAllRead }
 }
 
-const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-  { icon: ShoppingCart, label: "E-Commerce", href: "/dashboard/ecommerce" },
-  { icon: Package, label: "Siparişler", href: "/dashboard/orders" },
-  { icon: Receipt, label: "Faturalar", href: "/dashboard/billing" },
-  { icon: Users, label: "İK Yönetimi", href: "/dashboard/hr" },
-  { icon: Truck, label: "Kargo", href: "/dashboard/shipping" },
-  { icon: CreditCard, label: "Muhasebe", href: "/dashboard/accounting" },
-  { icon: Store, label: "Mağazalar", href: "/dashboard/stores" },
-  { icon: Warehouse, label: "Depo (WMS)", href: "/dashboard/wms" },
-  { icon: Layout, label: "Site Builder", href: "/dashboard/site-builder" },
-  { icon: ShoppingBag, label: "Mağaza Siparişleri", href: "/dashboard/marketplace-orders" },
-  { icon: BarChart2, label: "Analitik", href: "/dashboard/analytics" },
-  { icon: FileBarChart, label: "Raporlar", href: "/dashboard/raporlar" },
-  { icon: UserCheck, label: "Müşteriler", href: "/dashboard/musteriler" },
-  { icon: Bell, label: "Uyarı Merkezi", href: "/dashboard/bildirimler" },
-  { icon: Layers, label: "Kategoriler", href: "/dashboard/categories" },
-  { icon: Globe, label: "Katalog", href: "/dashboard/catalog" },
-  { icon: Tag, label: "Kuponlar", href: "/dashboard/coupons" },
-  { icon: Star, label: "Yorumlar", href: "/dashboard/reviews" },
-  { icon: ListTodo, label: "Görevler", href: "/dashboard/gorevler" },
-  { icon: Megaphone, label: "Pazarlama", href: "/dashboard/pazarlama" },
-  { icon: CheckSquare, label: "Kurulum Rehberi", href: "/dashboard/setup", badge: true },
-  { icon: Truck, label: "Tedarik & Satın Alma", href: "/dashboard/tedarik" },
-  { icon: RotateCcw, label: "İade Yönetimi", href: "/dashboard/iadeler" },
-  { icon: FileText, label: "Teklifler", href: "/dashboard/teklifler" },
-  { icon: TrendingDown, label: "Gider Takibi", href: "/dashboard/giderler" },
-  { icon: Calendar, label: "Takvim", href: "/dashboard/takvim" },
-  { icon: LifeBuoy, label: "Destek Talepleri", href: "/dashboard/destek" },
-  { icon: GitMerge, label: "Satış Hattı", href: "/dashboard/pipeline" },
-  { icon: Landmark, label: "Banka Hesapları", href: "/dashboard/banka" },
-  { icon: Plug, label: "Entegrasyonlar", href: "/dashboard/entegrasyonlar" },
-  { icon: Target, label: "KPI & Hedefler", href: "/dashboard/hedefler" },
-  { icon: CalendarDays, label: "Vardiya Takvimi", href: "/dashboard/vardiya" },
-  { icon: ReceiptText, label: "E-Fatura / E-Arşiv", href: "/dashboard/efatura" },
-  { icon: Percent, label: "Vergi Takvimi", href: "/dashboard/vergi" },
-  { icon: FileSignature, label: "Sözleşmeler", href: "/dashboard/sozlesmeler" },
-  { icon: Wallet, label: "Bütçe Takibi", href: "/dashboard/butce" },
-  { icon: Trophy, label: "Prim & Komisyon", href: "/dashboard/prim" },
-  { icon: ClipboardList, label: "Stok Sayım", href: "/dashboard/stok-sayim" },
-  { icon: BellRing, label: "İç Duyurular", href: "/dashboard/duyurular" },
-  { icon: RefreshCw, label: "Abonelik Yönetimi", href: "/dashboard/abonelikler" },
-  { icon: Tags, label: "Fiyat Listeleri", href: "/dashboard/fiyat-listesi" },
-  { icon: FolderKanban, label: "Proje Takibi", href: "/dashboard/projeler" },
-  { icon: StarHalf, label: "Performans", href: "/dashboard/performans" },
-  { icon: GraduationCap, label: "Eğitim & Sertifika", href: "/dashboard/egitim" },
-  { icon: Vault, label: "Kasa Yönetimi", href: "/dashboard/kasa" },
-  { icon: ShieldCheck, label: "Kalite & İş Emri", href: "/dashboard/kalite" },
-  { icon: MessageSquare, label: "Müşteri Anketi", href: "/dashboard/anket" },
-  { icon: Settings, label: "Ayarlar", href: "/dashboard/ayarlar" },
+type NavLeaf = { icon: React.ElementType; label: string; href: string; badge?: boolean }
+type NavGroup = { icon: React.ElementType; label: string; key: string; items: NavLeaf[] }
+
+const NAV_GROUPS: NavGroup[] = [
+  {
+    icon: ShoppingCart, label: "Satış & E-Ticaret", key: "satis",
+    items: [
+      { icon: Package, label: "Ürünler", href: "/dashboard/ecommerce" },
+      { icon: ShoppingCart, label: "Siparişler", href: "/dashboard/orders" },
+      { icon: ShoppingBag, label: "Mağaza Siparişleri", href: "/dashboard/marketplace-orders" },
+      { icon: Store, label: "Mağazalar", href: "/dashboard/stores" },
+      { icon: Layers, label: "Kategoriler", href: "/dashboard/categories" },
+      { icon: Globe, label: "Katalog", href: "/dashboard/catalog" },
+      { icon: Tag, label: "Kuponlar", href: "/dashboard/coupons" },
+      { icon: Star, label: "Yorumlar", href: "/dashboard/reviews" },
+      { icon: RotateCcw, label: "İade Yönetimi", href: "/dashboard/iadeler" },
+      { icon: FileText, label: "Teklifler", href: "/dashboard/teklifler" },
+      { icon: Tags, label: "Fiyat Listeleri", href: "/dashboard/fiyat-listesi" },
+    ],
+  },
+  {
+    icon: CreditCard, label: "Finans", key: "finans",
+    items: [
+      { icon: CreditCard, label: "Muhasebe", href: "/dashboard/accounting" },
+      { icon: Receipt, label: "Faturalar", href: "/dashboard/billing" },
+      { icon: Vault, label: "Kasa Yönetimi", href: "/dashboard/kasa" },
+      { icon: Landmark, label: "Banka Hesapları", href: "/dashboard/banka" },
+      { icon: Wallet, label: "Bütçe Takibi", href: "/dashboard/butce" },
+      { icon: TrendingDown, label: "Gider Takibi", href: "/dashboard/giderler" },
+      { icon: ReceiptText, label: "E-Fatura / E-Arşiv", href: "/dashboard/efatura" },
+      { icon: Percent, label: "Vergi Takvimi", href: "/dashboard/vergi" },
+    ],
+  },
+  {
+    icon: Warehouse, label: "Depo & Lojistik", key: "depo",
+    items: [
+      { icon: Warehouse, label: "Depo (WMS)", href: "/dashboard/wms" },
+      { icon: ClipboardList, label: "Stok Sayım", href: "/dashboard/stok-sayim" },
+      { icon: Truck, label: "Kargo", href: "/dashboard/shipping" },
+      { icon: Package, label: "Tedarik & Satın Alma", href: "/dashboard/tedarik" },
+    ],
+  },
+  {
+    icon: Users, label: "İnsan Kaynakları", key: "ik",
+    items: [
+      { icon: Users, label: "İK Yönetimi", href: "/dashboard/hr" },
+      { icon: StarHalf, label: "Performans", href: "/dashboard/performans" },
+      { icon: GraduationCap, label: "Eğitim & Sertifika", href: "/dashboard/egitim" },
+      { icon: Trophy, label: "Prim & Komisyon", href: "/dashboard/prim" },
+      { icon: CalendarDays, label: "Vardiya Takvimi", href: "/dashboard/vardiya" },
+    ],
+  },
+  {
+    icon: UserCheck, label: "Müşteri & Pazarlama", key: "musteri",
+    items: [
+      { icon: UserCheck, label: "Müşteriler", href: "/dashboard/musteriler" },
+      { icon: Megaphone, label: "Pazarlama", href: "/dashboard/pazarlama" },
+      { icon: MessageSquare, label: "Anket & NPS", href: "/dashboard/anket" },
+      { icon: GitMerge, label: "Satış Hattı", href: "/dashboard/pipeline" },
+      { icon: RefreshCw, label: "Abonelik Yönetimi", href: "/dashboard/abonelikler" },
+    ],
+  },
+  {
+    icon: FolderKanban, label: "Projeler & Kalite", key: "proje",
+    items: [
+      { icon: FolderKanban, label: "Proje Takibi", href: "/dashboard/projeler" },
+      { icon: ShieldCheck, label: "Kalite & İş Emri", href: "/dashboard/kalite" },
+      { icon: Target, label: "KPI & Hedefler", href: "/dashboard/hedefler" },
+    ],
+  },
+  {
+    icon: BarChart2, label: "Raporlar & Analitik", key: "rapor",
+    items: [
+      { icon: BarChart2, label: "Analitik", href: "/dashboard/analytics" },
+      { icon: FileBarChart, label: "Raporlar", href: "/dashboard/raporlar" },
+    ],
+  },
+  {
+    icon: LifeBuoy, label: "İletişim & Destek", key: "iletisim",
+    items: [
+      { icon: LifeBuoy, label: "Destek Talepleri", href: "/dashboard/destek" },
+      { icon: BellRing, label: "İç Duyurular", href: "/dashboard/duyurular" },
+      { icon: Bell, label: "Uyarı Merkezi", href: "/dashboard/bildirimler" },
+      { icon: ListTodo, label: "Görevler", href: "/dashboard/gorevler" },
+      { icon: Calendar, label: "Takvim", href: "/dashboard/takvim" },
+    ],
+  },
+  {
+    icon: Plug, label: "Sistem", key: "sistem",
+    items: [
+      { icon: Plug, label: "Entegrasyonlar", href: "/dashboard/entegrasyonlar" },
+      { icon: FileSignature, label: "Sözleşmeler", href: "/dashboard/sozlesmeler" },
+      { icon: Layout, label: "Site Builder", href: "/dashboard/site-builder" },
+      { icon: CheckSquare, label: "Kurulum Rehberi", href: "/dashboard/setup", badge: true },
+    ],
+  },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -154,6 +200,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [cmdOpen, setCmdOpen] = useState(false);
   const [cmdSearch, setCmdSearch] = useState('');
   const cmdInputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-open the group that contains the active route; allow manual toggle
+  const defaultOpenKey = useMemo(() => {
+    for (const g of NAV_GROUPS) {
+      if (g.items.some(i => pathname === i.href || (pathname.startsWith(i.href + '/') && i.href !== '/dashboard')))
+        return g.key;
+    }
+    return null;
+  }, [pathname]);
+
+  const [openGroup, setOpenGroup] = useState<string | null>(defaultOpenKey);
+
+  useEffect(() => { setOpenGroup(defaultOpenKey); }, [defaultOpenKey]);
+
+  const toggleGroup = (key: string) => setOpenGroup(prev => prev === key ? null : key);
 
   // Close bell panel on outside click
   useEffect(() => {
@@ -279,21 +340,64 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
         </div>
 
-        <nav className="flex-1 px-4 space-y-1">
-          {navItems.map((item) => (
-            <NavItem
-              key={item.href}
-              icon={<item.icon />}
-              label={item.label}
-              href={item.href}
-              active={pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href))}
-              showDot={item.badge && typeof window !== 'undefined' && !localStorage.getItem('setup-complete')}
-            />
-          ))}
+        <nav className="flex-1 px-3 overflow-y-auto space-y-0.5 py-2">
+          {/* Dashboard — always visible */}
+          <Link href="/dashboard"
+            className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all mb-1 ${pathname === '/dashboard' ? 'bg-primary text-white shadow-md shadow-primary/30' : 'text-foreground/70 hover:bg-slate-800/20 hover:text-foreground'}`}>
+            <LayoutDashboard size={16} className={pathname === '/dashboard' ? 'text-white' : 'text-slate-400'} />
+            Dashboard
+          </Link>
+
+          {/* Grouped nav */}
+          {NAV_GROUPS.map((group) => {
+            const isOpen = openGroup === group.key;
+            const hasActive = group.items.some(i => pathname === i.href || pathname.startsWith(i.href + '/'));
+            return (
+              <div key={group.key}>
+                <button onClick={() => toggleGroup(group.key)}
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold uppercase tracking-wide transition-all ${hasActive ? 'text-primary' : 'text-foreground/40 hover:text-foreground/70'} hover:bg-slate-800/10`}>
+                  <group.icon size={14} />
+                  <span className="flex-1 text-left">{group.label}</span>
+                  <ChevronDown size={12} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                </button>
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
+                      className="overflow-hidden"
+                    >
+                      <div className="ml-3 pl-3 border-l border-border/50 space-y-0.5 py-1">
+                        {group.items.map((item) => {
+                          const active = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href + '/'));
+                          return (
+                            <Link key={item.href} href={item.href}
+                              className={`flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-sm transition-all ${active ? 'bg-primary/10 text-primary font-semibold' : 'text-foreground/60 hover:bg-slate-800/15 hover:text-foreground'}`}>
+                              <item.icon size={14} className={active ? 'text-primary' : 'text-slate-400'} />
+                              <span className="flex-1">{item.label}</span>
+                              {item.badge && typeof window !== 'undefined' && !localStorage.getItem('setup-complete') && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                              )}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
         </nav>
 
-        <div className="p-4 border-t border-border space-y-1">
-          <NavItem icon={<Settings />} label="Ayarlar" href="#" active={false} />
+        <div className="p-3 border-t border-border space-y-1">
+          <Link href="/dashboard/ayarlar"
+            className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${pathname === '/dashboard/ayarlar' ? 'bg-primary text-white' : 'text-foreground/60 hover:bg-slate-800/20 hover:text-foreground'}`}>
+            <Settings size={16} className={pathname === '/dashboard/ayarlar' ? 'text-white' : 'text-slate-400'} />
+            Ayarlar
+          </Link>
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-500/10 transition-all"
@@ -335,20 +439,49 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <X size={20} />
                 </button>
               </div>
-              <nav className="flex-1 px-4 space-y-1">
-                {navItems.map((item) => (
-                  <NavItem
-                    key={item.href}
-                    icon={<item.icon />}
-                    label={item.label}
-                    href={item.href}
-                    active={pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href))}
-                    onClick={() => setSidebarOpen(false)}
-                    showDot={item.badge && typeof window !== 'undefined' && !localStorage.getItem('setup-complete')}
-                  />
-                ))}
+              <nav className="flex-1 px-3 overflow-y-auto space-y-0.5 py-2">
+                <Link href="/dashboard" onClick={() => setSidebarOpen(false)}
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all mb-1 ${pathname === '/dashboard' ? 'bg-primary text-white' : 'text-foreground/70 hover:bg-slate-800/20'}`}>
+                  <LayoutDashboard size={16} /> Dashboard
+                </Link>
+                {NAV_GROUPS.map((group) => {
+                  const isOpen = openGroup === group.key;
+                  const hasActive = group.items.some(i => pathname === i.href || pathname.startsWith(i.href + '/'));
+                  return (
+                    <div key={group.key}>
+                      <button onClick={() => toggleGroup(group.key)}
+                        className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold uppercase tracking-wide transition-all ${hasActive ? 'text-primary' : 'text-foreground/40 hover:text-foreground/70'}`}>
+                        <group.icon size={14} />
+                        <span className="flex-1 text-left">{group.label}</span>
+                        <ChevronDown size={12} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                      <AnimatePresence initial={false}>
+                        {isOpen && (
+                          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
+                            <div className="ml-3 pl-3 border-l border-border/50 space-y-0.5 py-1">
+                              {group.items.map((item) => {
+                                const active = pathname === item.href;
+                                return (
+                                  <Link key={item.href} href={item.href} onClick={() => setSidebarOpen(false)}
+                                    className={`flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-sm transition-all ${active ? 'bg-primary/10 text-primary font-semibold' : 'text-foreground/60 hover:bg-slate-800/15'}`}>
+                                    <item.icon size={14} />
+                                    {item.label}
+                                  </Link>
+                                );
+                              })}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
               </nav>
-              <div className="p-4 border-t border-border">
+              <div className="p-3 border-t border-border space-y-1">
+                <Link href="/dashboard/ayarlar" onClick={() => setSidebarOpen(false)}
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-foreground/60 hover:bg-slate-800/20">
+                  <Settings size={16} /> Ayarlar
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-500/10 transition-all"
@@ -571,28 +704,3 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   );
 }
 
-function NavItem({
-  icon, label, href, active, onClick, showDot
-}: {
-  icon: React.ReactNode; label: string; href: string; active: boolean; onClick?: () => void; showDot?: boolean
-}) {
-  return (
-    <Link
-      href={href}
-      onClick={onClick}
-      className={`relative flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 group
-        ${active
-          ? "bg-primary text-white shadow-lg shadow-primary/30"
-          : "text-slate-500 hover:bg-slate-800/20 "
-        }`}
-    >
-      <span className={`${active ? "text-white" : "text-slate-400 group-hover:text-primary"} transition-colors`}>
-        {React.cloneElement(icon as React.ReactElement<{ size?: number }>, { size: 20 })}
-      </span>
-      {label}
-      {showDot && (
-        <span className="ml-auto w-2 h-2 rounded-full bg-primary animate-pulse" />
-      )}
-    </Link>
-  );
-}
