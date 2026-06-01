@@ -1,13 +1,15 @@
 'use client'
 
 import { useEffect, useState, useMemo } from 'react'
-import { Plus, Layout, Pencil, Trash2, Eye, Globe, FileText, Loader2, Copy, RefreshCw } from 'lucide-react'
+import { Plus, Layout, Trash2, Eye, Globe, FileText, Loader2, RefreshCw, AlertTriangle, Store } from 'lucide-react'
 import { motion } from 'framer-motion'
 import api from '@/lib/api'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { useToast } from '@/store/ui.store'
 
 interface SitePage { id: string; storeId: string; slug: string; title: string; isPublished: boolean; blocks: PageBlock[] }
 interface PageBlock { id: string; blockType: string; order: number; contentJson: string }
+interface EcomStore { id: string; name: string; slug: string; isActive: boolean }
 
 const BLOCK_TYPES = ['Hero', 'ProductGrid', 'About', 'FAQ', 'Contact', 'Custom']
 
@@ -51,12 +53,15 @@ const BLOCK_META: Record<string, { emoji: string; label: string; description: st
 }
 
 export default function SiteBuilderPage() {
+  const toast = useToast()
   const [pages, setPages] = useState<SitePage[]>([])
+  const [stores, setStores] = useState<EcomStore[]>([])
   const [selectedPage, setSelectedPage] = useState<SitePage | null>(null)
   const [loading, setLoading] = useState(true)
   const [showNewPage, setShowNewPage] = useState(false)
   const [newPage, setNewPage] = useState({ storeId: '', slug: '', title: '' })
   const [saving, setSaving] = useState(false)
+  const [creatingStore, setCreatingStore] = useState(false)
   const [addingBlock, setAddingBlock] = useState(false)
   const [newBlock, setNewBlock] = useState(() => ({
     blockType: 'Hero',
@@ -74,16 +79,51 @@ export default function SiteBuilderPage() {
     }).catch(() => {}).finally(() => setLoading(false))
   }
 
-  useEffect(() => { fetchPages() }, [])
+  const fetchStores = () => {
+    api.get('/api/ecommerce/stores').then((r) => {
+      const list: EcomStore[] = r.data ?? []
+      setStores(list)
+      if (list.length > 0 && !newPage.storeId) {
+        setNewPage(p => ({ ...p, storeId: list[0].id }))
+      }
+    }).catch(() => {})
+  }
+
+  const handleCreateDefaultStore = async () => {
+    setCreatingStore(true)
+    try {
+      const res = await api.post('/api/ecommerce/stores', { name: 'Ana Mağaza', slug: 'ana-magaza', isActive: true })
+      const created: EcomStore = res.data
+      setStores([created])
+      setNewPage(p => ({ ...p, storeId: created.id }))
+      toast.success('Ana Mağaza oluşturuldu')
+    } catch {
+      toast.error('Mağaza oluşturulamadı')
+    } finally {
+      setCreatingStore(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchStores()
+    fetchPages()
+  }, [])
 
   const handleCreatePage = async () => {
+    if (!newPage.storeId) { toast.error('Önce bir mağaza seçin'); return }
+    if (!newPage.title.trim()) { toast.error('Sayfa başlığı zorunludur'); return }
+    if (!newPage.slug.trim()) { toast.error('Slug zorunludur'); return }
     setSaving(true)
     try {
       await api.post('/api/site-builder/pages', newPage)
       setShowNewPage(false)
-      setNewPage({ storeId: '', slug: '', title: '' })
+      setNewPage(p => ({ storeId: p.storeId, slug: '', title: '' }))
       fetchPages()
-    } catch { } finally { setSaving(false) }
+      toast.success('Sayfa oluşturuldu')
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { title?: string } } })?.response?.data?.title ?? 'Sayfa oluşturulamadı'
+      toast.error(msg)
+    } finally { setSaving(false) }
   }
 
   const handleDeletePage = async (id: string) => {
@@ -166,17 +206,48 @@ export default function SiteBuilderPage() {
       {showNewPage && (
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="premium-card p-6 space-y-4">
           <h2 className="font-semibold text-foreground">Yeni Sayfa Oluştur</h2>
+
+          {/* No stores warning */}
+          {stores.length === 0 && (
+            <div className="flex items-center gap-3 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+              <AlertTriangle size={16} className="text-amber-400 shrink-0" />
+              <p className="text-sm text-amber-300 flex-1">Henüz mağaza yok. Sayfa oluşturmak için önce bir mağaza gerekli.</p>
+              <button onClick={handleCreateDefaultStore} disabled={creatingStore}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 text-black text-xs font-bold rounded-lg hover:bg-amber-400 disabled:opacity-60 transition-colors shrink-0">
+                {creatingStore ? <Loader2 size={12} className="animate-spin" /> : <Store size={12} />}
+                Ana Mağaza Oluştur
+              </button>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {([['title', 'Sayfa Başlığı'], ['slug', 'Slug (URL)'], ['storeId', 'Mağaza ID']] as const).map(([field, label]) => (
-              <div key={field}>
-                <label className="text-xs text-slate-400 mb-1 block">{label}</label>
-                <input value={newPage[field]} onChange={(e) => setNewPage((f) => ({ ...f, [field]: e.target.value }))}
-                  className="w-full px-3 py-2 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary" />
-              </div>
-            ))}
+            <div>
+              <label className="text-xs text-slate-400 mb-1 block">Sayfa Başlığı</label>
+              <input value={newPage.title} onChange={e => setNewPage(p => ({ ...p, title: e.target.value }))}
+                placeholder="Örn: Ana Sayfa"
+                className="w-full px-3 py-2 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary" />
+            </div>
+            <div>
+              <label className="text-xs text-slate-400 mb-1 block">Slug (URL)</label>
+              <input value={newPage.slug} onChange={e => setNewPage(p => ({ ...p, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') }))}
+                placeholder="Örn: anasayfa"
+                className="w-full px-3 py-2 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary" />
+            </div>
+            <div>
+              <label className="text-xs text-slate-400 mb-1 block">Mağaza</label>
+              {stores.length > 0 ? (
+                <select value={newPage.storeId} onChange={e => setNewPage(p => ({ ...p, storeId: e.target.value }))}
+                  className="w-full px-3 py-2 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary">
+                  {stores.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                </select>
+              ) : (
+                <input disabled placeholder="Önce mağaza oluşturun"
+                  className="w-full px-3 py-2 rounded-lg bg-background border border-border text-slate-500 text-sm opacity-50 cursor-not-allowed" />
+              )}
+            </div>
           </div>
           <div className="flex gap-3">
-            <button onClick={handleCreatePage} disabled={saving} className="premium-button flex items-center gap-2 disabled:opacity-60">
+            <button onClick={handleCreatePage} disabled={saving || stores.length === 0} className="premium-button flex items-center gap-2 disabled:opacity-60">
               {saving && <Loader2 className="w-4 h-4 animate-spin" />} Oluştur
             </button>
             <button onClick={() => setShowNewPage(false)} className="px-4 py-2 rounded-lg border border-border text-foreground text-sm hover:bg-surface">İptal</button>
