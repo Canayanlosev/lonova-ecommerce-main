@@ -53,6 +53,7 @@ public class SuppliersController : ControllerBase
         supplier.ContactPhone = request.ContactPhone;
         supplier.Address = request.Address;
         supplier.UpdatedAt = DateTime.UtcNow;
+        _context.Update(supplier);
         await _context.SaveChangesAsync();
         return NoContent();
     }

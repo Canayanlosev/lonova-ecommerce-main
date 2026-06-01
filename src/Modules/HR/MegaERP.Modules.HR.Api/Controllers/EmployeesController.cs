@@ -82,6 +82,7 @@ public class EmployeesController : ControllerBase
         employee.Phone = request.Phone;
         employee.Salary = request.Salary;
         employee.DepartmentId = request.DepartmentId;
+        _context.Update(employee);
         await _context.SaveChangesAsync();
         return NoContent();
     }

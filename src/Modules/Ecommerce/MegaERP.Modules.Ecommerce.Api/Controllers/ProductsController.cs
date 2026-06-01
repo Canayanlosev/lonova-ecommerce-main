@@ -89,6 +89,7 @@ public class ProductsController : ControllerBase
         product.ImageUrl = request.ImageUrl;
         product.CategoryId = request.CategoryId;
 
+        _context.Update(product);
         await _context.SaveChangesAsync();
         return NoContent();
     }
@@ -167,6 +168,7 @@ public class ProductsController : ControllerBase
         if (product is null) return NotFound("Ürün bulunamadı.");
         product.IsPublishedToMarketplace = !product.IsPublishedToMarketplace;
         product.UpdatedAt = DateTime.UtcNow;
+        _context.Update(product);
         await _context.SaveChangesAsync();
         return Ok(new { product.Id, product.IsPublishedToMarketplace });
     }

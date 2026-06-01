@@ -56,6 +56,7 @@ public class DepartmentsController : ControllerBase
         if (dept is null) throw new KeyNotFoundException($"Departman bulunamadı: {id}");
         dept.Name = request.Name;
         dept.Description = request.Description;
+        _context.Update(dept);
         await _context.SaveChangesAsync();
         return NoContent();
     }

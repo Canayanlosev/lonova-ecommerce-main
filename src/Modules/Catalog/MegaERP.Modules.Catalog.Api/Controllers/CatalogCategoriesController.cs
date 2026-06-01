@@ -99,6 +99,7 @@ public class CatalogCategoriesController : ControllerBase
         category.IsActive = request.IsActive;
         category.UpdatedAt = DateTime.UtcNow;
 
+        _context.Update(category);
         await _context.SaveChangesAsync();
         return NoContent();
     }

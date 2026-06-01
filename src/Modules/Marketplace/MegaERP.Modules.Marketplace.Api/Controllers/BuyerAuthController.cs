@@ -128,6 +128,7 @@ public class BuyerAuthController : ControllerBase
         }
 
         buyer.UpdatedAt = DateTime.UtcNow;
+        _context.Update(buyer);
         await _context.SaveChangesAsync();
 
         return Ok(new BuyerProfileDto(buyer.Id.ToString(), buyer.Email, buyer.FirstName, buyer.LastName, buyer.Phone ?? string.Empty));
@@ -158,6 +159,7 @@ public class BuyerAuthController : ControllerBase
             return BadRequest("Mevcut şifre hatalı.");
 
         buyer.PasswordHash = _hasher.HashPassword(buyer, request.NewPassword);
+        _context.Update(buyer);
         await _context.SaveChangesAsync();
 
         return Ok(new { message = "Şifre başarıyla değiştirildi." });

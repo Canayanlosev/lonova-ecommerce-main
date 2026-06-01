@@ -59,6 +59,7 @@ public class AccountingAccountsController : ControllerBase
         if (account is null) throw new KeyNotFoundException($"Hesap bulunamadı: {id}");
         account.Name = request.Name;
         account.Type = request.Type;
+        _context.Update(account);
         await _context.SaveChangesAsync();
         return NoContent();
     }

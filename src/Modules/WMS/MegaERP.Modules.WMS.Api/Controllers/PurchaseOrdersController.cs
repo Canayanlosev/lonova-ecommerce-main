@@ -82,6 +82,7 @@ public class PurchaseOrdersController : ControllerBase
 
         order.Status = newStatus;
         order.UpdatedAt = DateTime.UtcNow;
+        _context.Update(order);
         await _context.SaveChangesAsync();
         return NoContent();
     }

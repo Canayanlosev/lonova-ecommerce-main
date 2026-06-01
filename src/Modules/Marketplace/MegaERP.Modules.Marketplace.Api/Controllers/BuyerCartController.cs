@@ -107,6 +107,7 @@ public class BuyerCartController : ControllerBase
         else
             item.Quantity = quantity;
 
+        _mkt.Update(item);
         await _mkt.SaveChangesAsync();
 
         var items = await _mkt.CartItems.Where(c => c.BuyerUserId == BuyerId).OrderBy(c => c.CreatedAt).ToListAsync();

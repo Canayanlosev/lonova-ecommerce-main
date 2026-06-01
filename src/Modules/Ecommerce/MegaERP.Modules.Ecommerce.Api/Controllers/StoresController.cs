@@ -84,6 +84,7 @@ public class StoresController : ControllerBase
         store.IsActive = request.IsActive;
         store.UpdatedAt = DateTime.UtcNow;
 
+        _context.Update(store);
         await _context.SaveChangesAsync();
         return NoContent();
     }

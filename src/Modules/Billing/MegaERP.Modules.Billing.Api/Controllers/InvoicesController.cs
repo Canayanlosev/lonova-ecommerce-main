@@ -64,6 +64,7 @@ public class InvoicesController : ControllerBase
         if (invoice is null) throw new KeyNotFoundException($"Fatura bulunamadı: {id}");
 
         invoice.Status = request.Status;
+        _context.Update(invoice);
         await _context.SaveChangesAsync();
         return NoContent();
     }

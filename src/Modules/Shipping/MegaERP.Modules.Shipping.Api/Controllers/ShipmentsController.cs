@@ -53,6 +53,7 @@ public class ShipmentsController : ControllerBase
         if (shipment is null) throw new KeyNotFoundException($"Kargo bulunamadı: {id}");
 
         shipment.Status = request.Status;
+        _context.Update(shipment);
         await _context.SaveChangesAsync();
         return NoContent();
     }

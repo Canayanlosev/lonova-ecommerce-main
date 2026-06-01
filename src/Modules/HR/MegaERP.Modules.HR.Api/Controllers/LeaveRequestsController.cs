@@ -80,6 +80,7 @@ public class LeaveRequestsController : ControllerBase
         var leave = await _context.LeaveRequests.FindAsync(id);
         if (leave is null) throw new KeyNotFoundException($"İzin talebi bulunamadı: {id}");
         leave.Status = request.Status;
+        _context.Update(leave);
         await _context.SaveChangesAsync();
         return NoContent();
     }

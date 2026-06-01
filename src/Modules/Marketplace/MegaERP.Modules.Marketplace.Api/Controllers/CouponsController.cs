@@ -110,6 +110,7 @@ public class AdminCouponsController : ControllerBase
         if (request.IsActive is not null)
             coupon.IsActive = request.IsActive.Value;
 
+        _context.Update(coupon);
         await _context.SaveChangesAsync();
         return Ok(ToDto(coupon));
     }

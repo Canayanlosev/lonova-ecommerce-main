@@ -12,6 +12,10 @@ public abstract class BaseDbContext : DbContext
     protected BaseDbContext(DbContextOptions options, ITenantService tenantService) : base(options)
     {
         _tenantService = tenantService;
+        // All queries are NoTracking by default. Write operations must call
+        // _context.Update(entity) or _context.Entry(entity).State = EntityState.Modified explicitly.
+        ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+        ChangeTracker.AutoDetectChangesEnabled = false;
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

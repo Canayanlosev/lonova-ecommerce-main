@@ -63,6 +63,7 @@ public class SitePagesController : ControllerBase
         page.Title = request.Title;
         page.IsPublished = request.IsPublished;
         page.UpdatedAt = DateTime.UtcNow;
+        _context.Update(page);
         await _context.SaveChangesAsync();
         return NoContent();
     }
@@ -110,6 +111,7 @@ public class SitePagesController : ControllerBase
         block.Order = request.Order;
         block.ContentJson = request.ContentJson;
         block.UpdatedAt = DateTime.UtcNow;
+        _context.Update(block);
         await _context.SaveChangesAsync();
         return NoContent();
     }

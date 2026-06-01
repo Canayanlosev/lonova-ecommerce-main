@@ -59,6 +59,7 @@ public class ShippingMethodsController : ControllerBase
         method.Name = request.Name;
         method.Carrier = request.Carrier;
         method.BaseCost = request.BaseCost;
+        _context.Update(method);
         await _context.SaveChangesAsync();
         return NoContent();
     }

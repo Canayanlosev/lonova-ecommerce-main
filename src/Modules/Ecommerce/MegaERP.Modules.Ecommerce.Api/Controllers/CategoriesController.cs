@@ -69,6 +69,7 @@ public class CategoriesController : ControllerBase
         category.Description = request.Description;
         category.ParentCategoryId = request.ParentCategoryId;
 
+        _context.Update(category);
         await _context.SaveChangesAsync();
 
         return NoContent();

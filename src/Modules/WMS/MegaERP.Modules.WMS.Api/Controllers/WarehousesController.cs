@@ -62,6 +62,7 @@ public class WarehousesController : ControllerBase
         warehouse.Name = request.Name;
         warehouse.Address = request.Address;
         warehouse.UpdatedAt = DateTime.UtcNow;
+        _context.Update(warehouse);
         await _context.SaveChangesAsync();
         return NoContent();
     }
