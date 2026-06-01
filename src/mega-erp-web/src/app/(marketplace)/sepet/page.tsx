@@ -251,9 +251,9 @@ export default function CartPage() {
           })()}
 
           {/* Coupon input */}
-          <div className="space-y-2">
-            <p className="text-xs font-medium text-slate-400 flex items-center gap-1.5">
-              <Tag className="w-3 h-3" /> Kupon / İndirim Kodu
+          <div className="p-3.5 rounded-xl bg-slate-950/40 border border-border/80 space-y-2.5">
+            <p className="text-[10px] font-black text-slate-455 uppercase tracking-wider flex items-center gap-1.5">
+              <Tag className="w-3.5 h-3.5 text-primary" /> Kupon / İndirim Kodu
             </p>
             <div className="flex gap-2">
               <input
@@ -261,23 +261,29 @@ export default function CartPage() {
                 value={couponCode}
                 onChange={e => { setCouponCode(e.target.value.toUpperCase()); setCouponResult(null) }}
                 placeholder="KODU GİRİN"
-                className="flex-1 px-3 py-2 rounded-lg bg-background border border-border text-sm text-foreground uppercase font-mono placeholder:normal-case placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/25"
+                className="flex-1 px-3 py-2 rounded-xl bg-slate-900/60 border border-border/80 text-xs text-foreground uppercase font-mono tracking-wider placeholder:normal-case placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all font-bold"
                 onKeyDown={e => e.key === 'Enter' && handleApplyCoupon()}
               />
               <button
                 onClick={handleApplyCoupon}
                 disabled={couponApplying || !couponCode.trim()}
-                className="px-3 py-2 rounded-lg bg-primary/10 text-primary text-xs font-bold hover:bg-primary hover:text-white transition-colors disabled:opacity-40"
+                className="px-4 py-2 rounded-xl bg-primary/10 hover:bg-primary text-primary hover:text-white text-xs font-bold transition-all disabled:opacity-40 border border-primary/20 hover:border-transparent flex items-center justify-center shrink-0 shadow-sm"
               >
                 {couponApplying ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Uygula'}
               </button>
             </div>
             {couponResult && (
-              <div className={`flex items-center gap-1.5 text-xs font-medium ${couponResult.valid ? 'text-emerald-400' : 'text-red-400'}`}>
-                {couponResult.valid ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
-                {couponResult.valid
-                  ? `${couponResult.discount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })} indirim uygulandı!`
-                  : (couponResult.message ?? 'Geçersiz kupon kodu.')}
+              <div className={`flex items-center gap-2 p-2.5 rounded-xl text-xs font-bold border transition-all ${
+                couponResult.valid
+                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-405'
+                  : 'bg-red-500/10 border-red-500/20 text-red-405'
+              }`}>
+                {couponResult.valid ? <Check className="w-3.5 h-3.5 shrink-0" /> : <X className="w-3.5 h-3.5 shrink-0" />}
+                <span>
+                  {couponResult.valid
+                    ? `${couponResult.discount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })} indirim uygulandı!`
+                    : (couponResult.message ?? 'Geçersiz kupon kodu.')}
+                </span>
               </div>
             )}
           </div>

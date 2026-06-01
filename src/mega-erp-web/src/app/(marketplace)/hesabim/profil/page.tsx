@@ -84,16 +84,16 @@ export default function ProfilPage() {
       <AccountTabs
         header={
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Hesabım</h1>
-            <p className="text-slate-400 text-sm mt-1">Profil bilgileri</p>
+            <h1 className="text-2xl font-black text-foreground uppercase tracking-wider">Hesabım</h1>
+            <p className="text-slate-400 text-xs font-semibold mt-1.5">Profil bilgileri</p>
           </div>
         }
       />
 
-      <div className="max-w-md">
-        <div className="premium-card p-6">
+      <div className="max-w-md mt-6">
+        <div className="bg-slate-900/65 border border-border/80 p-6 shadow-xl rounded-2xl">
           {/* Avatar */}
-          <div className="flex flex-col items-center gap-3 mb-6 pb-6 border-b border-border">
+          <div className="flex flex-col items-center gap-3 mb-6 pb-6 border-b border-border/40">
             <div
               className="w-20 h-20 rounded-2xl flex items-center justify-center font-black text-2xl text-white shadow-lg transition-all duration-300"
               style={{ backgroundColor: selectedColor.hex }}
@@ -101,19 +101,19 @@ export default function ProfilPage() {
               {form.firstName?.[0]?.toUpperCase() ?? '?'}{form.lastName?.[0]?.toUpperCase() ?? ''}
             </div>
             <div className="text-center">
-              <p className="font-semibold text-foreground">{form.firstName} {form.lastName}</p>
-              <p className="text-xs text-slate-400">{form.email}</p>
+              <p className="font-extrabold text-foreground text-sm tracking-tight">{form.firstName} {form.lastName}</p>
+              <p className="text-[11px] text-slate-500 font-semibold mt-0.5">{form.email}</p>
             </div>
             {/* Color picker */}
-            <div>
-              <p className="text-xs text-slate-400 text-center mb-2">Avatar Rengi</p>
+            <div className="mt-2">
+              <p className="text-[10px] font-black text-slate-455 uppercase tracking-wider text-center mb-2">Avatar Rengi</p>
               <div className="flex gap-2">
                 {AVATAR_COLORS.map(c => (
                   <button
                     key={c.id}
                     onClick={() => handleAvatarColor(c.id)}
                     className={`w-7 h-7 rounded-full transition-all ${c.bg} ${
-                      avatarColorId === c.id ? 'ring-2 ring-white ring-offset-2 ring-offset-background scale-110' : 'hover:scale-105'
+                      avatarColorId === c.id ? 'ring-2 ring-primary ring-offset-2 ring-offset-slate-950 scale-110' : 'hover:scale-105'
                     }`}
                     title={c.id}
                   />
@@ -122,69 +122,69 @@ export default function ProfilPage() {
             </div>
           </div>
 
-          <div className="mb-4">
-            <h2 className="font-semibold text-foreground">Profil Bilgilerini Güncelle</h2>
-            <p className="text-xs text-slate-400">Ad, soyad, e-posta ve telefon</p>
+          <div className="mb-5">
+            <h2 className="text-sm font-black text-foreground uppercase tracking-wider">Profil Bilgilerini Güncelle</h2>
+            <p className="text-xs text-slate-400 font-semibold mt-1">Ad, soyad, e-posta ve telefon</p>
           </div>
 
           {loading ? (
             <div className="space-y-3">
-              {[1,2,3,4].map(i => <div key={i} className="h-10 bg-slate-800 rounded-xl animate-pulse" />)}
+              {[1,2,3,4].map(i => <div key={i} className="h-10 bg-slate-950/40 border border-border/80 rounded-xl animate-pulse" />)}
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5">Ad *</label>
+                  <label className="block text-[10px] font-black text-slate-455 uppercase tracking-wider mb-1.5">Ad *</label>
                   <input
                     type="text"
                     value={form.firstName}
                     onChange={(e) => setForm({ ...form, firstName: e.target.value })}
                     required
-                    className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950/40 border border-border/80 text-foreground text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all placeholder:text-slate-505"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5">Soyad</label>
+                  <label className="block text-[10px] font-black text-slate-455 uppercase tracking-wider mb-1.5">Soyad</label>
                   <input
                     type="text"
                     value={form.lastName}
                     onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950/40 border border-border/80 text-foreground text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all placeholder:text-slate-505"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5">E-posta *</label>
+                <label className="block text-[10px] font-black text-slate-455 uppercase tracking-wider mb-1.5">E-posta *</label>
                 <input
                   type="email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   required
-                  className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 transition-all"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950/40 border border-border/80 text-foreground text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all placeholder:text-slate-505"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5">Telefon</label>
+                <label className="block text-[10px] font-black text-slate-455 uppercase tracking-wider mb-1.5">Telefon</label>
                 <input
                   type="tel"
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
                   placeholder="05xx xxx xx xx"
-                  className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 transition-all"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950/40 border border-border/80 text-foreground text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all placeholder:text-slate-505"
                 />
               </div>
 
               {error && (
-                <div className="px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                <div className="px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-405 text-xs font-bold">
                   {error}
                 </div>
               )}
 
               {success && (
-                <div className="px-4 py-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-sm flex items-center gap-2">
+                <div className="px-4 py-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-bold flex items-center gap-2">
                   <Check className="w-4 h-4" /> Profil başarıyla güncellendi.
                 </div>
               )}
@@ -192,7 +192,7 @@ export default function ProfilPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="w-full py-3 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-xl bg-primary text-white font-bold text-xs hover:bg-primary/95 transition-all shadow-md shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {saving ? (
                   <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Kaydediliyor...</>

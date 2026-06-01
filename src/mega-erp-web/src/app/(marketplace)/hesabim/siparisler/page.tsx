@@ -271,33 +271,48 @@ function OrderCard({ order, onUpdate }: { order: BuyerOrderDto; onUpdate: (updat
 
       {/* Cancel dialog */}
       {cancelOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setCancelOpen(false)}>
-          <div className="premium-card p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setCancelOpen(false)}>
+          <div className="premium-card p-6 w-full max-w-md border border-border/80 bg-slate-900/95 shadow-2xl relative" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-semibold text-foreground">Siparişi İptal Et</h3>
-              <button onClick={() => setCancelOpen(false)}><X className="w-4 h-4 text-slate-400 hover:text-white" /></button>
+              <h3 className="text-sm font-black text-foreground uppercase tracking-wider">Siparişi İptal Et</h3>
+              <button onClick={() => setCancelOpen(false)} className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all">
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            <p className="text-sm text-slate-400 mb-4">Bu siparişi iptal etmek istediğinize emin misiniz?</p>
-            <div className="mb-4">
-              <label className="text-xs text-slate-400 mb-2 block">İptal Sebebi</label>
-              <select
-                value={selectedReason}
-                onChange={e => setSelectedReason(e.target.value)}
-                className="w-full bg-slate-800 border border-border rounded-lg px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary"
-              >
-                <option value="">Seçin...</option>
-                {CANCEL_REASONS.map(r => <option key={r} value={r}>{r}</option>)}
-              </select>
+            <p className="text-xs text-slate-400 font-semibold mb-5 leading-relaxed">Bu siparişi iptal etmek istediğinize emin misiniz? Lütfen iptal nedenini seçin.</p>
+            
+            <div className="mb-6">
+              <label className="text-[10px] text-slate-455 font-black uppercase tracking-wider mb-2.5 block">İptal Sebebi</label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {CANCEL_REASONS.map(r => {
+                  const isSelected = selectedReason === r
+                  return (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => setSelectedReason(r)}
+                      className={`px-3 py-2.5 rounded-xl border text-xs font-bold text-left transition-all ${
+                        isSelected
+                          ? 'bg-red-500/10 border-red-500/40 text-red-405 shadow-md shadow-red-500/5'
+                          : 'bg-slate-950/40 border-border/80 text-slate-400 hover:border-slate-800 hover:text-slate-300'
+                      }`}
+                    >
+                      {r}
+                    </button>
+                  )
+                })}
+              </div>
             </div>
-            {actionError && <p className="text-xs text-red-400 mb-3">{actionError}</p>}
+
+            {actionError && <p className="text-xs text-red-405 mb-4 font-bold">{actionError}</p>}
             <div className="flex gap-3">
-              <button onClick={() => setCancelOpen(false)} className="flex-1 px-4 py-2.5 text-sm border border-border rounded-xl hover:bg-slate-800 transition-colors">
+              <button onClick={() => setCancelOpen(false)} className="flex-1 px-4 py-2.5 text-xs font-bold border border-border/80 rounded-xl hover:bg-slate-800/40 transition-colors">
                 Vazgeç
               </button>
               <button
                 onClick={handleCancel}
-                disabled={actionLoading}
-                className="flex-1 px-4 py-2.5 text-sm bg-red-600 hover:bg-red-500 text-white rounded-xl transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                disabled={actionLoading || !selectedReason}
+                className="flex-1 px-4 py-2.5 text-xs font-bold bg-red-500 hover:bg-red-600 text-white rounded-xl transition-all disabled:opacity-40 flex items-center justify-center gap-2 shadow-md shadow-red-500/20"
               >
                 {actionLoading ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> İptal ediliyor...</> : 'Evet, İptal Et'}
               </button>
@@ -308,33 +323,48 @@ function OrderCard({ order, onUpdate }: { order: BuyerOrderDto; onUpdate: (updat
 
       {/* Refund dialog */}
       {refundOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setRefundOpen(false)}>
-          <div className="premium-card p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setRefundOpen(false)}>
+          <div className="premium-card p-6 w-full max-w-md border border-border/80 bg-slate-900/95 shadow-2xl relative" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-semibold text-foreground">İade Talebi Oluştur</h3>
-              <button onClick={() => setRefundOpen(false)}><X className="w-4 h-4 text-slate-400 hover:text-white" /></button>
+              <h3 className="text-sm font-black text-foreground uppercase tracking-wider">İade Talebi Oluştur</h3>
+              <button onClick={() => setRefundOpen(false)} className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all">
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            <p className="text-sm text-slate-400 mb-4">İade talebiniz incelenerek en kısa sürede geri dönüş sağlanacaktır.</p>
-            <div className="mb-4">
-              <label className="text-xs text-slate-400 mb-2 block">İade Sebebi</label>
-              <select
-                value={selectedReason}
-                onChange={e => setSelectedReason(e.target.value)}
-                className="w-full bg-slate-800 border border-border rounded-lg px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary"
-              >
-                <option value="">Seçin...</option>
-                {REFUND_REASONS.map(r => <option key={r} value={r}>{r}</option>)}
-              </select>
+            <p className="text-xs text-slate-400 font-semibold mb-5 leading-relaxed">İade talebiniz ekibimiz tarafından incelenerek en kısa sürede geri dönüş sağlanacaktır. Lütfen iade nedenini seçin.</p>
+            
+            <div className="mb-6">
+              <label className="text-[10px] text-slate-455 font-black uppercase tracking-wider mb-2.5 block">İade Sebebi</label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {REFUND_REASONS.map(r => {
+                  const isSelected = selectedReason === r
+                  return (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => setSelectedReason(r)}
+                      className={`px-3 py-2.5 rounded-xl border text-xs font-bold text-left transition-all ${
+                        isSelected
+                          ? 'bg-orange-500/10 border-orange-500/40 text-orange-405 shadow-md shadow-orange-500/5'
+                          : 'bg-slate-950/40 border-border/80 text-slate-400 hover:border-slate-800 hover:text-slate-300'
+                      }`}
+                    >
+                      {r}
+                    </button>
+                  )
+                })}
+              </div>
             </div>
-            {actionError && <p className="text-xs text-red-400 mb-3">{actionError}</p>}
+
+            {actionError && <p className="text-xs text-red-405 mb-4 font-bold">{actionError}</p>}
             <div className="flex gap-3">
-              <button onClick={() => setRefundOpen(false)} className="flex-1 px-4 py-2.5 text-sm border border-border rounded-xl hover:bg-slate-800 transition-colors">
+              <button onClick={() => setRefundOpen(false)} className="flex-1 px-4 py-2.5 text-xs font-bold border border-border/80 rounded-xl hover:bg-slate-800/40 transition-colors">
                 Vazgeç
               </button>
               <button
                 onClick={handleRefund}
-                disabled={actionLoading}
-                className="flex-1 px-4 py-2.5 text-sm bg-orange-600 hover:bg-orange-500 text-white rounded-xl transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                disabled={actionLoading || !selectedReason}
+                className="flex-1 px-4 py-2.5 text-xs font-bold bg-orange-500 hover:bg-orange-600 text-white rounded-xl transition-all disabled:opacity-40 flex items-center justify-center gap-2 shadow-md shadow-orange-500/20"
               >
                 {actionLoading ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Gönderiliyor...</> : 'İade Talep Et'}
               </button>
@@ -345,40 +375,42 @@ function OrderCard({ order, onUpdate }: { order: BuyerOrderDto; onUpdate: (updat
 
       {/* Review modal */}
       {reviewItem && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setReviewItem(null)}>
-          <div className="premium-card p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setReviewItem(null)}>
+          <div className="premium-card p-6 w-full max-w-md border border-border/80 bg-slate-900/95 shadow-2xl relative" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-semibold text-foreground">Ürün Değerlendirmesi</h3>
-              <button onClick={() => setReviewItem(null)}><X className="w-4 h-4 text-slate-400 hover:text-white" /></button>
+              <h3 className="text-sm font-black text-foreground uppercase tracking-wider">Ürün Değerlendirmesi</h3>
+              <button onClick={() => setReviewItem(null)} className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all">
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            <p className="text-sm text-slate-400 mb-4 truncate">{reviewItem.productName}</p>
+            <p className="text-xs text-primary font-bold mb-5 truncate leading-relaxed">{reviewItem.productName}</p>
             <div className="mb-4">
-              <label className="text-xs text-slate-400 mb-2 block">Puanınız</label>
+              <label className="text-[10px] text-slate-455 font-black uppercase tracking-wider block mb-2">Puanınız</label>
               <StarRating value={reviewRating} onChange={setReviewRating} />
             </div>
-            <div className="mb-4">
-              <label className="text-xs text-slate-400 mb-1 block">Yorumunuz <span className="text-slate-600">(opsiyonel)</span></label>
+            <div className="mb-5">
+              <label className="text-[10px] text-slate-455 font-black uppercase tracking-wider block mb-2">Yorumunuz <span className="text-slate-500 font-semibold">(opsiyonel)</span></label>
               <textarea
                 value={reviewComment}
                 onChange={e => setReviewComment(e.target.value)}
                 rows={3}
                 maxLength={500}
                 placeholder="Bu ürün hakkında ne düşünüyorsunuz?"
-                className="w-full bg-slate-800 border border-border rounded-lg px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary resize-none"
+                className="w-full bg-slate-955/40 border border-border/80 rounded-xl px-3 py-2.5 text-xs text-foreground placeholder-slate-505 focus:outline-none focus:ring-2 focus:ring-primary/25 font-semibold resize-none"
               />
               {reviewComment.length > 0 && (
-                <p className="text-xs text-slate-500 text-right mt-0.5">{reviewComment.length}/500</p>
+                <p className="text-[10px] text-slate-500 font-bold font-mono text-right mt-1.5">{reviewComment.length} / 500</p>
               )}
             </div>
-            {reviewError && <p className="text-xs text-red-400 mb-3">{reviewError}</p>}
+            {reviewError && <p className="text-xs text-red-405 mb-4 font-bold">{reviewError}</p>}
             <div className="flex gap-3">
-              <button onClick={() => setReviewItem(null)} className="flex-1 px-4 py-2.5 text-sm border border-border rounded-xl hover:bg-slate-800 transition-colors">
+              <button onClick={() => setReviewItem(null)} className="flex-1 px-4 py-2.5 text-xs font-bold border border-border/80 rounded-xl hover:bg-slate-800/40 transition-colors">
                 Vazgeç
               </button>
               <button
                 onClick={handleSubmitReview}
                 disabled={reviewLoading || reviewRating === 0}
-                className="flex-1 px-4 py-2.5 text-sm bg-amber-500 hover:bg-amber-400 text-black font-semibold rounded-xl transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-2.5 text-xs font-bold bg-amber-500 hover:bg-amber-600 text-black rounded-xl transition-all disabled:opacity-60 flex items-center justify-center gap-2 shadow-md shadow-amber-500/20"
               >
                 {reviewLoading
                   ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Gönderiliyor...</>

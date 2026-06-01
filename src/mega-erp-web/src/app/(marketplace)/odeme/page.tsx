@@ -629,23 +629,24 @@ export default function OdemePage() {
               </div>
             ))}
           </div>
+
           {/* Coupon code input */}
-          <div className="border-t border-border pt-3">
+          <div className="border-t border-border/40 pt-3.5">
             {appliedCoupon ? (
-              <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-green-500/10 border border-green-500/20">
+              <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-405 text-xs font-bold transition-all shadow-sm">
                 <div className="flex items-center gap-2">
-                  <Tag className="w-3.5 h-3.5 text-green-400" />
-                  <span className="text-xs font-semibold text-green-400">{appliedCoupon}</span>
-                  <span className="text-xs text-green-400">
+                  <Tag className="w-3.5 h-3.5 text-emerald-455" />
+                  <span className="font-mono tracking-wider">{appliedCoupon}</span>
+                  <span className="text-[10px] bg-emerald-500/20 px-1.5 py-0.5 rounded text-emerald-400 font-black font-mono">
                     -{couponDiscount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
                   </span>
                 </div>
-                <button onClick={handleRemoveCoupon} className="text-slate-400 hover:text-red-400 transition-colors">
+                <button onClick={handleRemoveCoupon} className="text-slate-400 hover:text-red-405 transition-colors p-1 rounded hover:bg-slate-800/40">
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>
             ) : (
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -653,17 +654,17 @@ export default function OdemePage() {
                     onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                     onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon()}
                     placeholder="Kupon kodu gir..."
-                    className="flex-1 px-3 py-2 rounded-lg bg-background border border-border text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all placeholder:text-slate-500"
+                    className="flex-1 px-3 py-2 rounded-xl bg-slate-900/60 border border-border/80 text-foreground text-xs font-mono uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all placeholder:text-slate-505 placeholder:normal-case font-bold"
                   />
                   <button
                     onClick={handleApplyCoupon}
                     disabled={couponLoading || !couponCode.trim()}
-                    className="px-3 py-2 rounded-lg bg-primary/10 hover:bg-primary text-primary hover:text-white text-xs font-semibold transition-colors disabled:opacity-40"
+                    className="px-3.5 py-2 rounded-xl bg-primary/10 hover:bg-primary text-primary hover:text-white text-xs font-bold transition-colors disabled:opacity-40 border border-primary/20 hover:border-transparent flex items-center justify-center shrink-0"
                   >
                     {couponLoading ? '...' : 'Uygula'}
                   </button>
                 </div>
-                {couponError && <p className="text-xs text-red-400">{couponError}</p>}
+                {couponError && <p className="text-xs text-red-405 font-bold pl-1">{couponError}</p>}
               </div>
             )}
           </div>
