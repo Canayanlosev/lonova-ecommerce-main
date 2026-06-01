@@ -88,7 +88,10 @@ builder.Services.AddMarketplaceInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IPasswordHasher<BuyerUser>, PasswordHasher<BuyerUser>>();
 builder.Services.AddWMSInfrastructure(builder.Configuration);
 builder.Services.AddSiteBuilderInfrastructure(builder.Configuration);
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<MegaERP.Shared.Infrastructure.Filters.FluentValidationFilter>();
+});
 
 // MediatR Registration for all modules
 builder.Services.AddMediatR(cfg => {
@@ -110,6 +113,9 @@ builder.Services.AddValidatorsFromAssemblies([
     typeof(MegaERP.Modules.IAM.Core.Validators.LoginRequestValidator).Assembly,
     typeof(MegaERP.Modules.Ecommerce.Core.Validators.CreateProductRequestValidator).Assembly,
     typeof(MegaERP.Modules.Sales.Core.Features.Orders.Commands.PlaceOrderCommand).Assembly,
+    typeof(MegaERP.Modules.HR.Core.Validators.CreateEmployeeRequestValidator).Assembly,
+    typeof(MegaERP.Modules.WMS.Core.Validators.CreateWarehouseRequestValidator).Assembly,
+    typeof(MegaERP.Modules.Accounting.Core.Validators.CreateAccountRequestValidator).Assembly,
 ]);
 
 // JWT Authentication

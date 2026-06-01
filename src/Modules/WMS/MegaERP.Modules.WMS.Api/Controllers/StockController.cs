@@ -18,10 +18,15 @@ public class StockController : ControllerBase
 
     /// <summary>Returns stock levels across all bins.</summary>
     [HttpGet("stock")]
-    public async Task<ActionResult<IEnumerable<StockLocationDto>>> GetStock(
+    public async Task<ActionResult> GetStock(
         [FromQuery] Guid? productId = null,
-        [FromQuery] bool lowStockOnly = false)
+        [FromQuery] bool lowStockOnly = false,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 100)
     {
+        pageSize = Math.Clamp(pageSize, 1, 500);
+        page = Math.Max(1, page);
+
         var query = _context.StockLocations.AsQueryable();
 
         if (productId.HasValue)
@@ -30,10 +35,14 @@ public class StockController : ControllerBase
         if (lowStockOnly)
             query = query.Where(s => s.Quantity <= s.MinStockLevel);
 
+        var total = await query.CountAsync();
         var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .Select(s => new StockLocationDto(s.ProductId, s.BinId, s.Quantity, s.MinStockLevel, s.Quantity <= s.MinStockLevel))
             .ToListAsync();
 
+        // Keep flat list response for backwards compat with existing frontend consumers
         return Ok(items);
     }
 

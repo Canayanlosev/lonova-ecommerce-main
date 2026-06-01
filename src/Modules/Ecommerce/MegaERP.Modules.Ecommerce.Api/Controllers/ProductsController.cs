@@ -29,13 +29,31 @@ public class ProductsController : ControllerBase
             p.Variants.Select(MapVariant).ToList());
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts()
+    public async Task<ActionResult> GetProducts(
+        [FromQuery] string? search = null,
+        [FromQuery] Guid? categoryId = null,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 50)
     {
-        var products = await _context.Products
-            .Include(p => p.Variants)
+        pageSize = Math.Clamp(pageSize, 1, 200);
+        page = Math.Max(1, page);
+
+        var query = _context.Products.Include(p => p.Variants).AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(search))
+            query = query.Where(p => p.Name.Contains(search) || p.Sku.Contains(search));
+
+        if (categoryId.HasValue)
+            query = query.Where(p => p.CategoryId == categoryId);
+
+        var total = await query.CountAsync();
+        var products = await query
+            .OrderBy(p => p.Name)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
 
-        return Ok(products.Select(MapProduct));
+        return Ok(new { items = products.Select(MapProduct), totalCount = total, page, pageSize });
     }
 
     [HttpGet("{id:guid}")]
